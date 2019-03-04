@@ -1,6 +1,5 @@
 import {Space} from "../model/Space";
-
-declare var Raphael: any;
+import * as Raphael from "raphael/raphael";
 
 export class View {
     private offsetX: number;

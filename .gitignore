@@ -1,2 +1,3 @@
-.idea
+/.idea
 /dest
+/node_modules

@@ -15,6 +15,8 @@ export class Position {
         this.x = x;
         this.y = y;
         this.mass = mass;
+        this.accel = new Vector(0, 0);
+        this.speed = new Vector(0, 0);
     }
 
     getX(): number {

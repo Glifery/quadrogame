@@ -8,12 +8,13 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "outDir": "dest"
 //    "lib": [ "es2015", "dom" ],
 //    "noImplicitAny": true,
 //    "suppressImplicitAnyIndexErrors": true
-    "sourceRoot": "./src/",
-    "rootDir": "./src/",
-    "outFile": "dest/script.js"
+//    "sourceRoot": "./src/",
+//    "rootDir": "./src/"
+//    "outFile": "dest/script.js"
   },
   "exclude": [
     "node_modules"
