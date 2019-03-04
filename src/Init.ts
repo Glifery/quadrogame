@@ -12,9 +12,9 @@ export class Init {
 
         let space: Space = new Space();
         space
-            .addObject(obj1)
-            .addObject(obj2)
-            .addObject(obj3)
+            .addPosition(obj1)
+            .addPosition(obj2)
+            .addPosition(obj3)
         ;
 
         let view: View = new View(800, 600, 0, 0);

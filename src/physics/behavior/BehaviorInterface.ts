@@ -1,5 +1,6 @@
 import {Simulator} from "../Simulator";
+import {Position} from "../../model/Position";
 
 export interface BehaviorInterface {
-    handle(object: Object, simulator: Simulator);
+    handle(position: Position, simulator: Simulator): void;
 }

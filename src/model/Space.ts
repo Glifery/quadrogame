@@ -1,15 +1,15 @@
 import {Position} from "./Position";
 
 export class Space {
-    private objects: Position[] = [];
+    private positions: Position[] = [];
 
-    addObject(object: Position): Space {
-        this.objects.push(object);
+    addPosition(position: Position): Space {
+        this.positions.push(position);
 
         return this;
     }
 
-    getObjects(): Position[] {
-        return this.objects;
+    getPositions(): Position[] {
+        return this.positions;
     }
 }

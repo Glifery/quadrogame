@@ -30,24 +30,24 @@ export class View {
     }
 
     private rerender(): View {
-        for (let object of this.space.getObjects()) {
-            if (!object.getRenderer()) {
+        for (let position of this.space.getPositions()) {
+            if (!position.getRenderer()) {
                 let renderer = this.paper.add([{
                   type: "circle",
-                  cx: object.getX(),
-                  cy: object.getY(),
+                  cx: position.getX(),
+                  cy: position.getY(),
                   r: 3,
                   fill: 'red'
                 }]);
 
-                object.setRenderer(renderer);
+                position.setRenderer(renderer);
             }
 
-            let renderer = object.getRenderer();
+            let renderer = position.getRenderer();
 
             renderer.attr({
-                cx: object.getX() - this.offsetX,
-                cy: object.getY() - this.offsetY,
+                cx: position.getX() - this.offsetX,
+                cy: position.getY() - this.offsetY,
             });
         }
 
