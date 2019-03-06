@@ -3,10 +3,12 @@ import {Space} from "./model/Space";
 import {View} from "./graphics/View";
 import {Position} from "./model/Position";
 import {NullBehavior} from "./physics/behavior/NullBehavior";
+import {ControllableBehavior} from "./physics/behavior/ControllableBehavior";
+import {KeyboardControl} from "./physics/control/KeyboardControl";
 
 export class Init {
     constructor() {
-        let obj1: Position = new Position(10, 10, 10);
+        let obj1: Position = new Position(100, 100, 10);
         let obj2: Position = new Position(600, 200, 100);
         let obj3: Position = new Position(300, 500, 1000);
 
@@ -20,19 +22,15 @@ export class Init {
         let view: View = new View(800, 600, 0, 0);
         view.setSpace(space);
 
-        let behavior: NullBehavior = new NullBehavior();
-        obj1.addBehavior(behavior);
-        obj2.addBehavior(behavior);
-        obj3.addBehavior(behavior);
+        let nullBehavior: NullBehavior = new NullBehavior();
+        let controlBehavior: ControllableBehavior = new ControllableBehavior();
+        controlBehavior
+            .addControl(new KeyboardControl());
 
-        // let controllManager: ControllManager = new ControllManager();
-        // controllManager.initialize(document);
-        //
-        // let controllableBehavior: ControllableBehavior = new ControllableBehavior(controllManager);
-        // obj1.addBehavior(controllableBehavior);
-        // setInterval(() => {
-        //     controllManager.isCharPressed('S');
-        // }, 1000);
+        obj1.addBehavior(controlBehavior);
+        // obj1.addBehavior(nullBehavior);
+        obj2.addBehavior(nullBehavior);
+        obj3.addBehavior(nullBehavior);
 
         let simulator: Simulator = new Simulator();
         simulator
@@ -43,8 +41,6 @@ export class Init {
 
         simulator.startSimulation(25, 4);
         view.startRendering(25);
-
-        // new ControllManager();
     }
 }
 

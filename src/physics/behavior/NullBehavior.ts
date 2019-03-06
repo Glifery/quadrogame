@@ -5,6 +5,9 @@ import {Vector} from "../../model/Vector";
 
 export class NullBehavior implements BehaviorInterface {
     handle(position: Position, simulator: Simulator): void {
-        position.addVector(Vector.createFromXY(1, 1));
+        position.addVector(Vector.createFromXY(
+            Math.random() * 2 - 1,
+            Math.random() * 2 - 1
+        ));
     }
 }
