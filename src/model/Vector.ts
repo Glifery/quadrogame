@@ -109,6 +109,15 @@ export class Vector {
         this.y = 0;
         this.dir = 0;
         this.dis = 0;
+        this.xyToDirdis();
+
+        return this;
+    }
+
+    revert(): Vector {
+        this.x = -this.x;
+        this.y = -this.y;
+        this.xyToDirdis();
 
         return this;
     }

@@ -5,39 +5,48 @@ import {Position} from "./model/Position";
 import {NullBehavior} from "./physics/behavior/NullBehavior";
 import {ControllableBehavior} from "./physics/behavior/ControllableBehavior";
 import {KeyboardControl} from "./physics/control/KeyboardControl";
+import {DumpBehavior} from "./physics/behavior/DumpBehavior";
+import {GravityBehavior} from "./physics/behavior/GravityBehavior";
+import {Vector} from "./model/Vector";
 
 export class Init {
     constructor() {
-        let obj1: Position = new Position(100, 100, 10);
-        let obj2: Position = new Position(600, 200, 100);
-        let obj3: Position = new Position(300, 500, 1000);
-
         let space: Space = new Space();
-        space
-            .addPosition(obj1)
-            .addPosition(obj2)
-            .addPosition(obj3)
-        ;
 
-        let view: View = new View(800, 600, 0, 0);
+        let view: View = new View(1400, 600, 0, 0);
         view.setSpace(space);
 
+        let simulator: Simulator = new Simulator();
+
         let nullBehavior: NullBehavior = new NullBehavior();
+        let dumpBehavior: DumpBehavior = new DumpBehavior();
+        let gravidyBehavior: GravityBehavior = new GravityBehavior();
         let controlBehavior: ControllableBehavior = new ControllableBehavior();
-        controlBehavior
-            .addControl(new KeyboardControl());
+        controlBehavior.addControl(new KeyboardControl());
+
+        let obj1: Position = new Position(100, 100, 1);
 
         obj1.addBehavior(controlBehavior);
-        // obj1.addBehavior(nullBehavior);
-        obj2.addBehavior(nullBehavior);
-        obj3.addBehavior(nullBehavior);
+        obj1.addBehavior(dumpBehavior);
+        obj1.addBehavior(gravidyBehavior);
 
-        let simulator: Simulator = new Simulator();
-        simulator
-            .registerObject(obj1)
-            .registerObject(obj2)
-            .registerObject(obj3)
-        ;
+        space.addPosition(obj1);
+        simulator.registerObject(obj1);
+
+        let obj: Position;
+        let speed: Vector;
+        for (let i: number = 0; i < 20; i++) {
+            obj = new Position(Math.random()*1400, Math.random()*600, 800+Math.random()*400);
+
+            speed = Vector.createFromDirDis(Math.random()*360, Math.random()*10);
+            obj.setSpeed(speed);
+
+            obj.addBehavior(nullBehavior);
+            // obj.addBehavior(gravidyBehavior);
+
+            space.addPosition(obj);
+            simulator.registerObject(obj)
+        }
 
         simulator.startSimulation(25, 4);
         view.startRendering(25);

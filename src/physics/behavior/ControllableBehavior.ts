@@ -14,7 +14,7 @@ export class ControllableBehavior implements BehaviorInterface {
             finalVector.addVector(control.getVector());
         }
 
-        position.addVector(finalVector.multiply(4));
+        position.addVector(finalVector.multiply(20));
     }
 
     addControl(control: ControlInterface): BehaviorInterface {

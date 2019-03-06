@@ -12,7 +12,7 @@ export class Simulator {
         return this;
     }
 
-    public getObjects(): Position[] {
+    public getPositions(): Position[] {
         return this.positions;
     }
 
