@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { Container } from "inversify";
+import {Container} from "inversify";
+import {DemoSpace} from "../../../application/fixtures/DemoSpace";
 import {Simulator} from "../../../application/physics/Simulator";
 import {ControllableBehavior} from "../../../application/physics/behavior/ControllableBehavior";
 import {DumpBehavior} from "../../../application/physics/behavior/DumpBehavior";
@@ -8,6 +9,7 @@ import {NullBehavior} from "../../../application/physics/behavior/NullBehavior";
 
 const container = new Container();
 
+container.bind<DemoSpace>(DemoSpace).toSelf();
 container.bind<Simulator>(Simulator).toSelf();
 
 container.bind<ControllableBehavior>(ControllableBehavior).toSelf();
