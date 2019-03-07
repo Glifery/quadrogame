@@ -17,7 +17,8 @@ export class Entry {
         let view: View = new View(1400, 600, 0, 0);
         view.setSpace(space);
 
-        let simulator: Simulator = new Simulator();
+        let simulator: Simulator = container.get<Simulator>(Simulator);
+        simulator.registerSpace(space);
 
         let nullBehavior: NullBehavior = container.get<NullBehavior>(NullBehavior);
         let dumpBehavior: DumpBehavior = container.get<DumpBehavior>(DumpBehavior);
@@ -32,7 +33,6 @@ export class Entry {
         obj1.addBehavior(gravityBehavior);
 
         space.addPosition(obj1);
-        simulator.registerObject(obj1);
 
         let obj: Position;
         let speed: Vector;
@@ -46,7 +46,6 @@ export class Entry {
             // obj.addBehavior(gravityBehavior);
 
             space.addPosition(obj);
-            simulator.registerObject(obj)
         }
 
         simulator.startSimulation(25, 4);

@@ -1,19 +1,30 @@
+import {injectable} from "inversify";
 import {Position} from "../../domain/model/Position";
 import {Vector} from "../../domain/model/Vector";
+import {Space} from "../../domain/model/Space";
 
+@injectable()
 export class Simulator {
-    private positions: Position[] = [];
+    private spaces: Space[] = [];
 
     protected counter: number = 0;
 
-    registerObject(position: Position): Simulator {
-        this.positions.push(position);
+    registerSpace(space: Space): Simulator {
+        this.spaces.push(space);
 
         return this;
     }
 
     public getPositions(): Position[] {
-        return this.positions;
+        let positions: Position[] = [];
+
+        for (let space of this.spaces) {
+            for (let position of space.getPositions()) {
+                positions.push(position);
+            }
+        }
+
+        return positions;
     }
 
     public startSimulation(fps: number, speed: number = 1): Simulator {
@@ -26,7 +37,7 @@ export class Simulator {
     }
 
     private prepare(): Simulator {
-        for (let object of this.positions) {
+        for (let object of this.getPositions()) {
             object.clearVectors();
         }
 
@@ -34,7 +45,7 @@ export class Simulator {
     }
 
     private calculate(): Simulator {
-        for (let position of this.positions) {
+        for (let position of this.getPositions()) {
             for (let behavior of position.getBehaviors()) {
                 behavior.handle(position, this);
             }
@@ -44,7 +55,7 @@ export class Simulator {
     }
 
     private apply(): Simulator {
-        for (let position of this.positions) {
+        for (let position of this.getPositions()) {
             let accel = new Vector(0, 0);
 
             for (let vector of position.getVectors()) {
@@ -58,7 +69,7 @@ export class Simulator {
     }
 
     private move(multiplier: number): Simulator {
-        for (let position of this.positions) {
+        for (let position of this.getPositions()) {
             /**
              * period values - real accel and speed within one tick
              * @type {Vector}
