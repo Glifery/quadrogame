@@ -4,6 +4,7 @@ import {Simulator} from "./physics/Simulator";
 import {Space} from "./../domain/model/Space";
 import {View} from "./graphics/View";
 import {DemoSpace} from "./fixtures/DemoSpace";
+import {SimpleProjectionStrategy} from "./graphics/projection/SimpleProjectionStrategy";
 
 export class Entry {
     constructor() {
@@ -12,7 +13,8 @@ export class Entry {
         let simulator: Simulator = container.get<Simulator>(Simulator);
         simulator.registerSpace(space);
 
-        let view: View = new View(1400, 600, 0, 0);
+        let view: View = new View(1400, 600, 10, 30);
+        view.setProjectionStrategy(new SimpleProjectionStrategy());
         view.setSpace(space);
 
         let demoSpace: DemoSpace = container.get<DemoSpace>(DemoSpace);

@@ -1,19 +1,20 @@
 import {Space} from "../../domain/model/Space";
 import * as Raphael from "raphael/raphael";
+import {ProjectionStrategyInterface} from "./projection/ProjectionStrategyInterface";
+import {Projection} from "../../domain/model/Projection";
 
 export class View {
     private offsetX: number;
     private offsetY: number;
-
+    private space: Space;
+    private projectionStrategy: ProjectionStrategyInterface;
     private paper: any;
 
-    private space: Space;
-
-    constructor(width: number, height: number, offsetX: number = 0, offsetY: number = 0) {
+    constructor(width: number, height: number, offsetX: number, offsetY: number) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
 
-        this.paper = Raphael(0, 0, width, height);
+        this.paper = Raphael(offsetX, offsetY, width, height);
         this.paper.rect(0, 0, width, height, 5);
     }
 
@@ -21,6 +22,10 @@ export class View {
         this.space = space;
 
         return this;
+    }
+
+    setProjectionStrategy(projectionStrategy: ProjectionStrategyInterface) {
+        this.projectionStrategy = projectionStrategy;
     }
 
     startRendering(fps: number): View {
@@ -31,11 +36,13 @@ export class View {
 
     private rerender(): View {
         for (let position of this.space.getPositions()) {
+            let projection: Projection = this.projectionStrategy.calculateProjection(position, this);
+
             if (!position.getRenderer()) {
                 let renderer = this.paper.add([{
                   type: "circle",
-                  cx: position.getX(),
-                  cy: position.getY(),
+                  cx: projection.getX(),
+                  cy: projection.getY(),
                   r: 3,
                   fill: 'red'
                 }]);
@@ -46,8 +53,8 @@ export class View {
             let renderer = position.getRenderer();
 
             renderer.attr({
-                cx: position.getX() - this.offsetX,
-                cy: position.getY() - this.offsetY,
+                cx: projection.getX(),
+                cy: projection.getY(),
             });
         }
 
