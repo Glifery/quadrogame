@@ -5,7 +5,9 @@
   "main": "webpack.config.js",
   "dependencies": {
     "@types/raphael": "^2.1.30",
+    "inversify": "^5.0.1",
     "raphael": "^2.2.7",
+    "reflect-metadata": "^0.1.13",
     "ts-loader": "^5.3.3",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",

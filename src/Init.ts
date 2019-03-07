@@ -1,3 +1,4 @@
+import {container} from "./adapter/framework/di/inversify.config";
 import {Simulator} from "./physics/Simulator";
 import {Space} from "./model/Space";
 import {View} from "./graphics/View";
@@ -18,17 +19,17 @@ export class Init {
 
         let simulator: Simulator = new Simulator();
 
-        let nullBehavior: NullBehavior = new NullBehavior();
-        let dumpBehavior: DumpBehavior = new DumpBehavior();
-        let gravidyBehavior: GravityBehavior = new GravityBehavior();
-        let controlBehavior: ControllableBehavior = new ControllableBehavior();
+        let nullBehavior: NullBehavior = container.get<NullBehavior>(NullBehavior);
+        let dumpBehavior: DumpBehavior = container.get<DumpBehavior>(DumpBehavior);
+        let gravityBehavior: GravityBehavior = container.get<GravityBehavior>(GravityBehavior);
+        let controlBehavior: ControllableBehavior = container.get<ControllableBehavior>(ControllableBehavior);
         controlBehavior.addControl(new KeyboardControl());
 
         let obj1: Position = new Position(100, 100, 1);
 
         obj1.addBehavior(controlBehavior);
         obj1.addBehavior(dumpBehavior);
-        obj1.addBehavior(gravidyBehavior);
+        obj1.addBehavior(gravityBehavior);
 
         space.addPosition(obj1);
         simulator.registerObject(obj1);
@@ -42,7 +43,7 @@ export class Init {
             obj.setSpeed(speed);
 
             obj.addBehavior(nullBehavior);
-            // obj.addBehavior(gravidyBehavior);
+            // obj.addBehavior(gravityBehavior);
 
             space.addPosition(obj);
             simulator.registerObject(obj)

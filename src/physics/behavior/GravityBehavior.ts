@@ -1,9 +1,11 @@
+import {injectable} from "inversify";
 import {BehaviorInterface} from "./BehaviorInterface";
 import {Simulator} from "../Simulator";
 import {ControlInterface} from "../control/ControlInterface";
 import {Position} from "../../model/Position";
 import {Vector} from "../../model/Vector";
 
+@injectable()
 export class GravityBehavior implements BehaviorInterface {
     handle(position: Position, simulator: Simulator): void {
         let finalVector: Vector = new Vector(0, 0);
