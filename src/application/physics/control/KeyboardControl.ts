@@ -1,5 +1,5 @@
 import {ControlInterface} from "./ControlInterface";
-import {Vector} from "../../model/Vector";
+import {Vector} from "../../../domain/model/Vector";
 
 type KeyData = {direction: number, status: boolean};
 type KeyStatuses = {w:KeyData, a:KeyData, s:KeyData, d:KeyData};

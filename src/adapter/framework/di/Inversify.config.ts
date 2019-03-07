@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { Container } from "inversify";
-import {ControllableBehavior} from "../../../physics/behavior/ControllableBehavior";
-import {DumpBehavior} from "../../../physics/behavior/DumpBehavior";
-import {GravityBehavior} from "../../../physics/behavior/GravityBehavior";
-import {NullBehavior} from "../../../physics/behavior/NullBehavior";
+import {ControllableBehavior} from "../../../application/physics/behavior/ControllableBehavior";
+import {DumpBehavior} from "../../../application/physics/behavior/DumpBehavior";
+import {GravityBehavior} from "../../../application/physics/behavior/GravityBehavior";
+import {NullBehavior} from "../../../application/physics/behavior/NullBehavior";
 
 const container = new Container();
 

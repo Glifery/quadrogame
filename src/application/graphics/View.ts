@@ -1,4 +1,4 @@
-import {Space} from "../model/Space";
+import {Space} from "../../domain/model/Space";
 import * as Raphael from "raphael/raphael";
 
 export class View {

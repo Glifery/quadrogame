@@ -1,5 +1,5 @@
 import {Vector} from "./Vector";
-import {BehaviorInterface} from "../physics/behavior/BehaviorInterface";
+import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 
 export class Position {
     private x: number;

@@ -1,16 +1,16 @@
-import {container} from "./adapter/framework/di/inversify.config";
+import {container} from "../adapter/framework/di/Inversify.config";
 import {Simulator} from "./physics/Simulator";
-import {Space} from "./model/Space";
+import {Space} from "./../domain/model/Space";
 import {View} from "./graphics/View";
-import {Position} from "./model/Position";
+import {Position} from "./../domain/model/Position";
 import {NullBehavior} from "./physics/behavior/NullBehavior";
 import {ControllableBehavior} from "./physics/behavior/ControllableBehavior";
 import {KeyboardControl} from "./physics/control/KeyboardControl";
 import {DumpBehavior} from "./physics/behavior/DumpBehavior";
 import {GravityBehavior} from "./physics/behavior/GravityBehavior";
-import {Vector} from "./model/Vector";
+import {Vector} from "./../domain/model/Vector";
 
-export class Init {
+export class Entry {
     constructor() {
         let space: Space = new Space();
 
@@ -54,4 +54,4 @@ export class Init {
     }
 }
 
-new Init();
+new Entry();
