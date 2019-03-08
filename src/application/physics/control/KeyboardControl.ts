@@ -7,19 +7,19 @@ type KeyStatuses = {w:KeyData, a:KeyData, s:KeyData, d:KeyData};
 export class KeyboardControl implements ControlInterface {
     private keyStatuses: KeyStatuses = {
         w: {
-            direction: 90,
+            direction: 0,
             status: false,
         },
         a: {
-            direction: 180,
+            direction: 90,
             status: false,
         },
         s: {
-            direction: 270,
+            direction: 180,
             status: false,
         },
         d: {
-            direction: 0,
+            direction: 270,
             status: false,
         }
     };

@@ -9,7 +9,7 @@ export class DumpBehavior implements BehaviorInterface {
     handle(position: Position, simulator: Simulator): void {
         let vector = Vector.createFromVector(position.getSpeed());
 
-        vector.revert().setDis(Math.min(vector.getDis(), 7));
+        vector.invert().setDis(Math.min(vector.getDis(), 7));
         position.addVector(vector);
     }
 }

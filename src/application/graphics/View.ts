@@ -41,6 +41,8 @@ export class View {
     }
 
     private rerender(): View {
+        this.projectionStrategy.beforeCalculation(this);
+
         for (let position of this.space.getPositions()) {
             let projection: Projection = this.projectionStrategy.calculateProjection(position, this);
 

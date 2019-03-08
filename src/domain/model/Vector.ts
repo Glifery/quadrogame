@@ -1,8 +1,8 @@
 export class Vector {
-    private x: number;
-    private y: number;
-    private dir: number;
-    private dis: number;
+    private x: number = 0;
+    private y: number = 0;
+    private dir: number = 0;
+    private dis: number = 0;
 
     static createFromXY(x: number, y: number): Vector {
         return new Vector(x, y);
@@ -18,6 +18,7 @@ export class Vector {
 
     constructor(x: number, y: number) {
         this.setXY(x, y);
+        this.xyToDirdis();
     }
 
     getX(): number {
@@ -86,7 +87,7 @@ export class Vector {
         return this;
     }
 
-    addVector(vector: Vector) {
+    addVector(vector: Vector): Vector {
         this.setXY(this.getX() + vector.getX(), this.getY() + vector.getY());
 
         return this;
@@ -104,6 +105,14 @@ export class Vector {
         return this;
     }
 
+    rotate(rotationDir: number): Vector {
+        this.dir += rotationDir;
+        this.dirdisToXy();
+        this.xyToDirdis();
+
+        return this;
+    }
+
     clear(): Vector {
         this.x = 0;
         this.y = 0;
@@ -114,7 +123,7 @@ export class Vector {
         return this;
     }
 
-    revert(): Vector {
+    invert(): Vector {
         this.x = -this.x;
         this.y = -this.y;
         this.xyToDirdis();
@@ -130,10 +139,6 @@ export class Vector {
     private xyToDirdis(): Vector {
         if ((this.x === 0) && (this.y === 0)) {
             this.dis = 0;
-
-            if (this.dir === null) {
-                this.dir = 0;
-            }
         } else {
             const dis: number = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
             const dir: number = this.radToDeg(Math.atan2(-this.y, this.x));

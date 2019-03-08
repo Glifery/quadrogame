@@ -15,6 +15,8 @@ export class DemoSpace implements SpaceFixtureInterface{
     private dumpBehavior: DumpBehavior;
     private gravityBehavior: GravityBehavior;
     private controllableBehavior: ControllableBehavior;
+    
+    private controlleblePosition: Position;
 
     constructor(
         @inject(NullBehavior) nullBehavior: NullBehavior,
@@ -31,13 +33,13 @@ export class DemoSpace implements SpaceFixtureInterface{
     }
 
     up(space: Space): void {
-        let obj1: Position = new Position(100, 100, 1);
+        this.controlleblePosition = new Position(100, 100, 1);
 
-        obj1.addBehavior(this.controllableBehavior);
-        obj1.addBehavior(this.dumpBehavior);
-        obj1.addBehavior(this.gravityBehavior);
+        this.controlleblePosition.addBehavior(this.controllableBehavior);
+        this.controlleblePosition.addBehavior(this.dumpBehavior);
+        this.controlleblePosition.addBehavior(this.gravityBehavior);
 
-        space.addPosition(obj1);
+        space.addPosition(this.controlleblePosition);
 
         let obj: Position;
         let speed: Vector;
@@ -48,9 +50,13 @@ export class DemoSpace implements SpaceFixtureInterface{
             obj.setSpeed(speed);
 
             obj.addBehavior(this.nullBehavior);
-            // obj.addBehavior(gravityBehavior);
+            // obj.addBehavior(this.gravityBehavior);
 
             space.addPosition(obj);
         }
+    }
+    
+    getControllablePosition(): Position {
+        return this.controlleblePosition;
     }
 }

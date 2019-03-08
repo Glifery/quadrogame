@@ -1,11 +1,13 @@
 export class Projection {
     private x: number;
     private y: number;
+    private rotation: number;
     private scale: number;
 
-    constructor(x: number, y: number, scale: number) {
+    constructor(x: number, y: number, rotation: number, scale: number) {
         this.x = x;
         this.y = y;
+        this.rotation = rotation;
         this.scale = scale;
     }
 
@@ -15,6 +17,10 @@ export class Projection {
 
     getY(): number {
         return this.y;
+    }
+
+    getRotation(): number {
+        return this.rotation;
     }
 
     getScale(): number {
