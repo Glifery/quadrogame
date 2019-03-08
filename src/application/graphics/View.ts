@@ -2,12 +2,14 @@ import {Space} from "../../domain/model/Space";
 import * as Raphael from "raphael/raphael";
 import {ProjectionStrategyInterface} from "./projection/ProjectionStrategyInterface";
 import {Projection} from "../../domain/model/Projection";
+import {RendererStrategyInterface} from "./renderer/RendererStrategyInterface";
 
 export class View {
     private offsetX: number;
     private offsetY: number;
     private space: Space;
     private projectionStrategy: ProjectionStrategyInterface;
+    private rendererStrategy: RendererStrategyInterface;
     private paper: any;
 
     constructor(width: number, height: number, offsetX: number, offsetY: number) {
@@ -28,6 +30,10 @@ export class View {
         this.projectionStrategy = projectionStrategy;
     }
 
+    setRendererStrategy(rendererStrategy: RendererStrategyInterface) {
+        this.rendererStrategy = rendererStrategy;
+    }
+
     startRendering(fps: number): View {
         setInterval(() => this.rerender(), 1000/fps);
 
@@ -39,23 +45,20 @@ export class View {
             let projection: Projection = this.projectionStrategy.calculateProjection(position, this);
 
             if (!position.getRenderer()) {
-                let renderer = this.paper.add([{
+                let graphicElement = this.paper.add([{
                   type: "circle",
                   cx: projection.getX(),
                   cy: projection.getY(),
-                  r: 3,
+                  r: 0,
                   fill: 'red'
                 }]);
 
-                position.setRenderer(renderer);
+                position.setRenderer(graphicElement);
             }
 
-            let renderer = position.getRenderer();
+            let graphicElement = position.getRenderer();
 
-            renderer.attr({
-                cx: projection.getX(),
-                cy: projection.getY(),
-            });
+            this.rendererStrategy.renderPosition(position, projection, graphicElement);
         }
 
         return this;
