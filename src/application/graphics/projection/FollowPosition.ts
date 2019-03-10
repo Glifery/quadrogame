@@ -3,9 +3,10 @@ import {Position} from "../../../domain/model/Position";
 import {View} from "../View";
 import {Projection} from "../../../domain/model/Projection";
 import {Vector} from "../../../domain/model/Vector";
+import {ControllablePosition} from "../../../domain/model/ControllablePosition";
 
 export class FollowPosition implements ProjectionStrategyInterface {
-    private followedPosition: Position;
+    private followedPosition: ControllablePosition;
     private attachedX: number;
     private attachedY: number;
     private attachedDir: number;
@@ -13,7 +14,7 @@ export class FollowPosition implements ProjectionStrategyInterface {
     private shiftVector: Vector;
     private turnDir: number = 0;
 
-    constructor(followedPosition: Position, attachedX: number, attachedY: number, attachedDir: number) {
+    constructor(followedPosition: ControllablePosition, attachedX: number, attachedY: number, attachedDir: number) {
         this.followedPosition = followedPosition;
         this.attachedX = attachedX;
         this.attachedY = attachedY;
@@ -25,7 +26,7 @@ export class FollowPosition implements ProjectionStrategyInterface {
             .createFromXY(this.followedPosition.getX(), this.followedPosition.getY())
             .invert()
             .addVector(Vector.createFromXY(this.attachedX, this.attachedY));
-        this.turnDir = this.attachedDir - this.followedPosition.getSpeed().getDir();
+        this.turnDir = this.attachedDir - this.followedPosition.getOrientation();
     }
 
     calculateProjection(position: Position, view: View): Projection {

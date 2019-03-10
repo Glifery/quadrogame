@@ -1,69 +1,93 @@
+import {injectable} from "inversify";
 import {ControlInterface} from "./ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
 
-type KeyData = {direction: number, status: boolean};
-type KeyStatuses = {w:KeyData, a:KeyData, s:KeyData, d:KeyData};
+type MovingKeyData = {w:number, s:number};
+type RotationKeyData = {a:number, d:number};
 
+@injectable()
 export class KeyboardControl implements ControlInterface {
-    private keyStatuses: KeyStatuses = {
-        w: {
-            direction: 0,
-            status: false,
-        },
-        a: {
-            direction: 90,
-            status: false,
-        },
-        s: {
-            direction: 180,
-            status: false,
-        },
-        d: {
-            direction: 270,
-            status: false,
-        }
+    private trackedKeyStatuses: any;
+
+    private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd'];
+    private movingKeyData: MovingKeyData = {
+        w: 0,
+        // a: 90,
+        s: 180,
+        // d: 270
+    };
+    private rotationKeyData: RotationKeyData = {
+        // q: 1,
+        a: 1,
+        // e: -1
+        d: -1
     };
 
     constructor() {
         this.configure();
     }
 
-    getVector() {
+    getMovingVector() {
         let vector = new Vector(0, 0);
-        let keys = Object.keys(this.keyStatuses);
+        let keys: string[] = Object.keys(this.trackedKeyStatuses);
 
         for (let key of keys) {
-            if (this.keyStatuses[key].status === false) {
+            if (this.trackedKeyStatuses[key] === false) {
+                continue;
+            }
+            if (!this.movingKeyData.hasOwnProperty(key)) {
                 continue;
             }
 
-            vector.addVector(Vector.createFromDirDis(this.keyStatuses[key].direction, 1));
+            vector.addVector(Vector.createFromDirDis(this.movingKeyData[key], 1));
         }
 
         return vector;
     }
 
+    getRotationDir() {
+        let direction: number = 0;
+        let keys: string[] = Object.keys(this.trackedKeyStatuses);
+
+        for (let key of keys) {
+            if (this.trackedKeyStatuses[key] === false) {
+                continue;
+            }
+            if (!this.rotationKeyData.hasOwnProperty(key)) {
+                continue;
+            }
+
+            direction += this.rotationKeyData[key];
+        }
+
+        return direction;
+    }
+
     private configure(): void {
-        let trackedKeys: string[] = ['w', 'a', 's', 'd'];
+        this.trackedKeyStatuses = {};
+
+        for (let key of this.trackedKeys) {
+            this.trackedKeyStatuses[key] = false;
+        }
 
         document.addEventListener('keydown', (event) => {
             event.preventDefault();
 
-            if ((event.key in this.keyStatuses) === false) {
+            if ((event.key in this.trackedKeyStatuses) === false) {
                 return;
             }
 
-            this.keyStatuses[event.key].status = true;
+            this.trackedKeyStatuses[event.key] = true;
         }, false);
 
         document.addEventListener('keyup', (event) => {
             event.preventDefault();
 
-            if ((event.key in this.keyStatuses) === false) {
+            if ((event.key in this.trackedKeyStatuses) === false) {
                 return;
             }
 
-            this.keyStatuses[event.key].status = false;
+            this.trackedKeyStatuses[event.key] = false;
         }, false);
     }
 }
