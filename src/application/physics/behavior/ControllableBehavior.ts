@@ -23,7 +23,7 @@ export class ControllableBehavior implements BehaviorInterface {
             finalVector.addVector(control.getMovingVector());
         }
 
-        position.addVector(finalVector.rotate(position.getOrientation()).multiply(20));
+        position.addVector(finalVector.rotate(position.getOrientation() - 90).multiply(30));
     }
 
     addControl(control: ControlInterface): BehaviorInterface {

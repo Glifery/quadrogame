@@ -9,6 +9,7 @@ import {Position} from "../../domain/model/Position";
 import {Vector} from "../../domain/model/Vector";
 import {SpaceFixtureInterface} from "./SpaceFixtureInterface";
 import {ControllablePosition} from "../../domain/model/ControllablePosition";
+import {GamepadControl} from "../physics/control/GamepadControl";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -17,6 +18,7 @@ export class DemoSpace implements SpaceFixtureInterface{
     private gravityBehavior: GravityBehavior;
     private controllableBehavior: ControllableBehavior;
     private keyboardControl: KeyboardControl;
+    private gamepadControl: GamepadControl;
 
     private controlleblePosition: ControllablePosition;
 
@@ -25,15 +27,18 @@ export class DemoSpace implements SpaceFixtureInterface{
         @inject(DumpBehavior) dumpBehavior: DumpBehavior,
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(ControllableBehavior) controlBehavior: ControllableBehavior,
-        @inject(KeyboardControl) keyboardControl: KeyboardControl
+        @inject(KeyboardControl) keyboardControl: KeyboardControl,
+        @inject(GamepadControl) gamepadControl: GamepadControl
     ) {
         this.nullBehavior = nullBehavior;
         this.dumpBehavior = dumpBehavior;
         this.gravityBehavior = gravityBehavior;
         this.controllableBehavior = controlBehavior;
         this.keyboardControl = keyboardControl;
+        this.gamepadControl = gamepadControl;
 
         this.controllableBehavior.addControl(keyboardControl);
+        this.controllableBehavior.addControl(gamepadControl);
     }
 
     up(space: Space): void {

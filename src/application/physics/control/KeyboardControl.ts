@@ -2,8 +2,8 @@ import {injectable} from "inversify";
 import {ControlInterface} from "./ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
 
-type MovingKeyData = {w:number, s:number};
-type RotationKeyData = {a:number, d:number};
+type MovingKeyData = {w:number, a:number, s:number, d:number};
+type RotationKeyData = {q:number, e:number};
 
 @injectable()
 export class KeyboardControl implements ControlInterface {
@@ -11,16 +11,16 @@ export class KeyboardControl implements ControlInterface {
 
     private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd'];
     private movingKeyData: MovingKeyData = {
-        w: 0,
-        // a: 90,
-        s: 180,
-        // d: 270
+        w: 90,
+        a: 180,
+        s: 270,
+        d: 0
     };
     private rotationKeyData: RotationKeyData = {
-        // q: 1,
-        a: 1,
-        // e: -1
-        d: -1
+        q: 1,
+        // a: 1,
+        e: -1
+        // d: -1
     };
 
     constructor() {
