@@ -1,15 +1,16 @@
 import {Position} from "./Position";
+import {Entity} from "./Entity";
 
 export class Space {
-    private positions: Position[] = [];
+    private entities: Entity[] = [];
 
-    addPosition(position: Position): Space {
-        this.positions.push(position);
+    addEntity(entity: Entity): Space {
+        this.entities.push(entity);
 
         return this;
     }
 
-    getPositions(): Position[] {
-        return this.positions;
+    getEntities(): Entity[] {
+        return this.entities;
     }
 }

@@ -1,12 +1,11 @@
 import {ProjectionStrategyInterface} from "./ProjectionStrategyInterface";
-import {Position} from "../../../domain/model/Position";
 import {View} from "../View";
 import {Projection} from "../../../domain/model/Projection";
 import {Vector} from "../../../domain/model/Vector";
-import {ControllablePosition} from "../../../domain/model/ControllablePosition";
+import {Entity} from "../../../domain/model/Entity";
 
-export class FollowPosition implements ProjectionStrategyInterface {
-    private followedPosition: ControllablePosition;
+export class FollowEntity implements ProjectionStrategyInterface {
+    private followedEntity: Entity;
     private attachedX: number;
     private attachedY: number;
     private attachedDir: number;
@@ -14,8 +13,8 @@ export class FollowPosition implements ProjectionStrategyInterface {
     private shiftVector: Vector;
     private turnDir: number = 0;
 
-    constructor(followedPosition: ControllablePosition, attachedX: number, attachedY: number, attachedDir: number) {
-        this.followedPosition = followedPosition;
+    constructor(followedEntity: Entity, attachedX: number, attachedY: number, attachedDir: number) {
+        this.followedEntity = followedEntity;
         this.attachedX = attachedX;
         this.attachedY = attachedY;
         this.attachedDir = attachedDir;
@@ -23,19 +22,20 @@ export class FollowPosition implements ProjectionStrategyInterface {
 
     beforeCalculation(view: View): void {
         this.shiftVector = Vector
-            .createFromXY(this.followedPosition.getX(), this.followedPosition.getY())
+            .createFromXY(this.followedEntity.getPosition().getX(), this.followedEntity.getPosition().getY())
             .invert()
             .addVector(Vector.createFromXY(this.attachedX, this.attachedY));
-        this.turnDir = this.attachedDir - this.followedPosition.getOrientation();
+        this.turnDir = this.attachedDir - this.followedEntity.getAxis().getOrientation();
     }
 
-    calculateProjection(position: Position, view: View): Projection {
+    calculateProjection(entity: Entity, view: View): Projection {
         const projectionVector: Vector = Vector
-            .createFromXY(position.getX(), position.getY())
+            .createFromXY(entity.getPosition().getX(), entity.getPosition().getY())
             .addVector(this.shiftVector)
             .addVector(Vector.createFromXY(this.attachedX, this.attachedY).invert())
             .rotate(this.turnDir)
             .addVector(Vector.createFromXY(this.attachedX, this.attachedY))
+        ;
 
         return new Projection(projectionVector.getX(), projectionVector.getY(), this.turnDir, 1);
     }

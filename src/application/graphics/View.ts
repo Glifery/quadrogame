@@ -43,10 +43,10 @@ export class View {
     private rerender(): View {
         this.projectionStrategy.beforeCalculation(this);
 
-        for (let position of this.space.getPositions()) {
-            let projection: Projection = this.projectionStrategy.calculateProjection(position, this);
+        for (let entity of this.space.getEntities()) {
+            let projection: Projection = this.projectionStrategy.calculateProjection(entity, this);
 
-            if (!position.getRenderer()) {
+            if (!entity.getRenderer()) {
                 let graphicElement = this.paper.add([{
                   type: "circle",
                   cx: projection.getX(),
@@ -55,12 +55,12 @@ export class View {
                   fill: 'red'
                 }]);
 
-                position.setRenderer(graphicElement);
+                entity.setRenderer(graphicElement);
             }
 
-            let graphicElement = position.getRenderer();
+            let graphicElement = entity.getRenderer();
 
-            this.rendererStrategy.renderPosition(position, projection, graphicElement);
+            this.rendererStrategy.renderEntity(entity, projection, graphicElement);
         }
 
         return this;

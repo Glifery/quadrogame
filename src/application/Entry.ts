@@ -4,9 +4,8 @@ import {Simulator} from "./physics/Simulator";
 import {Space} from "./../domain/model/Space";
 import {View} from "./graphics/View";
 import {DemoSpace} from "./fixtures/DemoSpace";
-import {SimpleProjectionStrategy} from "./graphics/projection/SimpleProjectionStrategy";
 import {SimpleRendererStrategy} from "./graphics/renderer/SimpleRendererStrategy";
-import {FollowPosition} from "./graphics/projection/FollowPosition";
+import {FollowEntity} from "./graphics/projection/FollowEntity";
 
 export class Entry {
     constructor() {
@@ -16,8 +15,7 @@ export class Entry {
         demoSpace.up(space);
 
         let view: View = new View(1400, 600, 10, 30);
-        // view.setProjectionStrategy(new SimpleProjectionStrategy());
-        view.setProjectionStrategy(new FollowPosition(demoSpace.getControllablePosition(), 700, 500, 90));
+        view.setProjectionStrategy(new FollowEntity(demoSpace.getControllablePosition(), 700, 500, 90));
         view.setRendererStrategy(new SimpleRendererStrategy());
         view.setSpace(space);
 

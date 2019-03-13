@@ -2,12 +2,13 @@ import {injectable} from "inversify";
 import {Position} from "../../domain/model/Position";
 import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
+import {Entity} from "../../domain/model/Entity";
 
 @injectable()
 export class Simulator {
     private spaces: Space[] = [];
 
-    protected counter: number = 0;
+    private counter: number = 0;
 
     registerSpace(space: Space): Simulator {
         this.spaces.push(space);
@@ -15,19 +16,19 @@ export class Simulator {
         return this;
     }
 
-    public getPositions(): Position[] {
-        let positions: Position[] = [];
+    getEntities(): Entity[] {
+        let entities: Entity[] = [];
 
         for (let space of this.spaces) {
-            for (let position of space.getPositions()) {
-                positions.push(position);
+            for (let entity of space.getEntities()) {
+                entities.push(entity);
             }
         }
 
-        return positions;
+        return entities;
     }
 
-    public startSimulation(fps: number, speed: number = 1): Simulator {
+    startSimulation(fps: number, speed: number = 1): Simulator {
         setInterval(
             () => this.prepare().calculate().apply().move(speed/fps),
             1000/fps
@@ -37,17 +38,17 @@ export class Simulator {
     }
 
     private prepare(): Simulator {
-        for (let object of this.getPositions()) {
-            object.clearVectors();
+        for (let entity of this.getEntities()) {
+            entity.getPosition().clearVectors();
         }
 
         return this
     }
 
     private calculate(): Simulator {
-        for (let position of this.getPositions()) {
-            for (let behavior of position.getBehaviors()) {
-                behavior.handle(position, this);
+        for (let entity of this.getEntities()) {
+            for (let behavior of entity.getBehaviors()) {
+                behavior.handle(entity, this);
             }
         }
 
@@ -55,37 +56,37 @@ export class Simulator {
     }
 
     private apply(): Simulator {
-        for (let position of this.getPositions()) {
+        for (let entity of this.getEntities()) {
             let accel = new Vector(0, 0);
 
-            for (let vector of position.getVectors()) {
+            for (let vector of entity.getPosition().getVectors()) {
                 accel.addVector(vector);
             }
 
-            position.setAccel(accel);
+            entity.getPosition().setAccel(accel);
         }
 
         return this
     }
 
     private move(multiplier: number): Simulator {
-        for (let position of this.getPositions()) {
+        for (let entity of this.getEntities()) {
             /**
              * period values - real accel and speed within one tick
              * @type {Vector}
              */
-            let periodAccel = Vector.createFromVector(position.getAccel()).multiply(multiplier);
-            let periodSpeed = Vector.createFromVector(position.getSpeed()).addVector(periodAccel);
+            let periodAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
+            let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodAccel);
 
             /**
              * S = (V0*T) + (a*T*T)/2
              */
-            let initialMovement = Vector.createFromVector(position.getSpeed()).multiply(multiplier);
-            let accelMovement = Vector.createFromVector(position.getAccel()).multiply(multiplier * multiplier).multiply(0.5);
+            let initialMovement = Vector.createFromVector(entity.getPosition().getSpeed()).multiply(multiplier);
+            let accelMovement = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
             let actualMovement = Vector.createFromVector(initialMovement).addVector(accelMovement);
 
-            position.setXY(position.getX() + actualMovement.getX(), position.getY() + actualMovement.getY());
-            position.setSpeed(periodSpeed);
+            entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
+            entity.getPosition().setSpeed(periodSpeed);
 
             /**
              * Debug log

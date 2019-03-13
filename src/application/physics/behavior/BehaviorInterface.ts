@@ -1,6 +1,6 @@
 import {Simulator} from "../Simulator";
-import {Position} from "../../../domain/model/Position";
+import {Entity} from "../../../domain/model/Entity";
 
 export interface BehaviorInterface {
-    handle(position: Position, simulator: Simulator): void;
+    handle(entity: Entity, simulator: Simulator): void;
 }

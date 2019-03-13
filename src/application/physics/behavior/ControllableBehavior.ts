@@ -3,13 +3,13 @@ import {BehaviorInterface} from "./BehaviorInterface";
 import {Simulator} from "../Simulator";
 import {ControlInterface} from "../control/ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
-import {ControllablePosition} from "../../../domain/model/ControllablePosition";
+import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
     private controls: ControlInterface[] = [];
 
-    handle(position: ControllablePosition, simulator: Simulator): void {
+    handle(entity: Entity, simulator: Simulator): void {
         let finalVector = new Vector(0, 0);
         let finalRotation: number = 0;
 
@@ -17,13 +17,13 @@ export class ControllableBehavior implements BehaviorInterface {
             finalRotation += control.getRotationDir();
         }
 
-        position.addOrientation(finalRotation * 5);
+        entity.getAxis().addOrientation(finalRotation * 5);
 
         for (let control of this.controls) {
             finalVector.addVector(control.getMovingVector());
         }
 
-        position.addVector(finalVector.rotate(position.getOrientation() - 90).multiply(30));
+        entity.getPosition().addVector(finalVector.rotate(entity.getAxis().getOrientation() - 90).multiply(30));
     }
 
     addControl(control: ControlInterface): BehaviorInterface {

@@ -1,25 +1,25 @@
 import {injectable} from "inversify";
 import {BehaviorInterface} from "./BehaviorInterface";
 import {Simulator} from "../Simulator";
-import {Position} from "../../../domain/model/Position";
 import {Vector} from "../../../domain/model/Vector";
+import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class GravityBehavior implements BehaviorInterface {
-    handle(position: Position, simulator: Simulator): void {
+    handle(entity: Entity, simulator: Simulator): void {
         let finalVector: Vector = new Vector(0, 0);
 
-        for (let anotherPositions of simulator.getPositions()) {
-            if (position === anotherPositions) {
+        for (let anotherEntity of simulator.getEntities()) {
+            if (entity === anotherEntity) {
                 continue;
             }
 
             let gravity: Vector = Vector.createFromXY(
-                anotherPositions.getX() - position.getX(),
-                anotherPositions.getY() - position.getY(),
+                anotherEntity.getPosition().getX() - entity.getPosition().getX(),
+                anotherEntity.getPosition().getY() - entity.getPosition().getY(),
             );
 
-            let gravityAssel = anotherPositions.getMass() / Math.pow(gravity.getDis(), 2);
+            let gravityAssel = anotherEntity.getMass() / Math.pow(gravity.getDis(), 2);
 
             gravityAssel *= 10;
 
@@ -32,7 +32,7 @@ export class GravityBehavior implements BehaviorInterface {
         }
 
         if (finalVector.getDis() > 0) {
-            position.addVector(finalVector);
+            entity.getPosition().addVector(finalVector);
         }
     }
 }
