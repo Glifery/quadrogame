@@ -6,7 +6,7 @@ export class Position {
     private y: number;
     private accel: Vector;
     private speed: Vector;
-    private vectors: Vector[];//массив векторов, которые накладываются на вектор скорости
+    private vectors: Vector[];
 
     constructor(x: number, y: number) {
         this.x = x;

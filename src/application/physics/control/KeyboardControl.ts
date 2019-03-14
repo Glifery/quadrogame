@@ -1,6 +1,7 @@
 import {injectable} from "inversify";
 import {ControlInterface} from "./ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
+import {Moment} from "../../../domain/model/Moment";
 
 type MovingKeyData = {w:number, a:number, s:number, d:number};
 type RotationKeyData = {q:number, e:number};
@@ -28,7 +29,7 @@ export class KeyboardControl implements ControlInterface {
     }
 
     getMovingVector() {
-        let vector = new Vector(0, 0);
+        let vector: Vector = new Vector(0, 0);
         let keys: string[] = Object.keys(this.trackedKeyStatuses);
 
         for (let key of keys) {
@@ -45,8 +46,8 @@ export class KeyboardControl implements ControlInterface {
         return vector;
     }
 
-    getRotationDir() {
-        let direction: number = 0;
+    getRotationMoment(): Moment {
+        let moment: Moment = new Moment(0);
         let keys: string[] = Object.keys(this.trackedKeyStatuses);
 
         for (let key of keys) {
@@ -57,10 +58,10 @@ export class KeyboardControl implements ControlInterface {
                 continue;
             }
 
-            direction += this.rotationKeyData[key];
+            moment.addMoment(new Moment(this.rotationKeyData[key]));
         }
 
-        return direction;
+        return moment;
     }
 
     private configure(): void {

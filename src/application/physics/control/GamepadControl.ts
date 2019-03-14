@@ -1,6 +1,7 @@
 import {injectable} from "inversify";
 import {ControlInterface} from "./ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
+import {Moment} from "../../../domain/model/Moment";
 
 @injectable()
 export class GamepadControl implements  ControlInterface {
@@ -63,15 +64,15 @@ export class GamepadControl implements  ControlInterface {
         return vector;
     }
 
-    getRotationDir(): number {
-        let direction: number = 0;
+    getRotationMoment(): Moment {
+        let moment: Moment = new Moment(0);
 
         for (let index of this.gamepadIndexes) {
             let gamepad: any = navigator.getGamepads()[index];
 
-            direction -= gamepad.axes[2];
+            moment.addMoment(new Moment(-gamepad.axes[2]));
         }
 
-        return direction;
+        return moment;
     }
 }

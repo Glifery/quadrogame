@@ -1,21 +1,22 @@
 export class Moment {
     private dir = 0;
 
+    static createFromMoment(moment: Moment): Moment {
+        return new Moment(moment.getDir());
+    }
+
     constructor(dir: number) {
         this.dir = dir;
-        this.normalizeDir();
     }
 
     setDir(dir: number): Moment {
         this.dir = dir;
-        this.normalizeDir();
 
         return this;
     }
 
     addDir(dir: number): Moment {
         this.dir += dir;
-        this.normalizeDir();
 
         return this;
     }
@@ -24,13 +25,21 @@ export class Moment {
         return this.dir;
     }
 
-    private normalizeDir() {
-        while (this.dir < 0) {
-            this.dir += 360;
-        }
+    addMoment(moment: Moment): Moment {
+        this.dir += moment.getDir();
 
-        while (this.dir >= 360) {
-            this.dir -= 360;
-        }
+        return this;
+    }
+
+    multiply(multiplicator: number): Moment {
+        this.dir *= multiplicator;
+
+        return this;
+    }
+
+    invert(): Moment {
+        this.dir = -this.dir;
+
+        return this;
     }
 }

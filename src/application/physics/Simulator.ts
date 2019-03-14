@@ -3,6 +3,7 @@ import {Position} from "../../domain/model/Position";
 import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
+import {Moment} from "../../domain/model/Moment";
 
 @injectable()
 export class Simulator {
@@ -40,6 +41,7 @@ export class Simulator {
     private prepare(): Simulator {
         for (let entity of this.getEntities()) {
             entity.getPosition().clearVectors();
+            entity.getAxis().clearMoments();
         }
 
         return this
@@ -57,13 +59,21 @@ export class Simulator {
 
     private apply(): Simulator {
         for (let entity of this.getEntities()) {
-            let accel = new Vector(0, 0);
+            let sleedAccel: Vector = new Vector(0, 0);
 
             for (let vector of entity.getPosition().getVectors()) {
-                accel.addVector(vector);
+                sleedAccel.addVector(vector);
             }
 
-            entity.getPosition().setAccel(accel);
+            entity.getPosition().setAccel(sleedAccel);
+
+            let rotationAccel: Moment = new Moment(0);
+
+            for (let moment of entity.getAxis().getMoments()) {
+                rotationAccel.addMoment(moment);
+            }
+
+            entity.getAxis().setAccel(rotationAccel);
         }
 
         return this
@@ -75,8 +85,11 @@ export class Simulator {
              * period values - real accel and speed within one tick
              * @type {Vector}
              */
-            let periodAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
-            let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodAccel);
+            let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
+            let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
+
+            let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
+            let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
 
             /**
              * S = (V0*T) + (a*T*T)/2
@@ -85,8 +98,15 @@ export class Simulator {
             let accelMovement = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
             let actualMovement = Vector.createFromVector(initialMovement).addVector(accelMovement);
 
+            let initialRotation = Moment.createFromMoment(entity.getAxis().getRotation()).multiply(multiplier);
+            let accelRotation = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);//TODO: need to check formula
+            let actualRotation = Moment.createFromMoment(initialRotation).addMoment(accelRotation);
+
             entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
             entity.getPosition().setSpeed(periodSpeed);
+
+            entity.getAxis().setOrientation(entity.getAxis().getOrientation() + actualRotation.getDir());
+            entity.getAxis().setRotation(periodRotation);
 
             /**
              * Debug log
