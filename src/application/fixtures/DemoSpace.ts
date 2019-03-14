@@ -47,6 +47,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllebleEntity.addBehavior(this.gravityBehavior);
 
         space.addEntity(this.controllebleEntity);
+        this.controllebleEntity.setSpace(space);
 
         let entity: Entity;
         for (let i: number = 0; i < 20; i++) {
@@ -57,6 +58,7 @@ export class DemoSpace implements SpaceFixtureInterface{
             entity.addBehavior(this.nullBehavior);
 
             space.addEntity(entity);
+            entity.setSpace(space);
         }
     }
     

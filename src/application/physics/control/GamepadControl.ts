@@ -75,4 +75,8 @@ export class GamepadControl implements  ControlInterface {
 
         return moment;
     }
+
+    checkFireStatus(): boolean {
+        return false;
+    }
 }

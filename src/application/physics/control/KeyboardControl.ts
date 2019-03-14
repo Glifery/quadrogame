@@ -10,7 +10,7 @@ type RotationKeyData = {q:number, e:number};
 export class KeyboardControl implements ControlInterface {
     private trackedKeyStatuses: any;
 
-    private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd'];
+    private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd', ' '];
     private movingKeyData: MovingKeyData = {
         w: 90,
         a: 180,
@@ -19,9 +19,10 @@ export class KeyboardControl implements ControlInterface {
     };
     private rotationKeyData: RotationKeyData = {
         q: 1,
-        // a: 1,
         e: -1
-        // d: -1
+    };
+    private fireKeyData: any = {
+        ' ': true
     };
 
     constructor() {
@@ -62,6 +63,10 @@ export class KeyboardControl implements ControlInterface {
         }
 
         return moment;
+    }
+
+    checkFireStatus(): boolean {
+        return this.trackedKeyStatuses[' '];
     }
 
     private configure(): void {

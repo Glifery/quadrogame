@@ -4,4 +4,5 @@ import {Moment} from "../../../domain/model/Moment";
 export interface ControlInterface {
     getMovingVector(): Vector;
     getRotationMoment(): Moment;
+    checkFireStatus(): boolean;
 }

@@ -9,6 +9,7 @@ import {Moment} from "../../../domain/model/Moment";
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
     private controls: ControlInterface[] = [];
+    private lastFireTime: number = new Date().getTime();
 
     handle(entity: Entity, simulator: Simulator): void {
         let finalVector: Vector = new Vector(0, 0);
@@ -17,6 +18,10 @@ export class ControllableBehavior implements BehaviorInterface {
         for (let control of this.controls) {
             finalVector.addVector(control.getMovingVector());
             finalMoment.addMoment(control.getRotationMoment());
+
+            if (control.checkFireStatus() === true) {
+                this.fire(entity);
+            }
         }
 
         entity.getPosition().addVector(finalVector.rotate(entity.getAxis().getOrientation() - 90).multiply(30));
@@ -27,5 +32,20 @@ export class ControllableBehavior implements BehaviorInterface {
         this.controls.push(control);
 
         return this;
+    }
+
+    private fire(entity): void {
+        let currentTime: number = new Date().getTime();
+
+        if ((this.lastFireTime != null) && (currentTime - this.lastFireTime) < 300) {
+            return;
+        }
+
+        this.lastFireTime = currentTime;
+
+        let bullet: Entity = new Entity(entity.getPosition().getX(), entity.getPosition().getY(), 1, entity.getAxis().getOrientation());
+
+        bullet.getPosition().setSpeed(Vector.createFromDirDis(entity.getAxis().getOrientation(), 100));
+        entity.getSpace().addEntity(bullet);
     }
 }

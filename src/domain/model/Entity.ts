@@ -1,12 +1,14 @@
 import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
+import {Space} from "./Space";
 
 export class Entity {
     private position: Position;
     private axis: Axis;
     private mass: number;
     private behaviors: BehaviorInterface[];
+    private space: Space;
     private renderer: any;
 
     constructor(x: number, y: number, mass: number, dir: number = 0) {
@@ -34,6 +36,16 @@ export class Entity {
 
     addBehavior(behavior: BehaviorInterface): Entity {
         this.behaviors.push(behavior);
+
+        return this;
+    }
+
+    getSpace(): Space {
+        return this.space;
+    }
+
+    setSpace(space: Space): Entity {
+        this.space = space;
 
         return this;
     }
