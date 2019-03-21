@@ -7,6 +7,8 @@ import {KeyboardControl} from "../../../application/physics/control/KeyboardCont
 import {GamepadControl} from "../../../application/physics/control/GamepadControl";
 import {DumpBehavior} from "../../../application/physics/behavior/DumpBehavior";
 import {GravityBehavior} from "../../../application/physics/behavior/GravityBehavior";
+import {LifetimeBehavior} from "../../../application/physics/behavior/LifetimeBehavior";
+import {ExplosionBehavior} from "../../../application/physics/behavior/ExplosionBehavior";
 import {NullBehavior} from "../../../application/physics/behavior/NullBehavior";
 
 const container = new Container();
@@ -19,6 +21,8 @@ container.bind<KeyboardControl>(KeyboardControl).toSelf();
 container.bind<GamepadControl>(GamepadControl).toSelf();
 container.bind<DumpBehavior>(DumpBehavior).toSelf();
 container.bind<GravityBehavior>(GravityBehavior).toSelf();
+container.bind<LifetimeBehavior>(LifetimeBehavior).toSelf();
+container.bind<ExplosionBehavior>(ExplosionBehavior).toSelf();
 container.bind<NullBehavior>(NullBehavior).toSelf();
 
 export {container}

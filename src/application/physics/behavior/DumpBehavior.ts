@@ -7,7 +7,7 @@ import {Moment} from "../../../domain/model/Moment";
 
 @injectable()
 export class DumpBehavior implements BehaviorInterface {
-    handle(entity: Entity, simulator: Simulator): void {
+    handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         let vector = Vector.createFromVector(entity.getPosition().getSpeed());
 
         vector.invert().setDis(Math.min(vector.getDis(), 7));

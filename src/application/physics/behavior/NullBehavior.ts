@@ -6,7 +6,7 @@ import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class NullBehavior implements BehaviorInterface {
-    handle(entity: Entity, simulator: Simulator): void {
+    handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         entity.getPosition().addVector(Vector.createFromXY(
             Math.random() * 2 - 1,
             Math.random() * 2 - 1

@@ -9,6 +9,9 @@ import {Vector} from "../../domain/model/Vector";
 import {SpaceFixtureInterface} from "./SpaceFixtureInterface";
 import {GamepadControl} from "../physics/control/GamepadControl";
 import {Entity} from "../../domain/model/Entity";
+import {Hero} from "../../domain/entity/Hero";
+import {Roamer} from "../../domain/entity/Roamer";
+import {Enemy} from "../../domain/entity/Enemy";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -41,24 +44,34 @@ export class DemoSpace implements SpaceFixtureInterface{
     }
 
     up(space: Space): void {
-        this.controllebleEntity = new Entity(100, 100, 1, 0);
+        this.controllebleEntity = new Hero(1000, 1000, 10, 0);
         this.controllebleEntity.addBehavior(this.controllableBehavior);
         this.controllebleEntity.addBehavior(this.dumpBehavior);
         this.controllebleEntity.addBehavior(this.gravityBehavior);
 
         space.addEntity(this.controllebleEntity);
-        this.controllebleEntity.setSpace(space);
 
-        let entity: Entity;
+        let roamer: Roamer;
         for (let i: number = 0; i < 20; i++) {
-            entity = new Entity(Math.random()*1400, Math.random()*600, 800+Math.random()*400);
+            roamer = new Roamer(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
 
-            entity.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
+            roamer.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
 
-            entity.addBehavior(this.nullBehavior);
+            roamer.addBehavior(this.nullBehavior);
 
-            space.addEntity(entity);
-            entity.setSpace(space);
+            space.addEntity(roamer);
+        }
+
+        let enemy: Enemy;
+        for (let i: number = 0; i < 20; i++) {
+            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
+
+            enemy.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
+
+            enemy.addBehavior(this.nullBehavior);
+            enemy.addBehavior(this.gravityBehavior);
+
+            space.addEntity(enemy);
         }
     }
     

@@ -31,7 +31,7 @@ export class Simulator {
 
     startSimulation(fps: number, speed: number = 1): Simulator {
         setInterval(
-            () => this.prepare().calculate().apply().move(speed/fps),
+            () => this.prepare().calculate(speed/fps).apply().move(speed/fps),
             1000/fps
         );
 
@@ -47,10 +47,10 @@ export class Simulator {
         return this
     }
 
-    private calculate(): Simulator {
+    private calculate(multiplier: number): Simulator {
         for (let entity of this.getEntities()) {
             for (let behavior of entity.getBehaviors()) {
-                behavior.handle(entity, this);
+                behavior.handle(entity, multiplier, this);
             }
         }
 

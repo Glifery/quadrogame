@@ -6,7 +6,7 @@ import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class GravityBehavior implements BehaviorInterface {
-    handle(entity: Entity, simulator: Simulator): void {
+    handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         let finalVector: Vector = new Vector(0, 0);
 
         for (let anotherEntity of simulator.getEntities()) {
