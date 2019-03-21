@@ -93,6 +93,18 @@ export class Vector {
         return this;
     }
 
+    getProjectionOnDir(dir: number): Vector {
+        let dis: number = Vector.createFromVector(this).rotate(-dir).getX();
+
+        return Vector.createFromDirDis(dir, dis);
+    }
+
+    cutOnDir(dir: number): Vector {
+        this.addVector(this.getProjectionOnDir(dir).invert());
+
+        return this;
+    }
+
     multiply(multiplicator: number): Vector {
         if (multiplicator === 0) {
             this.setXY(0, 0);
