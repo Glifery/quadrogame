@@ -62,10 +62,10 @@ export class ControllableBehavior implements BehaviorInterface {
 
         let bullet: Bullet = new Bullet(entity.getPosition().getX(), entity.getPosition().getY(), 1, entity.getAxis().getOrientation());
 
-        bullet.setMaxLifetime(1.7);
+        bullet.setMaxLifetime(0.7);
         bullet.addBehavior(this.gravityBehavior);
         bullet.addBehavior(this.explosionBehavior);
-        bullet.getPosition().setSpeed(Vector.createFromDirDis(entity.getAxis().getOrientation(), 200));
+        bullet.getPosition().setSpeed(Vector.createFromDirDis(entity.getAxis().getOrientation(), 300).addVector(entity.getPosition().getSpeed()));
         entity.getSpace().addEntity(bullet);
 
         entity.getPosition().addVector(

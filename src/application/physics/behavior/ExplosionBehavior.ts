@@ -7,6 +7,9 @@ import {TemporaryEntity} from "../../../domain/entity/TemporaryEntity";
 
 @injectable()
 export class ExplosionBehavior extends LifetimeBehavior{
+    static readonly maxBlastWave = 7000;
+    static readonly maxDistance = 500;
+
     protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator) {
         for (let anotherEntity of simulator.getEntities()) {
             if (entity === anotherEntity) {
@@ -21,14 +24,15 @@ export class ExplosionBehavior extends LifetimeBehavior{
                 anotherEntity.getPosition().getX() - entity.getPosition().getX(),
                 anotherEntity.getPosition().getY() - entity.getPosition().getY(),
             );
+            let distance: number = blastWave.getDis();
 
-            if (blastWave.getDis() > 700) {
+            if (distance > ExplosionBehavior.maxDistance) {
                 continue;
             }
 
-            anotherEntity.getPosition().addVector(blastWave.setDis(
-                Math.pow((700 - blastWave.getDis()) / 70, 2))
-            );
+            let multiplier = Math.pow(ExplosionBehavior.maxDistance - distance, 2) / Math.pow(ExplosionBehavior.maxDistance, 2);
+
+            anotherEntity.getPosition().addVector(blastWave.setDis(ExplosionBehavior.maxBlastWave).multiply(multiplier));
         }
 
         super.deleteEntity(entity, multiplier, simulator);
