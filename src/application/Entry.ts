@@ -22,7 +22,7 @@ export class Entry {
         let simulator: Simulator = container.get<Simulator>(Simulator);
         simulator.registerSpace(space);
 
-        simulator.startSimulation(25, 4);
+        simulator.startSimulation(25, 1);
         view.startRendering(25);
     }
 }

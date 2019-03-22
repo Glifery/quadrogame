@@ -26,7 +26,6 @@ export class ExplosionBehavior extends LifetimeBehavior{
                 continue;
             }
 
-            console.log('@@@', Math.sqrt(700 - blastWave.getDis()));
             anotherEntity.getPosition().addVector(blastWave.setDis(
                 Math.pow((700 - blastWave.getDis()) / 70, 2))
             );

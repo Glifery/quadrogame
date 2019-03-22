@@ -1,5 +1,4 @@
 import {injectable} from "inversify";
-import {Position} from "../../domain/model/Position";
 import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
@@ -85,11 +84,11 @@ export class Simulator {
              * period values - real accel and speed within one tick
              * @type {Vector}
              */
-            let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
-            let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
+            // let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
+            // let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
 
-            let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
-            let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
+            // let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
+            // let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
 
             /**
              * S = (V0*T) + (a*T*T)/2
@@ -99,14 +98,16 @@ export class Simulator {
             let actualMovement = Vector.createFromVector(initialMovement).addVector(accelMovement);
 
             let initialRotation = Moment.createFromMoment(entity.getAxis().getRotation()).multiply(multiplier);
-            let accelRotation = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);//TODO: need to check formula
+            let accelRotation = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
             let actualRotation = Moment.createFromMoment(initialRotation).addMoment(accelRotation);
 
             entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
-            entity.getPosition().setSpeed(periodSpeed);
+            // entity.getPosition().setSpeed(periodSpeed);
+            entity.getPosition().setSpeed(Vector.createFromVector(actualMovement).multiply(1/multiplier));
 
             entity.getAxis().setOrientation(entity.getAxis().getOrientation() + actualRotation.getDir());
-            entity.getAxis().setRotation(periodRotation);
+            // entity.getAxis().setRotation(periodRotation);
+            entity.getAxis().setRotation(Moment.createFromMoment(actualRotation).multiply(1/multiplier));
 
             /**
              * Debug log

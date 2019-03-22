@@ -8,25 +8,24 @@ import {Moment} from "../../../domain/model/Moment";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {GravityBehavior} from "./GravityBehavior";
 import {ExplosionBehavior} from "./ExplosionBehavior";
-import {LifetimeBehavior} from "./LifetimeBehavior";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
+    static readonly movementAccel = 1200;
+    static readonly rotationAccel = 300;
+
     private gravityBehavior: GravityBehavior;
     private explosionBehavior: ExplosionBehavior;
-    private lifetimeBehavior: LifetimeBehavior;
 
     private controls: ControlInterface[] = [];
     private lastFireTime: number = new Date().getTime();
 
     constructor(
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
-        @inject(ExplosionBehavior) explosionBehavior: ExplosionBehavior,
-        @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior
+        @inject(ExplosionBehavior) explosionBehavior: ExplosionBehavior
     ) {
         this.gravityBehavior = gravityBehavior;
         this.explosionBehavior = explosionBehavior;
-        this.lifetimeBehavior = lifetimeBehavior;
     }
 
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
@@ -42,8 +41,8 @@ export class ControllableBehavior implements BehaviorInterface {
             }
         }
 
-        entity.getPosition().addVector(finalVector.rotate(entity.getAxis().getOrientation() - 90).multiply(30));
-        entity.getAxis().addMoment(finalMoment.multiply(10));
+        entity.getPosition().addVector(finalVector.rotate(entity.getAxis().getOrientation() - 90).multiply(ControllableBehavior.movementAccel));
+        entity.getAxis().addMoment(finalMoment.multiply(ControllableBehavior.rotationAccel));
     }
 
     addControl(control: ControlInterface): BehaviorInterface {
@@ -55,7 +54,7 @@ export class ControllableBehavior implements BehaviorInterface {
     private fire(entity): void {
         let currentTime: number = new Date().getTime();
 
-        if ((this.lastFireTime != null) && (currentTime - this.lastFireTime) < 300) {
+        if ((this.lastFireTime != null) && (currentTime - this.lastFireTime) < 400) {
             return;
         }
 
@@ -63,11 +62,10 @@ export class ControllableBehavior implements BehaviorInterface {
 
         let bullet: Bullet = new Bullet(entity.getPosition().getX(), entity.getPosition().getY(), 1, entity.getAxis().getOrientation());
 
-        bullet.setMaxLifetime(4);
+        bullet.setMaxLifetime(1.7);
         bullet.addBehavior(this.gravityBehavior);
-        bullet.addBehavior(this.lifetimeBehavior);
         bullet.addBehavior(this.explosionBehavior);
-        bullet.getPosition().setSpeed(Vector.createFromDirDis(entity.getAxis().getOrientation(), 100));
+        bullet.getPosition().setSpeed(Vector.createFromDirDis(entity.getAxis().getOrientation(), 200));
         entity.getSpace().addEntity(bullet);
 
         entity.getPosition().addVector(
