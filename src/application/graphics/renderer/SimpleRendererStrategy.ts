@@ -14,7 +14,7 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
                 type: "circle",
                 cx: projection.getX(),
                 cy: projection.getY(),
-                r: (3 + (entity.getMass() / 100)) * projection.getScale(),
+                r: 20,
                 fill: 'blue'
             });
         }
@@ -34,7 +34,7 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
                 type: "circle",
                 cx: projection.getX(),
                 cy: projection.getY(),
-                r: (3 + (entity.getMass() / 100)) * projection.getScale(),
+                r: 30,
                 fill: 'yellow'
             });
         }

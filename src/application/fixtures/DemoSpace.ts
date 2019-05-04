@@ -12,12 +12,14 @@ import {Entity} from "../../domain/model/Entity";
 import {Hero} from "../../domain/entity/Hero";
 import {Roamer} from "../../domain/entity/Roamer";
 import {Enemy} from "../../domain/entity/Enemy";
+import {CollisionBehavior} from "../physics/behavior/CollisionBehavior";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
     private nullBehavior: NullBehavior;
     private dumpBehavior: DumpBehavior;
     private gravityBehavior: GravityBehavior;
+    private collisionBehavior: CollisionBehavior;
     private controllableBehavior: ControllableBehavior;
     private keyboardControl: KeyboardControl;
     private gamepadControl: GamepadControl;
@@ -28,6 +30,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         @inject(NullBehavior) nullBehavior: NullBehavior,
         @inject(DumpBehavior) dumpBehavior: DumpBehavior,
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
+        @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
         @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
         @inject(KeyboardControl) keyboardControl: KeyboardControl,
         @inject(GamepadControl) gamepadControl: GamepadControl
@@ -35,6 +38,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.nullBehavior = nullBehavior;
         this.dumpBehavior = dumpBehavior;
         this.gravityBehavior = gravityBehavior;
+        this.collisionBehavior = collisionBehavior;
         this.controllableBehavior = controllableBehavior;
         this.keyboardControl = keyboardControl;
         this.gamepadControl = gamepadControl;
@@ -48,6 +52,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllebleEntity.addBehavior(this.controllableBehavior);
         this.controllebleEntity.addBehavior(this.dumpBehavior);
         this.controllebleEntity.addBehavior(this.gravityBehavior);
+        this.controllebleEntity.addBehavior(this.collisionBehavior);
 
         space.addEntity(this.controllebleEntity);
 
@@ -64,7 +69,8 @@ export class DemoSpace implements SpaceFixtureInterface{
 
         let enemy: Enemy;
         for (let i: number = 0; i < 20; i++) {
-            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
+            // enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
+            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 10);
 
             enemy.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
 
