@@ -40,15 +40,15 @@ export class CollisionBehavior implements BehaviorInterface {
                 return;
             }
 
-            const entityAntiMass: number = 1 / entity.getMass();
-            const anotherEntityAntiMass: number = 1 / anotherEntity.getMass();
+            const entityAntiMass: number = (entity.getMass() == 0) ? 0 :1 / entity.getMass();
+            const anotherEntityAntiMass: number = (anotherEntity.getMass() == 0) ? 0 : 1 / anotherEntity.getMass();
 
             let elasticity = 0.9;
             let j = -(1 + elasticity) * speedByNormal.getDis();
             j = j / (entityAntiMass + anotherEntityAntiMass);
 
-            let impulse1 = Vector.createFromDirDis(fromEntityToAnotherDir, entityAntiMass * j * 25);
-            let impulse2 = Vector.createFromDirDis(fromEntityToAnotherDir + 180, anotherEntityAntiMass * j * 25);
+            let impulse1 = Vector.createFromDirDis(fromEntityToAnotherDir, entityAntiMass * j * 2);
+            let impulse2 = Vector.createFromDirDis(fromEntityToAnotherDir + 180, anotherEntityAntiMass * j * 2);
 
             entity.getPosition().addVector(impulse1);
             anotherEntity.getPosition().addVector(impulse2);

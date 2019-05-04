@@ -3,11 +3,11 @@ import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
 import {Moment} from "../../domain/model/Moment";
+import {Hero} from "../../domain/entity/Hero";
 
 @injectable()
 export class Simulator {
     private spaces: Space[] = [];
-
     private counter: number = 0;
 
     registerSpace(space: Space): Simulator {
@@ -79,44 +79,88 @@ export class Simulator {
     }
 
     private move(multiplier: number): Simulator {
+        this.counter += multiplier;
+
         for (let entity of this.getEntities()) {
-            /**
-             * period values - real accel and speed within one tick
-             * @type {Vector}
-             */
-            // let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
-            // let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
-
-            // let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
-            // let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
-
-            /**
-             * S = (V0*T) + (a*T*T)/2
-             */
-            let initialMovement = Vector.createFromVector(entity.getPosition().getSpeed()).multiply(multiplier);
-            let accelMovement = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
-            let actualMovement = Vector.createFromVector(initialMovement).addVector(accelMovement);
-
-            let initialRotation = Moment.createFromMoment(entity.getAxis().getRotation()).multiply(multiplier);
-            let accelRotation = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
-            let actualRotation = Moment.createFromMoment(initialRotation).addMoment(accelRotation);
-
-            entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
-            // entity.getPosition().setSpeed(periodSpeed);
-            entity.getPosition().setSpeed(Vector.createFromVector(actualMovement).multiply(1/multiplier));
-
-            entity.getAxis().setOrientation(entity.getAxis().getOrientation() + actualRotation.getDir());
-            // entity.getAxis().setRotation(periodRotation);
-            entity.getAxis().setRotation(Moment.createFromMoment(actualRotation).multiply(1/multiplier));
-
-            /**
-             * Debug log
-             */
-            this.counter += multiplier;
-            // console.log(Vector.clearFloat(this.counter, 1), ":", Vector.clearFloat(object.getX(), 2), Vector.clearFloat(object.getY(), 2), object.speed.getDis());
-            // console.log(Vector.clearFloat(this.counter, 1), ":", object.speed.getDis());
+            this.calculateByEylerFormula(entity, multiplier);
+            // this.calculateByMathFormula(entity, multiplier);
         }
 
         return this;
+    }
+
+    /**
+     * https://web.archive.org/web/20120624003417/http://www.niksula.hut.fi/~hkankaan/Homepages/gravity.html
+     * https://habr.com/ru/post/341540/
+     *
+     *      temp = acc*dt
+     *      pos = pos + dt*(vel + temp/2)
+     *      vel = vel + temp
+     *
+     * @param {Entity} entity
+     * @param {number} multiplier
+     */
+    private calculateByEylerFormula(entity: Entity, multiplier: number): void {
+        let accelMovementForPeriod = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
+        let halfMovement = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(Vector.createFromVector(accelMovementForPeriod).multiply(0.5));
+        let movementForPeriod = Vector.createFromVector(halfMovement).multiply(multiplier);
+
+        entity.getPosition().setXY(entity.getPosition().getX() + movementForPeriod.getX(), entity.getPosition().getY() + movementForPeriod.getY());
+        entity.getPosition().setSpeed(entity.getPosition().getSpeed().addVector(accelMovementForPeriod));
+
+        let accelRotationForPeriod = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
+        let halfRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(Moment.createFromMoment(accelRotationForPeriod).multiply(0.5));
+        let rotationForPeriod = Moment.createFromMoment(halfRotation).multiply(multiplier);
+
+        entity.getAxis().setOrientation(entity.getAxis().getOrientation() + rotationForPeriod.getDir());
+        entity.getAxis().setRotation(entity.getAxis().getRotation().addMoment(accelRotationForPeriod));
+
+        // if (entity instanceof Hero) {
+        //     console.log('speed', entity.getPosition().getSpeed().getDis() / this.counter, entity.getPosition().getX() - 1000, this.counter);
+        //     console.log('rotation', entity.getAxis().getRotation().getDir() / this.counter, entity.getAxis().getOrientation(), this.counter);
+        // }
+    }
+
+    private calculateByMathFormula(entity: Entity, multiplier: number): void {
+        /**
+         * period values - real accel and speed within one tick
+         * @type {Vector}
+         */
+        // let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
+        // let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
+
+        // let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
+        // let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
+
+        /**
+         * S = (V0*T) + (a*T*T)/2
+         */
+        let initialMovement = Vector.createFromVector(entity.getPosition().getSpeed()).multiply(multiplier);
+        let accelMovement = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
+        let actualMovement = Vector.createFromVector(initialMovement).addVector(accelMovement);
+
+        let initialRotation = Moment.createFromMoment(entity.getAxis().getRotation()).multiply(multiplier);
+        let accelRotation = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier * multiplier).multiply(0.5);
+        let actualRotation = Moment.createFromMoment(initialRotation).addMoment(accelRotation);
+
+        entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
+        // entity.getPosition().setSpeed(periodSpeed);
+        entity.getPosition().setSpeed(Vector.createFromVector(actualMovement).multiply(1/multiplier));
+
+        entity.getAxis().setOrientation(entity.getAxis().getOrientation() + actualRotation.getDir());
+        // entity.getAxis().setRotation(periodRotation);
+        entity.getAxis().setRotation(Moment.createFromMoment(actualRotation).multiply(1/multiplier));
+
+        // if (entity instanceof Hero) {
+        //     console.log('speed', entity.getPosition().getSpeed().getDis() / this.counter, entity.getPosition().getX() - 1000, this.counter);
+        //     console.log('rotation', entity.getAxis().getRotation().getDir() / this.counter, entity.getAxis().getOrientation(), this.counter);
+        // }
+
+        /**
+         * Debug log
+         */
+        // this.counter += multiplier;
+        // console.log(Vector.clearFloat(this.counter, 1), ":", Vector.clearFloat(object.getX(), 2), Vector.clearFloat(object.getY(), 2), object.speed.getDis());
+        // console.log(Vector.clearFloat(this.counter, 1), ":", object.speed.getDis());
     }
 }
