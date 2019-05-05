@@ -93,6 +93,12 @@ export class Vector {
         return this;
     }
 
+    subtractVector(vector: Vector): Vector {
+        this.setXY(this.getX() - vector.getX(), this.getY() - vector.getY());
+
+        return this;
+    }
+
     getProjectionOnDir(dir: number): Vector {
         let dis: number = Vector.createFromVector(this).rotate(-dir).getX();
 

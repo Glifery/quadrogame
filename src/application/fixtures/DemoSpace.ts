@@ -55,11 +55,21 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllebleEntity = new Hero(1000, 1000, 10, 0);
         // this.controllebleEntity.addBehavior(this.testBehavior);
         this.controllebleEntity.addBehavior(this.controllableBehavior);
-        this.controllebleEntity.addBehavior(this.dumpBehavior);
+        // this.controllebleEntity.addBehavior(this.dumpBehavior);
         // this.controllebleEntity.addBehavior(this.gravityBehavior);
         this.controllebleEntity.addBehavior(this.collisionBehavior);
 
         space.addEntity(this.controllebleEntity);
+
+
+        this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
+        let en1 = new Enemy(1100, 1000, 100);
+        let en2 = new Enemy(900, 1000, 10);
+        // en1.getPosition().setSpeed(Vector.createFromDirDis(180, 50));
+        space.addEntity(en1);
+        space.addEntity(en2);
+
+        // return;
 
         let roamer: Roamer;
         for (let i: number = 0; i < 20; i++) {
@@ -75,12 +85,12 @@ export class DemoSpace implements SpaceFixtureInterface{
         let enemy: Enemy;
         for (let i: number = 0; i < 20; i++) {
             // enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
-            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 1);
+            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 10);
 
             enemy.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
 
-            enemy.addBehavior(this.nullBehavior);
-            enemy.addBehavior(this.gravityBehavior);
+            // enemy.addBehavior(this.nullBehavior);
+            // enemy.addBehavior(this.gravityBehavior);
 
             space.addEntity(enemy);
         }

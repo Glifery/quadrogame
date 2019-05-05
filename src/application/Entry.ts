@@ -15,7 +15,7 @@ export class Entry {
         demoSpace.up(space);
 
         let view: View = new View(1900, 600, 10, 30);
-        view.setProjectionStrategy(new FollowEntity(demoSpace.getControllablePosition(), 950, 500, 90));
+        view.setProjectionStrategy(new FollowEntity(demoSpace.getControllablePosition(), 950, 300, 90));
         view.setRendererStrategy(new SimpleRendererStrategy());
         view.setSpace(space);
 
