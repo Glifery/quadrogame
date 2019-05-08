@@ -7,7 +7,7 @@ import {KeyboardControl} from "../../../application/physics/control/KeyboardCont
 import {GamepadControl} from "../../../application/physics/control/GamepadControl";
 import {DumpBehavior} from "../../../application/physics/behavior/DumpBehavior";
 import {GravityBehavior} from "../../../application/physics/behavior/GravityBehavior";
-import {CollisionBehavior} from "../../../application/physics/behavior/CollisionBehavior";
+import {CollisionBehavior} from "../../../application/physics/behavior/global/CollisionBehavior";
 import {LifetimeBehavior} from "../../../application/physics/behavior/LifetimeBehavior";
 import {ExplosionBehavior} from "../../../application/physics/behavior/ExplosionBehavior";
 import {NullBehavior} from "../../../application/physics/behavior/NullBehavior";

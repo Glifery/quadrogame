@@ -12,14 +12,15 @@ export class Entry {
         let space: Space = new Space();
 
         let demoSpace: DemoSpace = container.get<DemoSpace>(DemoSpace);
-        demoSpace.up(space);
+        let simulator: Simulator = container.get<Simulator>(Simulator);
+
+        demoSpace.up(space, simulator);
 
         let view: View = new View(1900, 600, 10, 30);
         view.setProjectionStrategy(new FollowEntity(demoSpace.getControllablePosition(), 950, 300, 90));
         view.setRendererStrategy(new SimpleRendererStrategy());
         view.setSpace(space);
 
-        let simulator: Simulator = container.get<Simulator>(Simulator);
         simulator.registerSpace(space);
 
         simulator.startSimulation(25, 1);

@@ -1,18 +1,53 @@
 import {injectable} from "inversify";
-import {BehaviorInterface} from "./BehaviorInterface";
-import {Simulator} from "../Simulator";
-import {Vector} from "../../../domain/model/Vector";
-import {Entity} from "../../../domain/model/Entity";
-import {Enemy} from "../../../domain/entity/Enemy";
+import {Simulator} from "../../Simulator";
+import {Vector} from "../../../../domain/model/Vector";
+import {Entity} from "../../../../domain/model/Entity";
+import {Enemy} from "../../../../domain/entity/Enemy";
+import {CollisionEntityInterface} from "../../../../domain/entity/interface/CollisionEntityInterface";
+import {GlobalBehaviorInterface} from "./GlobalBehaviorInterface";
+import {CollisionPair} from "../../../../domain/model/CollisionPair";
+
+function canCollide(arg: any): arg is CollisionEntityInterface {
+    return (arg as CollisionEntityInterface).getMass !== undefined;
+}
 
 @injectable()
-export class CollisionBehavior implements BehaviorInterface {
-    handle(entity: Entity, multiplier: number, simulator: Simulator): void {
-        for (let anotherEntity of simulator.getEntities()) {
-            // this.calculateByOldFormula(entity, anotherEntity);
-            // this.calculateByImpulseFormula(entity, anotherEntity);
-            this.calculateByAxisFormula(entity, anotherEntity);
+export class CollisionBehavior implements GlobalBehaviorInterface {
+    handle(entities: Entity[], multiplier: number, simulator: Simulator): void {
+        let collisionPairs: CollisionPair[] = [];
+
+        for (let entity1 of entities) {
+            if (!canCollide(entity1)) {
+                continue;
+            }
+
+            for (let entity2 of entities) {
+                if (!canCollide(entity2)) {
+                    continue;
+                }
+
+                const distanceFrom1to2: Vector = Vector.createFromXY(
+                    entity2.getPosition().getX() - entity1.getPosition().getX(),
+                    entity2.getPosition().getY() - entity1.getPosition().getY(),
+                );
+
+                if (distanceFrom1to2.getDis() > (20 + 30)) {
+                    continue;
+                }
+
+                collisionPairs.push(new CollisionPair(entity1, entity2));
+            }
         }
+
+        for (let collisionPair of collisionPairs) {
+            this.resolveCollisionForPair(collisionPair);
+        }
+    }
+
+    resolveCollisionForPair(collisionPair: CollisionPair): void {
+        // this.calculateByOldFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
+        // this.calculateByImpulseFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
+        this.calculateByAxisFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
     }
 
     private calculateByAxisFormula(entity: Entity, anotherEntity: Entity) {
@@ -20,7 +55,7 @@ export class CollisionBehavior implements BehaviorInterface {
             return;
         }
 
-        if (!(anotherEntity instanceof Enemy)) {
+        if ((!canCollide(entity)) || (!canCollide(anotherEntity))) {
             return;
         }
 

@@ -4,14 +4,22 @@ import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
 import {Moment} from "../../domain/model/Moment";
 import {Hero} from "../../domain/entity/Hero";
+import {GlobalBehaviorInterface} from "./behavior/global/GlobalBehaviorInterface";
 
 @injectable()
 export class Simulator {
     private spaces: Space[] = [];
+    private globalBehaviors: GlobalBehaviorInterface[] = [];
     private counter: number = 0;
 
     registerSpace(space: Space): Simulator {
         this.spaces.push(space);
+
+        return this;
+    }
+
+    registerGlobalBehaviors(globalBehavior: GlobalBehaviorInterface): Simulator {
+        this.globalBehaviors.push(globalBehavior);
 
         return this;
     }
@@ -51,6 +59,10 @@ export class Simulator {
             for (let behavior of entity.getBehaviors()) {
                 behavior.handle(entity, multiplier, this);
             }
+        }
+
+        for (let behavior of this.globalBehaviors) {
+            behavior.handle(this.getEntities(), multiplier, this);
         }
 
         return this

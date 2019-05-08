@@ -2,6 +2,7 @@ import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 import {Space} from "./Space";
+import {Hero} from "../entity/Hero";
 
 export class Entity {
     private position: Position;
@@ -28,6 +29,12 @@ export class Entity {
 
     getMass(): number {
         return this.mass;
+    }
+
+    setMass(mass: number): Entity {
+        this.mass = mass;
+
+        return this;
     }
 
     getBehaviors(): BehaviorInterface[] {

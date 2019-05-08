@@ -12,8 +12,9 @@ import {Entity} from "../../domain/model/Entity";
 import {Hero} from "../../domain/entity/Hero";
 import {Roamer} from "../../domain/entity/Roamer";
 import {Enemy} from "../../domain/entity/Enemy";
-import {CollisionBehavior} from "../physics/behavior/CollisionBehavior";
+import {CollisionBehavior} from "../physics/behavior/global/CollisionBehavior";
 import {TestBehavior} from "../physics/behavior/TestBehavior";
+import {Simulator} from "../physics/Simulator";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -51,16 +52,15 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllableBehavior.addControl(gamepadControl);
     }
 
-    up(space: Space): void {
+    up(space: Space, simulator: Simulator): void {
         this.controllebleEntity = new Hero(1000, 1000, 10, 0);
         // this.controllebleEntity.addBehavior(this.testBehavior);
         this.controllebleEntity.addBehavior(this.controllableBehavior);
-        // this.controllebleEntity.addBehavior(this.dumpBehavior);
-        // this.controllebleEntity.addBehavior(this.gravityBehavior);
-        this.controllebleEntity.addBehavior(this.collisionBehavior);
+        this.controllebleEntity.addBehavior(this.dumpBehavior);
+        this.controllebleEntity.addBehavior(this.gravityBehavior);
 
         space.addEntity(this.controllebleEntity);
-
+        simulator.registerGlobalBehaviors(this.collisionBehavior);
 
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         let en1 = new Enemy(1100, 1000, 100);
@@ -84,13 +84,13 @@ export class DemoSpace implements SpaceFixtureInterface{
 
         let enemy: Enemy;
         for (let i: number = 0; i < 20; i++) {
-            // enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
-            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 10);
+            enemy = new Enemy(Math.random()*2000, Math.random()*2000, 800+Math.random()*400);
+            // enemy = new Enemy(Math.random()*2000, Math.random()*2000, 10);
 
             enemy.getPosition().setSpeed(Vector.createFromDirDis(Math.random()*360, Math.random()*10));
 
-            // enemy.addBehavior(this.nullBehavior);
-            // enemy.addBehavior(this.gravityBehavior);
+            enemy.addBehavior(this.nullBehavior);
+            enemy.addBehavior(this.gravityBehavior);
 
             space.addEntity(enemy);
         }
