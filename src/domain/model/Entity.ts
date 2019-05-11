@@ -2,20 +2,19 @@ import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 import {Space} from "./Space";
-import {Hero} from "../entity/Hero";
+import {BBox} from "./bbox/BBox";
 
 export class Entity {
-    private position: Position;
-    private axis: Axis;
-    private mass: number;
-    private behaviors: BehaviorInterface[];
-    private space: Space;
-    private renderer: any;
+    protected position: Position;
+    protected axis: Axis;
+    protected bbox: BBox;
+    protected behaviors: BehaviorInterface[];
+    protected space: Space;
+    protected renderer: any;
 
-    constructor(x: number, y: number, mass: number, dir: number = 0) {
+    constructor(x: number, y: number, dir: number = 0) {
         this.position = new Position(x, y);
         this.axis = new Axis(dir);
-        this.mass = mass;
         this.behaviors = [];
     }
 
@@ -27,14 +26,8 @@ export class Entity {
         return this.axis;
     }
 
-    getMass(): number {
-        return this.mass;
-    }
-
-    setMass(mass: number): Entity {
-        this.mass = mass;
-
-        return this;
+    getBBox(): BBox {
+        return this.bbox;
     }
 
     getBehaviors(): BehaviorInterface[] {

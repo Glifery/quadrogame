@@ -14,12 +14,16 @@ export class GravityBehavior implements BehaviorInterface {
                 continue;
             }
 
+            if (anotherEntity.getBBox() == null) {
+                continue;
+            }
+
             let gravity: Vector = Vector.createFromXY(
                 anotherEntity.getPosition().getX() - entity.getPosition().getX(),
                 anotherEntity.getPosition().getY() - entity.getPosition().getY(),
             );
 
-            let gravityAssel = anotherEntity.getMass() / Math.pow(gravity.getDis(), 2);
+            let gravityAssel = anotherEntity.getBBox().getMass() / Math.pow(gravity.getDis(), 2);
 
             gravityAssel *= 10;
 

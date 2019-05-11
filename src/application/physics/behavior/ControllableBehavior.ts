@@ -61,7 +61,7 @@ export class ControllableBehavior implements BehaviorInterface {
         this.lastFireTime = currentTime;
 
         let bulletPosition = Vector.createFromDirDis(entity.getAxis().getOrientation(), 22).addVector(entity.getPosition());
-        let bullet: Bullet = new Bullet(bulletPosition.getX(), bulletPosition.getY(), 1, entity.getAxis().getOrientation());
+        let bullet: Bullet = new Bullet(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
         bullet.setMaxLifetime(0.7);
         bullet.addBehavior(this.gravityBehavior);
@@ -70,9 +70,7 @@ export class ControllableBehavior implements BehaviorInterface {
         entity.getSpace().addEntity(bullet);
 
         entity.getPosition().addVector(
-            Vector.createFromVector(bullet.getPosition().getSpeed()).invert().multiply(
-                bullet.getMass() / entity.getMass()
-            )
+            Vector.createFromVector(bullet.getPosition().getSpeed()).invert().multiply(5)
         );
     }
 }
