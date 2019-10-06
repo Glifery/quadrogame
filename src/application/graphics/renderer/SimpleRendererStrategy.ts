@@ -5,6 +5,7 @@ import {Hero} from "../../../domain/entity/Hero";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {CircleBBox} from "../../../domain/model/bbox/CircleBBox";
 import {Representation} from "../../../domain/model/Representation";
+import {Explosion} from "../../../domain/entity/Explosion";
 
 export class SimpleRendererStrategy implements RendererStrategyInterface {
     renderEntity(representation: Representation): void {
@@ -51,6 +52,19 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
                 cy: projection.getY(),
                 r: 2,
                 fill: 'black'
+            });
+        }
+
+        if (entity instanceof Explosion) {
+            graphicElement.attr({
+                type: "circle",
+                cx: projection.getX(),
+                cy: projection.getY(),
+                r: entity.getMaxDistance() * (entity.getLifetime() / entity.getMaxLifetime()),
+                'fill-opacity': 0,
+                opacity: 1 - (entity.getLifetime() / entity.getMaxLifetime()),
+                'stroke-width': 1,
+                fill: 'red'
             });
         }
     }

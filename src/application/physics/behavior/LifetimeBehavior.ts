@@ -18,7 +18,7 @@ export class LifetimeBehavior implements BehaviorInterface {
         }
     }
 
-    protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator) {
+    protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator): void {
         entity.getSpace().deleteEntity(entity);
     }
 }

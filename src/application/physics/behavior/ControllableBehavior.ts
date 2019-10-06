@@ -7,7 +7,7 @@ import {Entity} from "../../../domain/model/Entity";
 import {Moment} from "../../../domain/model/Moment";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {GravityBehavior} from "./GravityBehavior";
-import {ExplosionBehavior} from "./ExplosionBehavior";
+import {ExplodeOnLifetimeBehavior} from "./ExplodeOnLifetimeBehavior";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
@@ -15,17 +15,17 @@ export class ControllableBehavior implements BehaviorInterface {
     static readonly rotationAccel = 300;
 
     private gravityBehavior: GravityBehavior;
-    private explosionBehavior: ExplosionBehavior;
+    private explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior;
 
     private controls: ControlInterface[] = [];
     private lastFireTime: number = new Date().getTime();
 
     constructor(
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
-        @inject(ExplosionBehavior) explosionBehavior: ExplosionBehavior
+        @inject(ExplodeOnLifetimeBehavior) explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior
     ) {
         this.gravityBehavior = gravityBehavior;
-        this.explosionBehavior = explosionBehavior;
+        this.explodeOnLifetimeBehavior = explodeOnLifetimeBehavior;
     }
 
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
@@ -63,9 +63,9 @@ export class ControllableBehavior implements BehaviorInterface {
         let bulletPosition = Vector.createFromDirDis(entity.getAxis().getOrientation(), 22).addVector(entity.getPosition());
         let bullet: Bullet = new Bullet(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
-        bullet.setMaxLifetime(0.7);
-        bullet.addBehavior(this.gravityBehavior);
-        bullet.addBehavior(this.explosionBehavior);
+        bullet.setMaxLifetime(0.6);
+        // bullet.addBehavior(this.gravityBehavior);
+        bullet.addBehavior(this.explodeOnLifetimeBehavior);
         bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), 300).addVector(entity.getPosition().getSpeed()));
         entity.getSpace().addEntity(bullet);
 

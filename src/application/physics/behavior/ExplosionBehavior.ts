@@ -2,18 +2,20 @@ import {injectable} from "inversify";
 import {Simulator} from "../Simulator";
 import {Vector} from "../../../domain/model/Vector";
 import {Enemy} from "../../../domain/entity/Enemy";
-import {LifetimeBehavior} from "./LifetimeBehavior";
 import {TemporaryEntity} from "../../../domain/entity/TemporaryEntity";
+import {BehaviorInterface} from "./BehaviorInterface";
+import {Explosion} from "../../../domain/entity/Explosion";
 
 @injectable()
-export class ExplosionBehavior extends LifetimeBehavior{
-    static readonly maxBlastWave = 7000;
-    static readonly maxDistance = 500;
-
-    protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator) {
+export class ExplosionBehavior implements BehaviorInterface {
+    handle(entity: TemporaryEntity, multiplier: number, simulator: Simulator): void {
         for (let anotherEntity of simulator.getEntities()) {
             if (entity === anotherEntity) {
                 continue;
+            }
+
+            if (!(entity instanceof Explosion)) {
+                throw new Error('Unable to apply ExplosionBehavior on non-Explosion entity')
             }
 
             if (!(anotherEntity instanceof Enemy)) {
@@ -26,15 +28,13 @@ export class ExplosionBehavior extends LifetimeBehavior{
             );
             let distance: number = blastWave.getDis();
 
-            if (distance > ExplosionBehavior.maxDistance) {
+            if (distance > entity.getMaxDistance()) {
                 continue;
             }
 
-            let multiplier = Math.pow(ExplosionBehavior.maxDistance - distance, 2) / Math.pow(ExplosionBehavior.maxDistance, 2);
+            let multiplier = Math.pow(entity.getMaxDistance() - distance, 2) / Math.pow(entity.getMaxDistance(), 2);
 
-            anotherEntity.getPosition().addVector(blastWave.setDis(ExplosionBehavior.maxBlastWave).multiply(multiplier));
+            anotherEntity.getPosition().addVector(blastWave.setDis(entity.getMaxBlastWave()).multiply(multiplier));
         }
-
-        super.deleteEntity(entity, multiplier, simulator);
     }
 }
