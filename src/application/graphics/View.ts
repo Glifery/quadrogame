@@ -1,8 +1,9 @@
 import {Space} from "../../domain/model/Space";
 import * as Raphael from "raphael/raphael";
 import {ProjectionStrategyInterface} from "./projection/ProjectionStrategyInterface";
-import {Projection} from "../../domain/model/Projection";
 import {RendererStrategyInterface} from "./renderer/RendererStrategyInterface";
+import {Representation} from "../../domain/model/Representation";
+import {Entity} from "../../domain/model/Entity";
 
 export class View {
     private offsetX: number;
@@ -44,25 +45,30 @@ export class View {
         this.projectionStrategy.beforeCalculation(this);
 
         for (let entity of this.space.getEntities()) {
-            let projection: Projection = this.projectionStrategy.calculateProjection(entity, this);
-
-            if (!entity.getRenderer()) {
-                let graphicElement = this.paper.add([{
-                  type: "circle",
-                  cx: projection.getX(),
-                  cy: projection.getY(),
-                  r: 0,
-                  fill: 'red'
-                }]);
-
-                entity.setRenderer(graphicElement);
+            if (!entity.getRepresentation()) {
+                entity.setRepresentation(this.initiateRepresentation(entity));
             }
 
-            let graphicElement = entity.getRenderer();
+            let representation: Representation = entity.getRepresentation();
 
-            this.rendererStrategy.renderEntity(entity, projection, graphicElement);
+            representation.setProjection(this.projectionStrategy.calculateProjection(entity, this));
+
+            this.rendererStrategy.renderEntity(representation);
         }
 
         return this;
+    }
+
+    private initiateRepresentation(entity: Entity) {
+        return new Representation(
+            entity,
+            this.paper.add([{
+                type: "circle",
+                cx: 0,
+                cy: 0,
+                r: 0,
+                fill: 'red'
+            }])
+        );
     }
 }

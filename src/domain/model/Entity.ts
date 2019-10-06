@@ -3,6 +3,7 @@ import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 import {Space} from "./Space";
 import {BBox} from "./bbox/BBox";
+import {Representation} from "./Representation";
 
 export class Entity {
     protected position: Position;
@@ -10,7 +11,7 @@ export class Entity {
     protected bbox: BBox;
     protected behaviors: BehaviorInterface[];
     protected space: Space;
-    protected renderer: any;
+    protected representation: Representation;
 
     constructor(x: number, y: number, dir: number = 0) {
         this.position = new Position(x, y);
@@ -50,12 +51,12 @@ export class Entity {
         return this;
     }
 
-    getRenderer(): any {
-        return this.renderer;
+    getRepresentation(): Representation {
+        return this.representation;
     }
 
-    setRenderer(renderer: any): Entity {
-        this.renderer = renderer;
+    setRepresentation(representation: Representation): Entity {
+        this.representation = representation;
 
         return this;
     }

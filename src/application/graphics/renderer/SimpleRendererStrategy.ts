@@ -1,15 +1,17 @@
 import {RendererStrategyInterface} from "./RendererStrategyInterface";
-import {Position} from "../../../domain/model/Position";
-import {Projection} from "../../../domain/model/Projection";
-import {Entity} from "../../../domain/model/Entity";
 import {Roamer} from "../../../domain/entity/Roamer";
 import {Enemy} from "../../../domain/entity/Enemy";
 import {Hero} from "../../../domain/entity/Hero";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {CircleBBox} from "../../../domain/model/bbox/CircleBBox";
+import {Representation} from "../../../domain/model/Representation";
 
 export class SimpleRendererStrategy implements RendererStrategyInterface {
-    renderEntity(entity: Entity, projection: Projection, graphicElement: any): void {
+    renderEntity(representation: Representation): void {
+        let entity = representation.getEntity();
+        let projection = representation.getProjection();
+        let graphicElement = representation.getGraphic();
+
         let bbox = entity.getBBox();
 
         if (entity instanceof Hero) {

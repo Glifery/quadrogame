@@ -1,6 +1,5 @@
-import {Projection} from "../../../domain/model/Projection";
-import {Entity} from "../../../domain/model/Entity";
+import {Representation} from "../../../domain/model/Representation";
 
 export interface RendererStrategyInterface {
-    renderEntity(entity: Entity, projection: Projection, graphicElement: any): void;
+    renderEntity(representation: Representation): void;
 }

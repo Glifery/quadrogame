@@ -20,7 +20,8 @@ export class Space {
         if (index > -1) {
             this.entities.splice(index, 1);
             entity.setSpace(null);
-            entity.getRenderer().remove();
+            entity.getRepresentation().getGraphic().remove();
+            entity.setRepresentation(null);
         }
     }
 }
