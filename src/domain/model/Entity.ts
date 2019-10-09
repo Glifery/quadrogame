@@ -31,6 +31,12 @@ export class Entity {
         return this.bbox;
     }
 
+    setBBox(bbox: BBox): Entity {
+        this.bbox = bbox;
+
+        return this;
+    }
+
     getBehaviors(): BehaviorInterface[] {
         return this.behaviors;
     }

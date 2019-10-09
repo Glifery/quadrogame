@@ -6,50 +6,54 @@ import {GlobalBehaviorInterface} from "./GlobalBehaviorInterface";
 import {CollisionPair} from "../../../../domain/model/CollisionPair";
 import {BBox} from "../../../../domain/model/bbox/BBox";
 import {CircleBBox} from "../../../../domain/model/bbox/CircleBBox";
+import {Collisions, Result} from "detect-collisions";
+import {Hero} from "../../../../domain/entity/Hero";
+import {Enemy} from "../../../../domain/entity/Enemy";
+import {Roamer} from "../../../../domain/entity/Roamer";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
+    private system: Collisions;
+    private result: Result;
+
+    constructor() {
+        this.system = new Collisions();
+        this.result = this.system.createResult();
+    }
+
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void {
         let collisionPairs: CollisionPair[] = [];
 
         for (let entity1 of entities) {
-            const entity1BBox: BBox = entity1.getBBox();
-
-            if (!(entity1BBox instanceof CircleBBox)) {
-                continue;
+            if (!entity1.getBBox()) {
+                entity1.setBBox(this.initiateBBox(entity1));
             }
 
-            const entity1BBoxPosition = Vector.createFromXY(
-                entity1.getPosition().getX() + entity1BBox.getOffsetX(),
-                entity1.getPosition().getY() + entity1BBox.getOffsetY()
-            );
+            const entity1BBox: BBox = entity1.getBBox();
+
+            entity1BBox.getCollider().x = entity1.getPosition().getX();
+            entity1BBox.getCollider().y = entity1.getPosition().getY();
 
             for (let entity2 of entities) {
                 if (entity2 == entity1) {
-                    continue;
+                    break;
+                }
+
+                if (!entity2.getBBox()) {
+                    entity2.setBBox(this.initiateBBox(entity2));
                 }
 
                 const entity2BBox: BBox = entity2.getBBox();
 
-                if (!(entity2BBox instanceof CircleBBox)) {
-                    continue;
+                entity2BBox.getCollider().x = entity2.getPosition().getX();
+                entity2BBox.getCollider().y = entity2.getPosition().getY();
+
+                if (entity1BBox.getCollider().collides(entity2BBox.getCollider(), this.result)) {
+                    collisionPairs.push(new CollisionPair(entity1, entity2, new Vector(
+                        this.result.overlap * this.result.overlap_x,
+                        this.result.overlap * this.result.overlap_y
+                    )));
                 }
-
-                const entity2BBoxPosition = Vector.createFromXY(
-                    entity2.getPosition().getX() + entity2BBox.getOffsetX(),
-                    entity2.getPosition().getY() + entity2BBox.getOffsetY()
-                );
-
-                const distanceFrom1to2: Vector = Vector.createFromXY(
-                    entity2BBoxPosition.getX() - entity1BBoxPosition.getX(),
-                    entity2BBoxPosition.getY() - entity1BBoxPosition.getY()
-                );
-
-                if (distanceFrom1to2.getDis() > (entity1BBox.getRadius() + entity2BBox.getRadius())) {
-                    continue;
-                }
-
-                collisionPairs.push(new CollisionPair(entity1, entity2));
             }
         }
 
@@ -59,12 +63,10 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
     }
 
     resolveCollisionForPair(collisionPair: CollisionPair): void {
-        // this.calculateByOldFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
-        // this.calculateByImpulseFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
-        this.calculateByAxisFormula(collisionPair.getEntity1(), collisionPair.getEntity2());
+        this.calculateByAxisFormula(collisionPair.getEntity1(), collisionPair.getEntity2(), collisionPair.getOverlap());
     }
 
-    private calculateByAxisFormula(entity: Entity, anotherEntity: Entity) {
+    private calculateByAxisFormula(entity: Entity, anotherEntity: Entity, overlap: Vector) {
         const entityBBox: BBox = entity.getBBox();
         const anotherEntityBBox: BBox = anotherEntity.getBBox();
 
@@ -72,21 +74,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
             return;
         }
 
-        const entityBBoxPosition = Vector.createFromXY(
-            entity.getPosition().getX() + entityBBox.getOffsetX(),
-            entity.getPosition().getY() + entityBBox.getOffsetY()
-        );
-        const anotherEntityBBoxPosition = Vector.createFromXY(
-            anotherEntity.getPosition().getX() + anotherEntityBBox.getOffsetX(),
-            anotherEntity.getPosition().getY() + anotherEntityBBox.getOffsetY()
-        );
+        const fromEntityToAnother: Vector = Vector.createFromVector(overlap);
 
-        const fromEntityToAnother: Vector = Vector.createFromXY(
-            anotherEntityBBoxPosition.getX() - entityBBoxPosition.getX(),
-            anotherEntityBBoxPosition.getY() - entityBBoxPosition.getY()
-        );
-
-        if (fromEntityToAnother.getDis() > (entityBBox.getRadius() + anotherEntityBBox.getRadius())) {
+        if (fromEntityToAnother.getDis() == 0) {
             return;
         }
 
@@ -121,131 +111,42 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
 
         entity.getPosition().getSpeed().addVector(entitySpeed);
         anotherEntity.getPosition().getSpeed().addVector(anotherEntitySpeed);
-
-        // console.log('entityAccel', entitySpeed.getDir(), entitySpeed.getDis());
-        // console.log('anotherEntityAccel', anotherEntitySpeed.getDir(), anotherEntitySpeed.getDis());
-        // console.log('------------------------');
     }
 
-    // private calculateByImpulseFormula(entity: Entity, anotherEntity: Entity) {
-    //     if (entity === anotherEntity) {
-    //         return;
-    //     }
-    //
-    //     if (!(anotherEntity instanceof Enemy)) {
-    //         return;
-    //     }
-    //
-    //     const relativeSpeed: Vector = Vector.createFromVector(entity.getPosition().getSpeed()).subtractVector(anotherEntity.getPosition().getSpeed());
-    //     const initialImpulse: Vector = Vector.createFromVector(relativeSpeed).multiply(entity.getMass());
-    //     const fromEntityToAnother: Vector = Vector.createFromXY(
-    //         anotherEntity.getPosition().getX() - entity.getPosition().getX(),
-    //         anotherEntity.getPosition().getY() - entity.getPosition().getY(),
-    //     );
-    //
-    //     if (fromEntityToAnother.getDis() > 50) {
-    //         return;
-    //     }
-    //     // console.log('initialImpulse', initialImpulse.getDir(), initialImpulse.getDis());
-    //
-    //     const relativeSpeedByNormal: Vector = Vector.createFromVector(relativeSpeed).getProjectionOnDir(fromEntityToAnother.getDir());
-    //     const anotherEntityImpulse: Vector = Vector.createFromVector(initialImpulse).getProjectionOnDir(fromEntityToAnother.getDir());
-    //
-    //     if (relativeSpeedByNormal.getDis() < 0) {
-    //         return;
-    //     }
-    //
-    //     const entityImpulse: Vector = Vector.createFromVector(initialImpulse).subtractVector(anotherEntityImpulse);
-    //     // console.log('entityImpulse', entityImpulse.getDir(), entityImpulse.getDis());
-    //     // console.log('anotherEntityImpulse', anotherEntityImpulse.getDir(), anotherEntityImpulse.getDis());
-    //     // console.log('---');
-    //
-    //     const entityAntiMass: number = (entity.getMass() == 0) ? 0 : 1 / entity.getMass();
-    //     const anotherEntityAntiMass: number = (anotherEntity.getMass() == 0) ? 0 : 1 / anotherEntity.getMass();
-    //
-    //     const anotherEntitySpeed: Vector = anotherEntityImpulse.multiply(anotherEntityAntiMass);
-    //     const anotherEntityAccel = anotherEntitySpeed;
-    //
-    //     const entitySpeed: Vector = entityImpulse.multiply(entityAntiMass);
-    //     const entityAccel: Vector = entitySpeed.subtractVector(relativeSpeed);
-    //
-    //     // entity.getPosition().addVector(entityAccel);
-    //     // anotherEntity.getPosition().addVector(anotherEntityAccel);
-    //     entity.getPosition().getSpeed().addVector(entitySpeed);
-    //     anotherEntity.getPosition().getSpeed().addVector(anotherEntitySpeed);
-    //
-    //     // console.log('entityAccel', entitySpeed.getDir(), entitySpeed.getDis());
-    //     // console.log('anotherEntityAccel', anotherEntitySpeed.getDir(), anotherEntitySpeed.getDis());
-    //     // console.log('------------------------');
-    //
-    //     const correctionPercent: number = 0.2; // 20% - 80%
-    //     const slop: number = 0.01; // 0.01 - 0.1
-    //
-    //     const correctionDis: number = Math.max((50 - fromEntityToAnother.getDis()) - (50 - fromEntityToAnother.getDis()) * slop, 0) / (entityAntiMass + anotherEntityAntiMass) * correctionPercent;
-    //     const correction1: Vector = Vector.createFromDirDis(relativeSpeedByNormal.getDir() + 180, entityAntiMass * correctionDis);
-    //     const correction2: Vector = Vector.createFromDirDis(relativeSpeedByNormal.getDir(), anotherEntityAntiMass * correctionDis);
-    //
-    //     entity.getPosition().setXY(entity.getPosition().getX() + correction1.getX(), entity.getPosition().getY() + correction1.getY());
-    //     anotherEntity.getPosition().setXY(anotherEntity.getPosition().getX() + correction2.getX(), anotherEntity.getPosition().getY() + correction2.getY());
-    // }
-    //
-    // private calculateByOldFormula(entity: Entity, anotherEntity: Entity) {
-    //     if (entity === anotherEntity) {
-    //         return;
-    //     }
-    //
-    //     if (!(anotherEntity instanceof Enemy)) {
-    //         return;
-    //     }
-    //
-    //     const fromEntityToAnother: Vector = Vector.createFromXY(
-    //         anotherEntity.getPosition().getX() - entity.getPosition().getX(),
-    //         anotherEntity.getPosition().getY() - entity.getPosition().getY(),
-    //     );
-    //     const fromEntityToAnotherDir: number = fromEntityToAnother.getDir();
-    //     const fromEntityToAnotherDis: number = fromEntityToAnother.getDis();
-    //
-    //     // console.log('fromEntityToAnotherDis', fromEntityToAnotherDis);
-    //
-    //     if (fromEntityToAnotherDis > 50) {
-    //         return;
-    //     }
-    //
-    //     const relativeSpeed: Vector = Vector.createFromVector(entity.getPosition().getSpeed())
-    //         .addVector(
-    //             Vector.createFromVector(anotherEntity.getPosition().getSpeed()).invert()
-    //         );
-    //     const speedByNormal: Vector = Vector.createFromVector(relativeSpeed).getProjectionOnDir(fromEntityToAnotherDir);
-    //
-    //     if (speedByNormal.getDis() < 0) {
-    //         return;
-    //     }
-    //
-    //     const entityAntiMass: number = (entity.getMass() == 0) ? 0 :1 / entity.getMass();
-    //     const anotherEntityAntiMass: number = (anotherEntity.getMass() == 0) ? 0 : 1 / anotherEntity.getMass();
-    //
-    //     let elasticity = 0.9;
-    //     let j = -(1 + elasticity) * speedByNormal.getDis();
-    //     j = j / (entityAntiMass + anotherEntityAntiMass);
-    //
-    //     let impulse1 = Vector.createFromDirDis(fromEntityToAnotherDir, entityAntiMass * j * 1);
-    //     let impulse2 = Vector.createFromDirDis(fromEntityToAnotherDir + 180, anotherEntityAntiMass * j * 1);
-    //
-    //     entity.getPosition().addVector(impulse1);
-    //     anotherEntity.getPosition().addVector(impulse2);
-    //
-    //     // console.log('impulse1', impulse1.getDir(), impulse1.getDis());
-    //     // console.log('impulse2', impulse2.getDir(), impulse2.getDis());
-    //     // console.log('-------------------');
-    //
-    //     const correctionPercent: number = 0.2; // 20% - 80%
-    //     const slop: number = 0.01; // 0.01 - 0.1
-    //
-    //     const correctionDis: number = Math.max((50 - fromEntityToAnotherDis) - (50 - fromEntityToAnotherDis) * slop, 0) / (entityAntiMass + anotherEntityAntiMass) * correctionPercent;
-    //     const correction1: Vector = Vector.createFromDirDis(speedByNormal.getDir() + 180, entityAntiMass * correctionDis);
-    //     const correction2: Vector = Vector.createFromDirDis(speedByNormal.getDir(), anotherEntityAntiMass * correctionDis);
-    //
-    //     entity.getPosition().setXY(entity.getPosition().getX() + correction1.getX(), entity.getPosition().getY() + correction1.getY());
-    //     anotherEntity.getPosition().setXY(anotherEntity.getPosition().getX() + correction2.getX(), anotherEntity.getPosition().getY() + correction2.getY());
-    // }
+    private initiateBBox(entity: Entity): BBox {
+        if (entity instanceof Hero) {
+            let bbox: CircleBBox = new CircleBBox(20, 10);
+            bbox.setCollider(this.system.createCircle(
+                entity.getPosition().getX() + bbox.getOffsetX(),
+                entity.getPosition().getY() + bbox.getOffsetY(),
+                bbox.getRadius()
+            ));
+
+            return bbox;
+        }
+
+        if (entity instanceof Enemy) {
+            let bbox: CircleBBox = new CircleBBox(30, 10);
+            bbox.setCollider(this.system.createCircle(
+                entity.getPosition().getX() + bbox.getOffsetX(),
+                entity.getPosition().getY() + bbox.getOffsetY(),
+                bbox.getRadius()
+            ));
+
+            return bbox;
+        }
+
+        if (entity instanceof Roamer) {
+            let bbox: CircleBBox = new CircleBBox(3, 0);
+            bbox.setCollider(this.system.createCircle(
+                entity.getPosition().getX() + bbox.getOffsetX(),
+                entity.getPosition().getY() + bbox.getOffsetY(),
+                bbox.getRadius()
+            ));
+
+            return bbox;
+        }
+
+        throw new Error('Entity is not added to CollisionBehavior');
+    }
 }

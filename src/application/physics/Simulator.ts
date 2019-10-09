@@ -3,7 +3,6 @@ import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
 import {Moment} from "../../domain/model/Moment";
-import {Hero} from "../../domain/entity/Hero";
 import {GlobalBehaviorInterface} from "./behavior/global/GlobalBehaviorInterface";
 
 @injectable()

@@ -15,6 +15,7 @@ import {Enemy} from "../../domain/entity/Enemy";
 import {CollisionBehavior} from "../physics/behavior/global/CollisionBehavior";
 import {TestBehavior} from "../physics/behavior/TestBehavior";
 import {Simulator} from "../physics/Simulator";
+import {LegacyCollisionBehavior} from "../physics/behavior/global/LegacyCollisionBehavior";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -23,6 +24,7 @@ export class DemoSpace implements SpaceFixtureInterface{
     private dumpBehavior: DumpBehavior;
     private gravityBehavior: GravityBehavior;
     private collisionBehavior: CollisionBehavior;
+    private legacyCollisionBehavior: LegacyCollisionBehavior;
     private controllableBehavior: ControllableBehavior;
     private keyboardControl: KeyboardControl;
     private gamepadControl: GamepadControl;
@@ -35,6 +37,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         @inject(DumpBehavior) dumpBehavior: DumpBehavior,
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
+        @inject(LegacyCollisionBehavior) legacyCollisionBehavior: LegacyCollisionBehavior,
         @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
         @inject(KeyboardControl) keyboardControl: KeyboardControl,
         @inject(GamepadControl) gamepadControl: GamepadControl
@@ -44,6 +47,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.dumpBehavior = dumpBehavior;
         this.gravityBehavior = gravityBehavior;
         this.collisionBehavior = collisionBehavior;
+        this.legacyCollisionBehavior = legacyCollisionBehavior;
         this.controllableBehavior = controllableBehavior;
         this.keyboardControl = keyboardControl;
         this.gamepadControl = gamepadControl;

@@ -13,18 +13,28 @@ export class View {
     private rendererStrategy: RendererStrategyInterface;
     private paper: any;
 
-    constructor(width: number, height: number, offsetX: number, offsetY: number) {
+    constructor(space: Space, width: number, height: number, offsetX: number, offsetY: number) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
 
         this.paper = Raphael(offsetX, offsetY, width, height);
         this.paper.rect(0, 0, width, height, 5);
+
+        this.space = space;
+        space.addView(this);
     }
 
-    setSpace(space: Space): View {
-        this.space = space;
-
-        return this;
+    initiateRepresentation(entity: Entity): void {
+        entity.setRepresentation(new Representation(
+            entity,
+            this.paper.add([{
+                type: "circle",
+                cx: 0,
+                cy: 0,
+                r: 0,
+                fill: 'red'
+            }])
+        ));
     }
 
     setProjectionStrategy(projectionStrategy: ProjectionStrategyInterface) {
@@ -45,10 +55,6 @@ export class View {
         this.projectionStrategy.beforeCalculation(this);
 
         for (let entity of this.space.getEntities()) {
-            if (!entity.getRepresentation()) {
-                entity.setRepresentation(this.initiateRepresentation(entity));
-            }
-
             let representation: Representation = entity.getRepresentation();
 
             representation.setProjection(this.projectionStrategy.calculateProjection(entity, this));
@@ -57,18 +63,5 @@ export class View {
         }
 
         return this;
-    }
-
-    private initiateRepresentation(entity: Entity) {
-        return new Representation(
-            entity,
-            this.paper.add([{
-                type: "circle",
-                cx: 0,
-                cy: 0,
-                r: 0,
-                fill: 'red'
-            }])
-        );
     }
 }
