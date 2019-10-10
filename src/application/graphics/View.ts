@@ -43,6 +43,8 @@ export class View {
             this.rendererStrategy.renderEntity(representation);
         }
 
+        this.rendererStrategy.finalizeRender();
+
         return this;
     }
 }

@@ -31,6 +31,10 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         for (let entity1 of entities) {
             const entity1BBox: BBox = entity1.getBBox();
 
+            if (!entity1BBox) {
+                continue;
+            }
+
             entity1BBox.getCollider().x = entity1.getPosition().getX();
             entity1BBox.getCollider().y = entity1.getPosition().getY();
 
@@ -40,6 +44,10 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 }
 
                 const entity2BBox: BBox = entity2.getBBox();
+
+                if (!entity2BBox) {
+                    continue;
+                }
 
                 entity2BBox.getCollider().x = entity2.getPosition().getX();
                 entity2BBox.getCollider().y = entity2.getPosition().getY();
@@ -148,7 +156,5 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
 
             return;
         }
-
-        throw new Error('Entity is not added to CollisionBehavior');
     }
 }

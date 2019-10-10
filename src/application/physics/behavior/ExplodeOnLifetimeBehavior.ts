@@ -23,7 +23,7 @@ export class ExplodeOnLifetimeBehavior extends LifetimeBehavior {
     protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator): void {
         let explosion: Explosion = new Explosion(entity.getPosition().getX(), entity.getPosition().getY());
 
-        explosion.setMaxLifetime(0.3);
+        explosion.setMaxLifetime(0.4);
         explosion.setMaxDistance(200);
         explosion.setMaxBlastWave(1000);
         explosion.addBehavior(this.lifetimeBehavior);

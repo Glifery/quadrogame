@@ -67,6 +67,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         simulator.registerGlobalBehaviors(this.collisionBehavior);
 
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
+        // return;
         let en1 = new Enemy(1100, 1000, 0);
         let en2 = new Enemy(900, 1000, 0);
         // en1.getPosition().setSpeed(Vector.createFromDirDis(180, 50));
@@ -95,6 +96,7 @@ export class DemoSpace implements SpaceFixtureInterface{
 
             enemy.addBehavior(this.nullBehavior);
             enemy.addBehavior(this.gravityBehavior);
+            enemy.addBehavior(this.dumpBehavior);
 
             space.addEntity(enemy);
         }

@@ -85,4 +85,7 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
             });
         }
     }
+
+    finalizeRender(): void {
+    }
 }

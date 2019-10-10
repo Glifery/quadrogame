@@ -7,6 +7,7 @@
     "@types/raphael": "^2.1.30",
     "detect-collisions": "^2.4.4",
     "inversify": "^5.0.1",
+    "konva": "^4.0.13",
     "raphael": "^2.2.7",
     "reflect-metadata": "^0.1.13",
     "ts-loader": "^5.3.3",

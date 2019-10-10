@@ -5,4 +5,6 @@ export interface RendererStrategyInterface {
     initiateRepresentation(entity: Entity): void;
 
     renderEntity(representation: Representation): void;
+
+    finalizeRender(): void;
 }

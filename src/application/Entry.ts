@@ -4,8 +4,8 @@ import {Simulator} from "./physics/Simulator";
 import {Space} from "./../domain/model/Space";
 import {View} from "./graphics/View";
 import {DemoSpace} from "./fixtures/DemoSpace";
-import {SimpleRendererStrategy} from "./graphics/renderer/SimpleRendererStrategy";
 import {FollowEntity} from "./graphics/projection/FollowEntity";
+import {KonvaRendererStrategy} from "./graphics/renderer/KonvaRendererStrategy";
 
 export class Entry {
     constructor() {
@@ -18,7 +18,7 @@ export class Entry {
 
         let view: View = new View(
             space,
-            new SimpleRendererStrategy(1900, 600, 10, 30),
+            new KonvaRendererStrategy(1900, 600, 10, 30),
             new FollowEntity(demoSpace.getControllablePosition(), 950, 300, 90)
         );
 
