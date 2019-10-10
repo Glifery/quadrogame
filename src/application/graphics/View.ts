@@ -22,17 +22,18 @@ export class View {
 
         this.space = space;
         space.addView(this);
+
+        // In case if view is added AFTER entity added
+        for (let entity of space.getEntities()) {
+            this.initiateRepresentation(entity);
+        }
     }
 
     initiateRepresentation(entity: Entity): void {
         entity.setRepresentation(new Representation(
             entity,
             this.paper.add([{
-                type: "circle",
-                cx: 0,
-                cy: 0,
-                r: 0,
-                fill: 'red'
+                type: "circle"
             }])
         ));
     }

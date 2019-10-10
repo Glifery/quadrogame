@@ -20,7 +20,19 @@ export class Simulator {
     registerGlobalBehaviors(globalBehavior: GlobalBehaviorInterface): Simulator {
         this.globalBehaviors.push(globalBehavior);
 
+        // In case if global behavior is added AFTER entity added
+        for (let entities of this.getEntities()) {
+            globalBehavior.initiateEntity(entities, this);
+
+        }
+
         return this;
+    }
+
+    registerEntity(entity: Entity): void {
+        for (let behavior of this.globalBehaviors) {
+            behavior.initiateEntity(entity, this);
+        }
     }
 
     getEntities(): Entity[] {

@@ -28,6 +28,8 @@ export class Space {
             view.initiateRepresentation(entity);
         }
 
+        this.simulator.registerEntity(entity);
+
         return this;
     }
 

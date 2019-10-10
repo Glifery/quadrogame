@@ -21,14 +21,14 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         this.result = this.system.createResult();
     }
 
+    initiateEntity(entity: Entity, simulator: Simulator): void {
+        this.initiateBBox(entity);
+    }
+
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void {
         let collisionPairs: CollisionPair[] = [];
 
         for (let entity1 of entities) {
-            if (!entity1.getBBox()) {
-                entity1.setBBox(this.initiateBBox(entity1));
-            }
-
             const entity1BBox: BBox = entity1.getBBox();
 
             entity1BBox.getCollider().x = entity1.getPosition().getX();
@@ -37,10 +37,6 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
             for (let entity2 of entities) {
                 if (entity2 == entity1) {
                     break;
-                }
-
-                if (!entity2.getBBox()) {
-                    entity2.setBBox(this.initiateBBox(entity2));
                 }
 
                 const entity2BBox: BBox = entity2.getBBox();
@@ -113,7 +109,7 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         anotherEntity.getPosition().getSpeed().addVector(anotherEntitySpeed);
     }
 
-    private initiateBBox(entity: Entity): BBox {
+    private initiateBBox(entity: Entity): void {
         if (entity instanceof Hero) {
             let bbox: CircleBBox = new CircleBBox(20, 10);
             bbox.setCollider(this.system.createCircle(
@@ -122,7 +118,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 bbox.getRadius()
             ));
 
-            return bbox;
+            entity.setBBox(bbox);
+
+            return;
         }
 
         if (entity instanceof Enemy) {
@@ -133,7 +131,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 bbox.getRadius()
             ));
 
-            return bbox;
+            entity.setBBox(bbox);
+
+            return;
         }
 
         if (entity instanceof Roamer) {
@@ -144,7 +144,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 bbox.getRadius()
             ));
 
-            return bbox;
+            entity.setBBox(bbox);
+
+            return;
         }
 
         throw new Error('Entity is not added to CollisionBehavior');
