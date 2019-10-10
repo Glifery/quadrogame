@@ -1,27 +1,20 @@
 import {Space} from "../../domain/model/Space";
-import * as Raphael from "raphael/raphael";
 import {ProjectionStrategyInterface} from "./projection/ProjectionStrategyInterface";
 import {RendererStrategyInterface} from "./renderer/RendererStrategyInterface";
 import {Representation} from "../../domain/model/Representation";
 import {Entity} from "../../domain/model/Entity";
 
 export class View {
-    private offsetX: number;
-    private offsetY: number;
     private space: Space;
     private projectionStrategy: ProjectionStrategyInterface;
     private rendererStrategy: RendererStrategyInterface;
-    private paper: any;
 
-    constructor(space: Space, width: number, height: number, offsetX: number, offsetY: number) {
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-
-        this.paper = Raphael(offsetX, offsetY, width, height);
-        this.paper.rect(0, 0, width, height, 5);
-
+    constructor(space: Space, rendererStrategy: RendererStrategyInterface, projectionStrategy: ProjectionStrategyInterface) {
         this.space = space;
         space.addView(this);
+
+        this.rendererStrategy = rendererStrategy;
+        this.projectionStrategy = projectionStrategy;
 
         // In case if view is added AFTER entity added
         for (let entity of space.getEntities()) {
@@ -30,20 +23,7 @@ export class View {
     }
 
     initiateRepresentation(entity: Entity): void {
-        entity.setRepresentation(new Representation(
-            entity,
-            this.paper.add([{
-                type: "circle"
-            }])
-        ));
-    }
-
-    setProjectionStrategy(projectionStrategy: ProjectionStrategyInterface) {
-        this.projectionStrategy = projectionStrategy;
-    }
-
-    setRendererStrategy(rendererStrategy: RendererStrategyInterface) {
-        this.rendererStrategy = rendererStrategy;
+        this.rendererStrategy.initiateRepresentation(entity);
     }
 
     startRendering(fps: number): View {

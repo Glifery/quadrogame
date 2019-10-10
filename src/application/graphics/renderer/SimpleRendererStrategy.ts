@@ -1,3 +1,4 @@
+import * as Raphael from "raphael/raphael";
 import {RendererStrategyInterface} from "./RendererStrategyInterface";
 import {Roamer} from "../../../domain/entity/Roamer";
 import {Enemy} from "../../../domain/entity/Enemy";
@@ -6,8 +7,24 @@ import {Bullet} from "../../../domain/entity/Bullet";
 import {CircleBBox} from "../../../domain/model/bbox/CircleBBox";
 import {Representation} from "../../../domain/model/Representation";
 import {Explosion} from "../../../domain/entity/Explosion";
+import {Entity} from "../../../domain/model/Entity";
 
 export class SimpleRendererStrategy implements RendererStrategyInterface {
+    private paper: any;
+
+    constructor(width: number, height: number, offsetX: number, offsetY: number) {
+        this.paper = Raphael(offsetX, offsetY, width, height);
+    }
+
+    initiateRepresentation(entity: Entity): void {
+        entity.setRepresentation(new Representation(
+            entity,
+            this.paper.add([{
+                type: "circle"
+            }])
+        ));
+    }
+
     renderEntity(representation: Representation): void {
         let entity = representation.getEntity();
         let projection = representation.getProjection();
