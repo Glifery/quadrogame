@@ -3,6 +3,7 @@ import {Body} from "detect-collisions";
 export abstract class BBox {
     static shapeCircle: string = 'circle';
     static shapeRectangle: string = 'rectangle';
+    static shapeLine: string = 'line';
 
     protected shape: string;
     protected mass: number;

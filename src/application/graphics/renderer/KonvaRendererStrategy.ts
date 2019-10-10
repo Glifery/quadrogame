@@ -10,6 +10,8 @@ import * as konva from 'konva';
 import {Layer} from "konva/types/Layer";
 import {Stage} from "konva/types/Stage";
 import {Shape} from "konva/types/Shape";
+import {Wall} from "../../../domain/entity/Wall";
+import {Vector} from "../../../domain/model/Vector";
 
 const Konva: any = konva;
 
@@ -83,6 +85,19 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
                 strokeWidth: 2
             });
         }
+        if (entity instanceof Wall) {
+            shape = new Konva.Line({
+                x: 0,
+                y: 0,
+                points: [0, 0, 0, 0],
+                stroke: 'green',
+                strokeWidth: 1
+            });
+        }
+
+        if (!shape) {
+            throw new Error('Entity is not added to KonvaTendererStrategy');
+        }
 
         entity.setRepresentation(new Representation(
             entity,
@@ -123,6 +138,16 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
             graphicElement.radius(entity.getMaxDistance() * (entity.getLifetime() / entity.getMaxLifetime()));
             graphicElement.fill(`rgba(255,0,0,${0.2 * (1 - (entity.getLifetime() / entity.getMaxLifetime()))})`);
             graphicElement.stroke(`rgba(255,0,0,${1 - (entity.getLifetime() / entity.getMaxLifetime())})`);
+        }
+        if (entity instanceof Wall) {
+            graphicElement.x(projection.getX());
+            graphicElement.y(projection.getY());
+            graphicElement.points([
+                0,
+                0,
+                Vector.createFromVector(entity.getVector()).rotate(projection.getRotation()).getX(),
+                Vector.createFromVector(entity.getVector()).rotate(projection.getRotation()).getY()
+            ]);
         }
     }
 

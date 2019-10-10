@@ -10,6 +10,8 @@ import {Collisions, Result} from "detect-collisions";
 import {Hero} from "../../../../domain/entity/Hero";
 import {Enemy} from "../../../../domain/entity/Enemy";
 import {Roamer} from "../../../../domain/entity/Roamer";
+import {Wall} from "../../../../domain/entity/Wall";
+import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
@@ -74,9 +76,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         const entityBBox: BBox = entity.getBBox();
         const anotherEntityBBox: BBox = anotherEntity.getBBox();
 
-        if (!((entityBBox instanceof CircleBBox) && (anotherEntityBBox instanceof CircleBBox))) {
-            return;
-        }
+        // if (!((entityBBox instanceof CircleBBox) && (anotherEntityBBox instanceof CircleBBox))) {
+        //     return;
+        // }
 
         const fromEntityToAnother: Vector = Vector.createFromVector(overlap);
 
@@ -150,6 +152,27 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 entity.getPosition().getX() + bbox.getOffsetX(),
                 entity.getPosition().getY() + bbox.getOffsetY(),
                 bbox.getRadius()
+            ));
+
+            entity.setBBox(bbox);
+
+            return;
+        }
+
+        if (entity instanceof Wall) {
+            let bbox: LineBBox = new LineBBox(0, 0, 0, entity.getVector().getX(), entity.getVector().getY());
+            bbox.setCollider(this.system.createPolygon(
+                entity.getPosition().getX() + bbox.getX(),
+                entity.getPosition().getY() + bbox.getY(),
+                [
+                    [
+                        0,0
+                    ],
+                    [
+                        bbox.getVector().getX(),
+                        bbox.getVector().getY()
+                    ]
+                ]
             ));
 
             entity.setBBox(bbox);

@@ -16,6 +16,7 @@ import {CollisionBehavior} from "../physics/behavior/global/CollisionBehavior";
 import {TestBehavior} from "../physics/behavior/TestBehavior";
 import {Simulator} from "../physics/Simulator";
 import {LegacyCollisionBehavior} from "../physics/behavior/global/LegacyCollisionBehavior";
+import {Wall} from "../../domain/entity/Wall";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -68,6 +69,7 @@ export class DemoSpace implements SpaceFixtureInterface{
 
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         // return;
+
         let en1 = new Enemy(1100, 1000, 0);
         let en2 = new Enemy(900, 1000, 0);
         // en1.getPosition().setSpeed(Vector.createFromDirDis(180, 50));
@@ -75,6 +77,9 @@ export class DemoSpace implements SpaceFixtureInterface{
         space.addEntity(en2);
 
         // return;
+
+        let wall1 = new Wall(1200, 900, 1300, 1100);
+        space.addEntity(wall1);
 
         let roamer: Roamer;
         for (let i: number = 0; i < 20; i++) {
