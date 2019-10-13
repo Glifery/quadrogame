@@ -17,6 +17,7 @@ import {TestBehavior} from "../physics/behavior/TestBehavior";
 import {Simulator} from "../physics/Simulator";
 import {LegacyCollisionBehavior} from "../physics/behavior/global/LegacyCollisionBehavior";
 import {Wall} from "../../domain/entity/Wall";
+import {ReactionCollisionHandler} from "../physics/behavior/collision/ReactionCollisionHandler";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -25,6 +26,7 @@ export class DemoSpace implements SpaceFixtureInterface{
     private dumpBehavior: DumpBehavior;
     private gravityBehavior: GravityBehavior;
     private collisionBehavior: CollisionBehavior;
+    private reactionCollisionHandler: ReactionCollisionHandler;
     private legacyCollisionBehavior: LegacyCollisionBehavior;
     private controllableBehavior: ControllableBehavior;
     private keyboardControl: KeyboardControl;
@@ -38,6 +40,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         @inject(DumpBehavior) dumpBehavior: DumpBehavior,
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
+        @inject(ReactionCollisionHandler) reactionCollisionHandler: ReactionCollisionHandler,
         @inject(LegacyCollisionBehavior) legacyCollisionBehavior: LegacyCollisionBehavior,
         @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
         @inject(KeyboardControl) keyboardControl: KeyboardControl,
@@ -48,6 +51,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.dumpBehavior = dumpBehavior;
         this.gravityBehavior = gravityBehavior;
         this.collisionBehavior = collisionBehavior;
+        this.reactionCollisionHandler = reactionCollisionHandler;
         this.legacyCollisionBehavior = legacyCollisionBehavior;
         this.controllableBehavior = controllableBehavior;
         this.keyboardControl = keyboardControl;
@@ -63,10 +67,11 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllebleEntity.addBehavior(this.controllableBehavior);
         this.controllebleEntity.addBehavior(this.dumpBehavior);
         this.controllebleEntity.addBehavior(this.gravityBehavior);
-
         space.addEntity(this.controllebleEntity);
-        simulator.registerGlobalBehaviors(this.collisionBehavior);
 
+        simulator.addGlobalBehaviors(this.collisionBehavior);
+
+        this.collisionBehavior.addCollisionHandler(this.reactionCollisionHandler);
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         // return;
 

@@ -1,4 +1,7 @@
+import {BBox} from "../../model/bbox/BBox";
+
 export interface CollisionEntityInterface {
-    getMass(): number;
-    setMass(mass: number): CollisionEntityInterface
+    _CollisionEntityInterface(): void;
+    // getBBox(): BBox;
+    // setBBox(bbox: BBox): CollisionEntityInterface
 }

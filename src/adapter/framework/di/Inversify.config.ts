@@ -8,6 +8,7 @@ import {GamepadControl} from "../../../application/physics/control/GamepadContro
 import {DumpBehavior} from "../../../application/physics/behavior/DumpBehavior";
 import {GravityBehavior} from "../../../application/physics/behavior/GravityBehavior";
 import {CollisionBehavior} from "../../../application/physics/behavior/global/CollisionBehavior";
+import {ReactionCollisionHandler} from "../../../application/physics/behavior/collision/ReactionCollisionHandler";
 import {LegacyCollisionBehavior} from "../../../application/physics/behavior/global/LegacyCollisionBehavior";
 import {LifetimeBehavior} from "../../../application/physics/behavior/LifetimeBehavior";
 import {ExplodeOnLifetimeBehavior} from "../../../application/physics/behavior/ExplodeOnLifetimeBehavior";
@@ -26,6 +27,7 @@ container.bind<GamepadControl>(GamepadControl).toSelf();
 container.bind<DumpBehavior>(DumpBehavior).toSelf();
 container.bind<GravityBehavior>(GravityBehavior).toSelf();
 container.bind<CollisionBehavior>(CollisionBehavior).toSelf();
+container.bind<ReactionCollisionHandler>(ReactionCollisionHandler).toSelf();
 container.bind<LegacyCollisionBehavior>(LegacyCollisionBehavior).toSelf();
 container.bind<LifetimeBehavior>(LifetimeBehavior).toSelf();
 container.bind<ExplodeOnLifetimeBehavior>(ExplodeOnLifetimeBehavior).toSelf();

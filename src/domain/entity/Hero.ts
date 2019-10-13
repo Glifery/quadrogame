@@ -1,5 +1,6 @@
 import {Entity} from "../model/Entity";
-import {CircleBBox} from "../model/bbox/CircleBBox";
+import {CollisionEntityInterface} from "./interface/CollisionEntityInterface";
 
-export class Hero extends Entity {
+export class Hero extends Entity implements CollisionEntityInterface {
+    _CollisionEntityInterface(): void {};
 }

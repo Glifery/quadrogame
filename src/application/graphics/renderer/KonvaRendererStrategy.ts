@@ -30,15 +30,7 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
         this.layer = new Konva.Layer();
         this.stage.add(this.layer);
 
-        this.layer.add(new Konva.Rect({
-            x: 0,
-            y: 0,
-            width: width,
-            height: height,
-            fillEnabled: false,
-            stroke: 'black',
-            strokeWidth: 2
-        }));
+        this.initCanvas(width, height);
 
         this.layer.draw();
     }
@@ -80,10 +72,8 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
             shape = new Konva.Circle({
                 x: 0,
                 y: 0,
-                radius: 0,
-                fill: 'black',
-                stroke: 'black',
-                strokeWidth: 1
+                radius: 3,
+                fill: 'white'
             });
         }
         if (entity instanceof Explosion) {
@@ -140,7 +130,6 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
         if (entity instanceof Bullet) {
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
-            graphicElement.radius(2);
         }
         if (entity instanceof Explosion) {
             graphicElement.x(projection.getX());
@@ -163,5 +152,17 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
 
     finalizeRender(): void {
         this.layer.draw();
+    }
+
+    private initCanvas(width: number, height: number): void {
+        this.layer.add(new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            fill: 'black',
+            stroke: 'black',
+            strokeWidth: 2
+        }));
     }
 }

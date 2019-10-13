@@ -12,15 +12,25 @@ import {Enemy} from "../../../../domain/entity/Enemy";
 import {Roamer} from "../../../../domain/entity/Roamer";
 import {Wall} from "../../../../domain/entity/Wall";
 import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
+import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
+    private collisionHandlers: CollisionHandlerInterface[];
     private system: Collisions;
     private result: Result;
 
     constructor() {
+        this.collisionHandlers = [];
+
         this.system = new Collisions();
         this.result = this.system.createResult();
+    }
+
+    addCollisionHandler(collisionHandler: CollisionHandlerInterface): CollisionBehavior {
+        this.collisionHandlers.push(collisionHandler);
+
+        return this;
     }
 
     initiateEntity(entity: Entity, simulator: Simulator): void {
@@ -64,55 +74,18 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         }
 
         for (let collisionPair of collisionPairs) {
-            this.resolveCollisionForPair(collisionPair);
+            this.resolveCollisionForPair(collisionPair, multiplier, simulator);
         }
     }
 
-    resolveCollisionForPair(collisionPair: CollisionPair): void {
-        this.calculateByAxisFormula(collisionPair.getEntity1(), collisionPair.getEntity2(), collisionPair.getOverlap());
-    }
+    resolveCollisionForPair(collisionPair: CollisionPair, multiplier: number, simulator: Simulator): void {
+        for (let collisionHandler of this.collisionHandlers) {
+            if (!collisionHandler.supports(collisionPair)) {
+                continue;
+            }
 
-    private calculateByAxisFormula(entity: Entity, anotherEntity: Entity, overlap: Vector) {
-        const entityBBox: BBox = entity.getBBox();
-        const anotherEntityBBox: BBox = anotherEntity.getBBox();
-
-        const fromEntityToAnother: Vector = Vector.createFromVector(overlap);
-
-        if (fromEntityToAnother.getDis() == 0) {
-            return;
+            collisionHandler.handle(collisionPair, multiplier, simulator);
         }
-
-        const relativeSpeed: Vector = Vector.createFromVector(entity.getPosition().getSpeed()).subtractVector(anotherEntity.getPosition().getSpeed());
-        const relativeSpeedByNormal: Vector = Vector.createFromVector(relativeSpeed).getProjectionOnDir(fromEntityToAnother.getDir());
-
-        if (relativeSpeedByNormal.getDis() < 0) {
-            return;
-        }
-
-        const relativeSpeedExtra: Vector = Vector.createFromVector(relativeSpeed).subtractVector(relativeSpeedByNormal);
-
-        let entityNormalSpeedScalar;
-        let anotherEntityNormalSpeedScalar;
-
-        if (anotherEntityBBox.getMass() == 0) {
-            entityNormalSpeedScalar = -relativeSpeedByNormal.getDis();
-            anotherEntityNormalSpeedScalar = 0;
-        } else if (entityBBox.getMass() == 0) {
-            entityNormalSpeedScalar = relativeSpeedByNormal.getDis();
-            anotherEntityNormalSpeedScalar = relativeSpeedByNormal.getDis() * 2;
-        } else {
-            entityNormalSpeedScalar = ((entityBBox.getMass() - anotherEntityBBox.getMass()) * relativeSpeedByNormal.getDis()) / (entityBBox.getMass() + anotherEntityBBox.getMass());
-            anotherEntityNormalSpeedScalar = (2 * entityBBox.getMass() * relativeSpeedByNormal.getDis()) / (entityBBox.getMass() + anotherEntityBBox.getMass());
-        }
-
-        const entityNormalSpeed = Vector.createFromDirDis(fromEntityToAnother.getDir(), entityNormalSpeedScalar);
-        const anotherEntityNormalSpeed = Vector.createFromDirDis(fromEntityToAnother.getDir(), anotherEntityNormalSpeedScalar);
-
-        const entitySpeed = Vector.createFromVector(entityNormalSpeed).addVector(relativeSpeedExtra).subtractVector(relativeSpeed);
-        const anotherEntitySpeed = anotherEntityNormalSpeed;
-
-        entity.getPosition().getSpeed().addVector(entitySpeed);
-        anotherEntity.getPosition().getSpeed().addVector(anotherEntitySpeed);
     }
 
     private initiateBBox(entity: Entity): void {

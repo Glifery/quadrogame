@@ -17,7 +17,7 @@ export class Simulator {
         return this;
     }
 
-    registerGlobalBehaviors(globalBehavior: GlobalBehaviorInterface): Simulator {
+    addGlobalBehaviors(globalBehavior: GlobalBehaviorInterface): Simulator {
         this.globalBehaviors.push(globalBehavior);
 
         // In case if global behavior is added AFTER entity added
