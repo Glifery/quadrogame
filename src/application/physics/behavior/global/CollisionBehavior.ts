@@ -76,10 +76,6 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         const entityBBox: BBox = entity.getBBox();
         const anotherEntityBBox: BBox = anotherEntity.getBBox();
 
-        // if (!((entityBBox instanceof CircleBBox) && (anotherEntityBBox instanceof CircleBBox))) {
-        //     return;
-        // }
-
         const fromEntityToAnother: Vector = Vector.createFromVector(overlap);
 
         if (fromEntityToAnother.getDis() == 0) {

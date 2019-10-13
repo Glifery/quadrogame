@@ -30,6 +30,16 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
         this.layer = new Konva.Layer();
         this.stage.add(this.layer);
 
+        this.layer.add(new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            fillEnabled: false,
+            stroke: 'black',
+            strokeWidth: 2
+        }));
+
         this.layer.draw();
     }
 

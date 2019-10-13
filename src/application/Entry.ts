@@ -18,7 +18,7 @@ export class Entry {
 
         let view: View = new View(
             space,
-            new KonvaRendererStrategy(1900, 600, 10, 30),
+            new KonvaRendererStrategy(1900, 600, 0, 0),
             new FollowEntity(demoSpace.getControllablePosition(), 950, 300, 90)
         );
 
