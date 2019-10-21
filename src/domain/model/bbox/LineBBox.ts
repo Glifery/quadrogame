@@ -2,9 +2,9 @@ import {BBox} from "./BBox";
 import {Vector} from "../Vector";
 
 export class LineBBox extends BBox {
-    private x: number;
-    private y: number;
-    private vector: Vector;
+    protected x: number;
+    protected y: number;
+    protected vector: Vector;
 
     constructor(mass: number = 0, x: number, y: number, x2: number, y2: number) {
         super(BBox.shapeLine, mass);

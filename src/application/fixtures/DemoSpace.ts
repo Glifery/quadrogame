@@ -18,6 +18,7 @@ import {Simulator} from "../physics/Simulator";
 import {LegacyCollisionBehavior} from "../physics/behavior/global/LegacyCollisionBehavior";
 import {Wall} from "../../domain/entity/Wall";
 import {ReactionCollisionHandler} from "../physics/behavior/collision/ReactionCollisionHandler";
+import {BulletCollisionHandler} from "../physics/behavior/collision/BulletCollisionHandler";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
@@ -27,6 +28,7 @@ export class DemoSpace implements SpaceFixtureInterface{
     private gravityBehavior: GravityBehavior;
     private collisionBehavior: CollisionBehavior;
     private reactionCollisionHandler: ReactionCollisionHandler;
+    private bulletCollisionHandler: BulletCollisionHandler;
     private legacyCollisionBehavior: LegacyCollisionBehavior;
     private controllableBehavior: ControllableBehavior;
     private keyboardControl: KeyboardControl;
@@ -41,6 +43,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
         @inject(ReactionCollisionHandler) reactionCollisionHandler: ReactionCollisionHandler,
+        @inject(BulletCollisionHandler) bulletCollisionHandler: BulletCollisionHandler,
         @inject(LegacyCollisionBehavior) legacyCollisionBehavior: LegacyCollisionBehavior,
         @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
         @inject(KeyboardControl) keyboardControl: KeyboardControl,
@@ -52,6 +55,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.gravityBehavior = gravityBehavior;
         this.collisionBehavior = collisionBehavior;
         this.reactionCollisionHandler = reactionCollisionHandler;
+        this.bulletCollisionHandler = bulletCollisionHandler;
         this.legacyCollisionBehavior = legacyCollisionBehavior;
         this.controllableBehavior = controllableBehavior;
         this.keyboardControl = keyboardControl;
@@ -72,6 +76,7 @@ export class DemoSpace implements SpaceFixtureInterface{
         simulator.addGlobalBehaviors(this.collisionBehavior);
 
         this.collisionBehavior.addCollisionHandler(this.reactionCollisionHandler);
+        this.collisionBehavior.addCollisionHandler(this.bulletCollisionHandler);
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         // return;
 

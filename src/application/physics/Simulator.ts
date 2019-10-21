@@ -105,11 +105,17 @@ export class Simulator {
         this.counter += multiplier;
 
         for (let entity of this.getEntities()) {
+            this.savePrevPosition(entity);
+
             this.calculateByEylerFormula(entity, multiplier);
             // this.calculateByMathFormula(entity, multiplier);
         }
 
         return this;
+    }
+
+    private savePrevPosition(entity: Entity): void {
+        entity.getPosition().setPrevXY(entity.getPosition().getX(), entity.getPosition().getY());
     }
 
     /**

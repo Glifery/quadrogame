@@ -13,6 +13,8 @@ import {Roamer} from "../../../../domain/entity/Roamer";
 import {Wall} from "../../../../domain/entity/Wall";
 import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
 import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface";
+import {Bullet} from "../../../../domain/entity/Bullet";
+import {DynamicLineBBox} from "../../../../domain/model/bbox/DynamicLineBBox";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
@@ -38,33 +40,27 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
     }
 
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void {
-        let collisionPairs: CollisionPair[] = [];
+        let collidableEntities: Entity[] = [];
 
-        for (let entity1 of entities) {
-            const entity1BBox: BBox = entity1.getBBox();
-
-            if (!entity1BBox) {
+        for (let entity of entities) {
+            if (!entity.getBBox()) {
                 continue;
             }
 
-            entity1BBox.getCollider().x = entity1.getPosition().getX();
-            entity1BBox.getCollider().y = entity1.getPosition().getY();
+            this.updateBBox(entity);
 
-            for (let entity2 of entities) {
+            collidableEntities.push(entity);
+        }
+
+        let collisionPairs: CollisionPair[] = [];
+
+        for (let entity1 of collidableEntities) {
+            for (let entity2 of collidableEntities) {
                 if (entity2 == entity1) {
                     break;
                 }
 
-                const entity2BBox: BBox = entity2.getBBox();
-
-                if (!entity2BBox) {
-                    continue;
-                }
-
-                entity2BBox.getCollider().x = entity2.getPosition().getX();
-                entity2BBox.getCollider().y = entity2.getPosition().getY();
-
-                if (entity1BBox.getCollider().collides(entity2BBox.getCollider(), this.result)) {
+                if (entity1.getBBox().getCollider().collides(entity2.getBBox().getCollider(), this.result)) {
                     collisionPairs.push(new CollisionPair(entity1, entity2, new Vector(
                         this.result.overlap * this.result.overlap_x,
                         this.result.overlap * this.result.overlap_y
@@ -86,6 +82,52 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
 
             collisionHandler.handle(collisionPair, multiplier, simulator);
         }
+    }
+
+    private updateBBox(entity: Entity): void {
+        if (entity instanceof Bullet) {
+            if ((entity.getPosition().getPrevX() == null) || (entity.getPosition().getPrevY() == null)) {
+                entity.getBBox().getCollider().x = entity.getPosition().getX();
+                entity.getBBox().getCollider().y = entity.getPosition().getY();
+
+                return;
+            }
+
+            this.system.remove(entity.getBBox().getCollider());
+
+            const shiftPositionVector: Vector = new Vector(
+                entity.getPosition().getPrevX() - entity.getPosition().getX(),
+                entity.getPosition().getPrevY() - entity.getPosition().getY()
+            );
+            const bbox: LineBBox = new LineBBox(0, 0, 0, shiftPositionVector.getX(), shiftPositionVector.getY());
+
+            bbox.setCollider(this.system.createPolygon(
+                entity.getPosition().getX() + bbox.getX(),
+                entity.getPosition().getY() + bbox.getY(),
+                [
+                    [
+                        0,0
+                    ],
+                    [
+                        shiftPositionVector.getX() + bbox.getX(),
+                        shiftPositionVector.getY() + bbox.getY()
+                    ]
+                ]
+            ));
+
+            entity.setBBox(bbox);
+
+            return;
+        }
+
+        const entityBBox: BBox = entity.getBBox();
+
+        if (!entityBBox) {
+            return;
+        }
+
+        entityBBox.getCollider().x = entity.getPosition().getX();
+        entityBBox.getCollider().y = entity.getPosition().getY();
     }
 
     private initiateBBox(entity: Entity): void {
@@ -142,6 +184,19 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                         bbox.getVector().getY()
                     ]
                 ]
+            ));
+
+            entity.setBBox(bbox);
+
+            return;
+        }
+
+        if (entity instanceof Bullet) {
+            let bbox: LineBBox = new DynamicLineBBox(0, 0, 0, 0, 0);
+            bbox.setCollider(this.system.createPolygon(
+                entity.getPosition().getX() + bbox.getX(),
+                entity.getPosition().getY() + bbox.getY(),
+                [[0, 0], [0, 0]]
             ));
 
             entity.setBBox(bbox);

@@ -4,6 +4,8 @@ import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInte
 export class Position {
     private x: number;
     private y: number;
+    private prevX: number;
+    private prevY: number;
     private accel: Vector;
     private speed: Vector;
     private vectors: Vector[];
@@ -11,6 +13,8 @@ export class Position {
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
+        this.prevX = null;
+        this.prevY = null;
         this.accel = new Vector(0, 0);
         this.speed = new Vector(0, 0);
         this.vectors = [];
@@ -27,6 +31,21 @@ export class Position {
     setXY(x: number, y: number): Position {
         this.x = x;
         this.y = y;
+
+        return this;
+    }
+
+    getPrevX(): number {
+        return this.prevX;
+    }
+
+    getPrevY(): number {
+        return this.prevY;
+    }
+
+    setPrevXY(prevX: number, prevY: number): Position {
+        this.prevX = prevX;
+        this.prevY = prevY;
 
         return this;
     }
