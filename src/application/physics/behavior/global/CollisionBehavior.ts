@@ -13,8 +13,9 @@ import {Roamer} from "../../../../domain/entity/Roamer";
 import {Wall} from "../../../../domain/entity/Wall";
 import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
 import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface";
-import {Bullet} from "../../../../domain/entity/Bullet";
+import {Grenade} from "../../../../domain/entity/Grenade";
 import {DynamicLineBBox} from "../../../../domain/model/bbox/DynamicLineBBox";
+import {Bullet} from "../../../../domain/entity/Bullet";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
@@ -85,7 +86,7 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
     }
 
     private updateBBox(entity: Entity): void {
-        if (entity instanceof Bullet) {
+        if (entity.getSpace() && entity.getBBox() instanceof DynamicLineBBox) {
             if ((entity.getPosition().getPrevX() == null) || (entity.getPosition().getPrevY() == null)) {
                 entity.getBBox().getCollider().x = entity.getPosition().getX();
                 entity.getBBox().getCollider().y = entity.getPosition().getY();
@@ -197,6 +198,19 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                 entity.getPosition().getX() + bbox.getX(),
                 entity.getPosition().getY() + bbox.getY(),
                 [[0, 0], [0, 0]]
+            ));
+
+            entity.setBBox(bbox);
+
+            return;
+        }
+
+        if (entity instanceof Grenade) {
+            let bbox: CircleBBox = new CircleBBox(3, 1);
+            bbox.setCollider(this.system.createCircle(
+                entity.getPosition().getX() + bbox.getOffsetX(),
+                entity.getPosition().getY() + bbox.getOffsetY(),
+                bbox.getRadius()
             ));
 
             entity.setBBox(bbox);

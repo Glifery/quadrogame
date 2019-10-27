@@ -5,4 +5,5 @@ export interface ControlInterface {
     getMovingVector(): Vector;
     getRotationMoment(): Moment;
     checkFireStatus(): boolean;
+    checkCtrlStatus(): boolean;
 }

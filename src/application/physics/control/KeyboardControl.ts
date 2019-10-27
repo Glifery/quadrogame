@@ -10,7 +10,7 @@ type RotationKeyData = {q:number, e:number};
 export class KeyboardControl implements ControlInterface {
     private trackedKeyStatuses: any;
 
-    private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd', ' '];
+    private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd', ' ', 'c'];
     private movingKeyData: MovingKeyData = {
         w: 90,
         a: 180,
@@ -67,6 +67,10 @@ export class KeyboardControl implements ControlInterface {
 
     checkFireStatus(): boolean {
         return this.trackedKeyStatuses[' '];
+    }
+
+    checkCtrlStatus(): boolean {
+        return this.trackedKeyStatuses['c'];
     }
 
     private configure(): void {

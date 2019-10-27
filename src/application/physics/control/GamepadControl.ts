@@ -79,4 +79,8 @@ export class GamepadControl implements  ControlInterface {
     checkFireStatus(): boolean {
         return false;
     }
+
+    checkCtrlStatus(): boolean {
+        return false;
+    }
 }

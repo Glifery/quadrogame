@@ -2,7 +2,7 @@ import {RendererStrategyInterface} from "./RendererStrategyInterface";
 import {Roamer} from "../../../domain/entity/Roamer";
 import {Enemy} from "../../../domain/entity/Enemy";
 import {Hero} from "../../../domain/entity/Hero";
-import {Bullet} from "../../../domain/entity/Bullet";
+import {Grenade} from "../../../domain/entity/Grenade";
 import {Representation} from "../../../domain/model/Representation";
 import {Explosion} from "../../../domain/entity/Explosion";
 import {Entity} from "../../../domain/model/Entity";
@@ -12,6 +12,7 @@ import {Stage} from "konva/types/Stage";
 import {Shape} from "konva/types/Shape";
 import {Wall} from "../../../domain/entity/Wall";
 import {Vector} from "../../../domain/model/Vector";
+import {Bullet} from "../../../domain/entity/Bullet";
 
 const Konva: any = konva;
 
@@ -72,8 +73,16 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
             shape = new Konva.Circle({
                 x: 0,
                 y: 0,
-                radius: 3,
+                radius: 1,
                 fill: 'white'
+            });
+        }
+        if (entity instanceof Grenade) {
+            shape = new Konva.Circle({
+                x: 0,
+                y: 0,
+                radius: 3,
+                fill: 'yellow'
             });
         }
         if (entity instanceof Explosion) {
@@ -128,6 +137,10 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
             graphicElement.radius(30 * projection.getScale());
         }
         if (entity instanceof Bullet) {
+            graphicElement.x(projection.getX());
+            graphicElement.y(projection.getY());
+        }
+        if (entity instanceof Grenade) {
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
         }

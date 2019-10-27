@@ -3,7 +3,7 @@ import {RendererStrategyInterface} from "./RendererStrategyInterface";
 import {Roamer} from "../../../domain/entity/Roamer";
 import {Enemy} from "../../../domain/entity/Enemy";
 import {Hero} from "../../../domain/entity/Hero";
-import {Bullet} from "../../../domain/entity/Bullet";
+import {Grenade} from "../../../domain/entity/Grenade";
 import {CircleBBox} from "../../../domain/model/bbox/CircleBBox";
 import {Representation} from "../../../domain/model/Representation";
 import {Explosion} from "../../../domain/entity/Explosion";
@@ -62,13 +62,13 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
             });
         }
 
-        if (entity instanceof Bullet) {
+        if (entity instanceof Grenade) {
             graphicElement.attr({
                 type: "circle",
                 cx: projection.getX(),
                 cy: projection.getY(),
                 r: 2,
-                fill: 'black'
+                fill: 'yellow'
             });
         }
 

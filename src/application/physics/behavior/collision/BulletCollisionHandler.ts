@@ -2,12 +2,9 @@ import {injectable} from "inversify";
 import {CollisionHandlerInterface} from "./CollisionHandlerInterface";
 import {CollisionPair} from "../../../../domain/model/CollisionPair";
 import {Simulator} from "../../Simulator";
-import {Vector} from "../../../../domain/model/Vector";
-import {BBox} from "../../../../domain/model/bbox/BBox";
 import {Entity} from "../../../../domain/model/Entity";
-import {CollisionEntityInterface} from "../../../../domain/entity/interface/CollisionEntityInterface";
-import {Bullet} from "../../../../domain/entity/Bullet";
 import {Hero} from "../../../../domain/entity/Hero";
+import {Bullet} from "../../../../domain/entity/Bullet";
 
 @injectable()
 export class BulletCollisionHandler implements CollisionHandlerInterface {
