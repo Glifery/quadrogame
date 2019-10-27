@@ -20,10 +20,10 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
     }
 
     private isBullet(entity: Entity): boolean {
-        return (entity.getHandlerMetadata('CollisionEntityInterface').get('bullet') == true);
+        return (entity.getHandlerMetadata('CollisionBehavior').get('bullet') == true);
     }
 
     private isMortal(entity: Entity): boolean {
-        return !(entity.getHandlerMetadata('CollisionEntityInterface').get('bullet') == true) && !(entity instanceof Hero);
+        return !(entity.getHandlerMetadata('CollisionBehavior').get('bullet') == true) && !(entity instanceof Hero);
     }
 }

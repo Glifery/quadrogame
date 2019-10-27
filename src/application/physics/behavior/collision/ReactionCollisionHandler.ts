@@ -10,8 +10,8 @@ import {Entity} from "../../../../domain/model/Entity";
 export class ReactionCollisionHandler implements CollisionHandlerInterface {
     supports(collisionPair: CollisionPair): boolean {
         return (
-            (collisionPair.getEntity1().getHandlerMetadata('CollisionEntityInterface').get('reaction') == true) &&
-            (collisionPair.getEntity2().getHandlerMetadata('CollisionEntityInterface').get('reaction') == true)
+            (collisionPair.getEntity1().getHandlerMetadata('CollisionBehavior').get('reaction') == true) &&
+            (collisionPair.getEntity2().getHandlerMetadata('CollisionBehavior').get('reaction') == true)
         );
     }
 

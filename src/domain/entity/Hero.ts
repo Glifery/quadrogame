@@ -6,7 +6,7 @@ export class Hero extends Entity {
         this.getHandlerMetadata('main').set('radius', 20);
         this.getHandlerMetadata('main').set('mass', 10);
 
-        this.getHandlerMetadata('CollisionEntityInterface').set('reaction', true);
+        this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
 
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new CircleBBox(
             this.getHandlerMetadata('main').get('radius'),
