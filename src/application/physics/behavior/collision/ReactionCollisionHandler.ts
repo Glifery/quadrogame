@@ -5,16 +5,14 @@ import {Simulator} from "../../Simulator";
 import {Vector} from "../../../../domain/model/Vector";
 import {BBox} from "../../../../domain/model/bbox/BBox";
 import {Entity} from "../../../../domain/model/Entity";
-import {CollisionEntityInterface} from "../../../../domain/entity/interface/CollisionEntityInterface";
-
-function supports(entity: any): entity is CollisionEntityInterface {
-    return (entity as CollisionEntityInterface)['_CollisionEntityInterface'] !== undefined;
-}
 
 @injectable()
 export class ReactionCollisionHandler implements CollisionHandlerInterface {
     supports(collisionPair: CollisionPair): boolean {
-        return (supports(collisionPair.getEntity1()) && supports(collisionPair.getEntity2()));
+        return (
+            (collisionPair.getEntity1().getHandlerMetadata('CollisionEntityInterface').get('reaction') == true) &&
+            (collisionPair.getEntity2().getHandlerMetadata('CollisionEntityInterface').get('reaction') == true)
+        );
     }
 
     handle(collisionPair: CollisionPair, multiplier: number, simulator: Simulator): void {

@@ -5,7 +5,8 @@ import {Space} from "./Space";
 import {BBox} from "./bbox/BBox";
 import {Representation} from "./Representation";
 
-export class Entity {
+export abstract class Entity {
+    private handlerMetadata: Map<string, Map<string, any>>;
     protected position: Position;
     protected axis: Axis;
     protected bbox: BBox;
@@ -14,10 +15,15 @@ export class Entity {
     protected representation: Representation;
 
     constructor(x: number, y: number, dir: number = 0) {
+        this.handlerMetadata = new Map<string, Map<string, any>>();
         this.position = new Position(x, y);
         this.axis = new Axis(dir);
         this.behaviors = [];
+
+        this.init();
     }
+
+    init(): void {}
 
     getPosition(): Position {
         return this.position;
@@ -65,5 +71,15 @@ export class Entity {
         this.representation = representation;
 
         return this;
+    }
+
+    getHandlerMetadata(handler: string): Map<string, any> {
+        let handlerMetadata: Map<string, any> = this.handlerMetadata.get(handler);
+
+        if (handlerMetadata == null) {
+            this.handlerMetadata.set(handler, new Map<string, any>());
+        }
+
+        return this.handlerMetadata.get(handler);
     }
 }

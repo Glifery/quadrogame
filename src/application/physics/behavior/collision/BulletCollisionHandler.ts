@@ -4,7 +4,6 @@ import {CollisionPair} from "../../../../domain/model/CollisionPair";
 import {Simulator} from "../../Simulator";
 import {Entity} from "../../../../domain/model/Entity";
 import {Hero} from "../../../../domain/entity/Hero";
-import {Bullet} from "../../../../domain/entity/Bullet";
 
 @injectable()
 export class BulletCollisionHandler implements CollisionHandlerInterface {
@@ -21,10 +20,10 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
     }
 
     private isBullet(entity: Entity): boolean {
-        return (entity instanceof Bullet);
+        return (entity.getHandlerMetadata('CollisionEntityInterface').get('bullet') == true);
     }
 
     private isMortal(entity: Entity): boolean {
-        return !(entity instanceof Bullet) && !(entity instanceof Hero);
+        return !(entity.getHandlerMetadata('CollisionEntityInterface').get('bullet') == true) && !(entity instanceof Hero);
     }
 }

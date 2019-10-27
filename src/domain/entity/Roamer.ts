@@ -1,6 +1,7 @@
 import {Entity} from "../model/Entity";
-import {CollisionEntityInterface} from "./interface/CollisionEntityInterface";
 
-export class Roamer extends Entity implements CollisionEntityInterface {
-    _CollisionEntityInterface(): void {};
+export class Roamer extends Entity {
+    init(): void {
+        this.getHandlerMetadata('CollisionEntityInterface').set('reaction', true);
+    }
 }
