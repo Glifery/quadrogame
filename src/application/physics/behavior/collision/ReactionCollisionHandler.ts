@@ -20,8 +20,8 @@ export class ReactionCollisionHandler implements CollisionHandlerInterface {
         const anotherEntity: Entity = collisionPair.getEntity2();
         const overlap: Vector = collisionPair.getOverlap();
 
-        const entityBBox: BBox = entity.getBBox();
-        const anotherEntityBBox: BBox = anotherEntity.getBBox();
+        const entityBBox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
+        const anotherEntityBBox: BBox = anotherEntity.getHandlerMetadata('CollisionBehavior').get('bbox');
 
         const fromEntityToAnother: Vector = Vector.createFromVector(overlap);
 

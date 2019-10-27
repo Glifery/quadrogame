@@ -24,6 +24,8 @@ export class Space {
         this.entities.push(entity);
         entity.setSpace(this);
 
+        entity.init();
+
         for (let view of this.views) {
             view.initiateRepresentation(entity);
         }

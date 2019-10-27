@@ -129,7 +129,7 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
         if (entity instanceof Roamer) {
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
-            graphicElement.radius((3 + (entity.getBBox().getMass() / 100)) * projection.getScale());
+            graphicElement.radius(3 * projection.getScale());
         }
         if (entity instanceof Enemy) {
             graphicElement.x(projection.getX());

@@ -7,15 +7,9 @@ import {CollisionPair} from "../../../../domain/model/CollisionPair";
 import {BBox} from "../../../../domain/model/bbox/BBox";
 import {CircleBBox} from "../../../../domain/model/bbox/CircleBBox";
 import {Collisions, Result} from "detect-collisions";
-import {Hero} from "../../../../domain/entity/Hero";
-import {Enemy} from "../../../../domain/entity/Enemy";
-import {Roamer} from "../../../../domain/entity/Roamer";
-import {Wall} from "../../../../domain/entity/Wall";
 import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
 import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface";
-import {Grenade} from "../../../../domain/entity/Grenade";
 import {DynamicLineBBox} from "../../../../domain/model/bbox/DynamicLineBBox";
-import {Bullet} from "../../../../domain/entity/Bullet";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
@@ -44,7 +38,7 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         let collidableEntities: Entity[] = [];
 
         for (let entity of entities) {
-            if (!entity.getBBox()) {
+            if (!entity.getHandlerMetadata('CollisionBehavior').get('bbox')) {
                 continue;
             }
 
@@ -61,7 +55,10 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                     break;
                 }
 
-                if (entity1.getBBox().getCollider().collides(entity2.getBBox().getCollider(), this.result)) {
+                const entity1BBox: BBox = entity1.getHandlerMetadata('CollisionBehavior').get('bbox');
+                const entity2BBox: BBox = entity2.getHandlerMetadata('CollisionBehavior').get('bbox');
+
+                if (entity1BBox.getCollider().collides(entity2BBox.getCollider(), this.result)) {
                     collisionPairs.push(new CollisionPair(entity1, entity2, new Vector(
                         this.result.overlap * this.result.overlap_x,
                         this.result.overlap * this.result.overlap_y
@@ -86,93 +83,63 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
     }
 
     private updateBBox(entity: Entity): void {
-        if (entity.getSpace() && entity.getBBox() instanceof DynamicLineBBox) {
+        const bbox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
+
+        if (bbox instanceof DynamicLineBBox) {
             if ((entity.getPosition().getPrevX() == null) || (entity.getPosition().getPrevY() == null)) {
-                entity.getBBox().getCollider().x = entity.getPosition().getX();
-                entity.getBBox().getCollider().y = entity.getPosition().getY();
+                bbox.getCollider().x = entity.getPosition().getX();
+                bbox.getCollider().y = entity.getPosition().getY();
 
                 return;
             }
 
-            this.system.remove(entity.getBBox().getCollider());
+            this.system.remove(bbox.getCollider());
 
             const shiftPositionVector: Vector = new Vector(
                 entity.getPosition().getPrevX() - entity.getPosition().getX(),
                 entity.getPosition().getPrevY() - entity.getPosition().getY()
             );
-            const bbox: LineBBox = new LineBBox(0, 0, 0, shiftPositionVector.getX(), shiftPositionVector.getY());
 
-            bbox.setCollider(this.system.createPolygon(
-                entity.getPosition().getX() + bbox.getX(),
-                entity.getPosition().getY() + bbox.getY(),
+            const newBBox: LineBBox = new DynamicLineBBox(0, 0, 0, shiftPositionVector.getX(), shiftPositionVector.getY());
+            newBBox.setCollider(this.system.createPolygon(
+                entity.getPosition().getX() + newBBox.getX(),
+                entity.getPosition().getY() + newBBox.getY(),
                 [
                     [
                         0,0
                     ],
                     [
-                        shiftPositionVector.getX() + bbox.getX(),
-                        shiftPositionVector.getY() + bbox.getY()
+                        shiftPositionVector.getX() + newBBox.getX(),
+                        shiftPositionVector.getY() + newBBox.getY()
                     ]
                 ]
             ));
 
-            entity.setBBox(bbox);
+            entity.getHandlerMetadata('CollisionBehavior').set('bbox', newBBox);
 
             return;
         }
 
-        const entityBBox: BBox = entity.getBBox();
+        if ((bbox instanceof CircleBBox) || bbox instanceof LineBBox) {
+            bbox.getCollider().x = entity.getPosition().getX();
+            bbox.getCollider().y = entity.getPosition().getY();
 
-        if (!entityBBox) {
             return;
         }
-
-        entityBBox.getCollider().x = entity.getPosition().getX();
-        entityBBox.getCollider().y = entity.getPosition().getY();
     }
 
     private initiateBBox(entity: Entity): void {
-        if (entity instanceof Hero) {
-            let bbox: CircleBBox = new CircleBBox(20, 10);
+        const bbox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
+
+        if (bbox instanceof CircleBBox) {
             bbox.setCollider(this.system.createCircle(
                 entity.getPosition().getX() + bbox.getOffsetX(),
                 entity.getPosition().getY() + bbox.getOffsetY(),
                 bbox.getRadius()
             ));
-
-            entity.setBBox(bbox);
-
-            return;
         }
 
-        if (entity instanceof Enemy) {
-            let bbox: CircleBBox = new CircleBBox(30, 10);
-            bbox.setCollider(this.system.createCircle(
-                entity.getPosition().getX() + bbox.getOffsetX(),
-                entity.getPosition().getY() + bbox.getOffsetY(),
-                bbox.getRadius()
-            ));
-
-            entity.setBBox(bbox);
-
-            return;
-        }
-
-        if (entity instanceof Roamer) {
-            let bbox: CircleBBox = new CircleBBox(3, 0);
-            bbox.setCollider(this.system.createCircle(
-                entity.getPosition().getX() + bbox.getOffsetX(),
-                entity.getPosition().getY() + bbox.getOffsetY(),
-                bbox.getRadius()
-            ));
-
-            entity.setBBox(bbox);
-
-            return;
-        }
-
-        if (entity instanceof Wall) {
-            let bbox: LineBBox = new LineBBox(0, 0, 0, entity.getVector().getX(), entity.getVector().getY());
+        if (bbox instanceof LineBBox) {
             bbox.setCollider(this.system.createPolygon(
                 entity.getPosition().getX() + bbox.getX(),
                 entity.getPosition().getY() + bbox.getY(),
@@ -186,36 +153,14 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
                     ]
                 ]
             ));
-
-            entity.setBBox(bbox);
-
-            return;
         }
 
-        if (entity instanceof Bullet) {
-            let bbox: LineBBox = new DynamicLineBBox(0, 0, 0, 0, 0);
+        if (bbox instanceof DynamicLineBBox) {
             bbox.setCollider(this.system.createPolygon(
                 entity.getPosition().getX() + bbox.getX(),
                 entity.getPosition().getY() + bbox.getY(),
                 [[0, 0], [0, 0]]
             ));
-
-            entity.setBBox(bbox);
-
-            return;
-        }
-
-        if (entity instanceof Grenade) {
-            let bbox: CircleBBox = new CircleBBox(3, 1);
-            bbox.setCollider(this.system.createCircle(
-                entity.getPosition().getX() + bbox.getOffsetX(),
-                entity.getPosition().getY() + bbox.getOffsetY(),
-                bbox.getRadius()
-            ));
-
-            entity.setBBox(bbox);
-
-            return;
         }
     }
 }

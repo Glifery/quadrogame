@@ -19,8 +19,6 @@ export abstract class Entity {
         this.position = new Position(x, y);
         this.axis = new Axis(dir);
         this.behaviors = [];
-
-        this.init();
     }
 
     init(): void {}
