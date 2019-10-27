@@ -1,0 +1,2 @@
+- run `npm start`
+- open http://localhost:8081/
