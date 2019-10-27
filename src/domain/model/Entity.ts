@@ -2,14 +2,12 @@ import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 import {Space} from "./Space";
-import {BBox} from "./bbox/BBox";
 import {Representation} from "./Representation";
 
 export abstract class Entity {
     private handlerMetadata: Map<string, Map<string, any>>;
     protected position: Position;
     protected axis: Axis;
-    protected bbox: BBox;
     protected behaviors: BehaviorInterface[];
     protected space: Space;
     protected representation: Representation;
@@ -29,16 +27,6 @@ export abstract class Entity {
 
     getAxis(): Axis {
         return this.axis;
-    }
-
-    getBBox(): BBox {
-        return this.bbox;
-    }
-
-    setBBox(bbox: BBox): Entity {
-        this.bbox = bbox;
-
-        return this;
     }
 
     getBehaviors(): BehaviorInterface[] {

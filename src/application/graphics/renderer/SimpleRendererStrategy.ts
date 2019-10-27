@@ -30,7 +30,7 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
         let projection = representation.getProjection();
         let graphicElement = representation.getGraphic();
 
-        let bbox = entity.getBBox();
+        let bbox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
 
         if (entity instanceof Hero) {
             graphicElement.attr({
@@ -47,7 +47,7 @@ export class SimpleRendererStrategy implements RendererStrategyInterface {
                 type: "circle",
                 cx: projection.getX(),
                 cy: projection.getY(),
-                r: (3 + (entity.getBBox().getMass() / 100)) * projection.getScale(),
+                r: 3 * projection.getScale(),
                 fill: 'red'
             });
         }

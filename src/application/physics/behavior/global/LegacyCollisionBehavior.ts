@@ -16,7 +16,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
         let collisionPairs: CollisionPair[] = [];
 
         for (let entity1 of entities) {
-            const entity1BBox: BBox = entity1.getBBox();
+            const entity1BBox: BBox = entity1.getHandlerMetadata('CollisionBehavior').get('bbox');
 
             if (!(entity1BBox instanceof CircleBBox)) {
                 continue;
@@ -32,7 +32,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
                     continue;
                 }
 
-                const entity2BBox: BBox = entity2.getBBox();
+                const entity2BBox: BBox = entity2.getHandlerMetadata('CollisionBehavior').get('bbox');
 
                 if (!(entity2BBox instanceof CircleBBox)) {
                     continue;
@@ -68,8 +68,8 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     }
 
     private calculateByAxisFormula(entity: Entity, anotherEntity: Entity) {
-        const entityBBox: BBox = entity.getBBox();
-        const anotherEntityBBox: BBox = anotherEntity.getBBox();
+        const entityBBox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
+        const anotherEntityBBox: BBox = anotherEntity.getHandlerMetadata('CollisionBehavior').get('bbox');
 
         if (!((entityBBox instanceof CircleBBox) && (anotherEntityBBox instanceof CircleBBox))) {
             return;

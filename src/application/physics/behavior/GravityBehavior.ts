@@ -3,6 +3,7 @@ import {BehaviorInterface} from "./BehaviorInterface";
 import {Simulator} from "../Simulator";
 import {Vector} from "../../../domain/model/Vector";
 import {Entity} from "../../../domain/model/Entity";
+import {BBox} from "../../../domain/model/bbox/BBox";
 
 @injectable()
 export class GravityBehavior implements BehaviorInterface {
@@ -14,7 +15,9 @@ export class GravityBehavior implements BehaviorInterface {
                 continue;
             }
 
-            if (anotherEntity.getBBox() == null) {
+            const anotherEntityBBox: BBox = anotherEntity.getHandlerMetadata('CollisionBehavior').get('bbox');
+
+            if (anotherEntityBBox == null) {
                 continue;
             }
 
@@ -23,7 +26,7 @@ export class GravityBehavior implements BehaviorInterface {
                 anotherEntity.getPosition().getY() - entity.getPosition().getY(),
             );
 
-            let gravityAssel = anotherEntity.getBBox().getMass() / Math.pow(gravity.getDis(), 2);
+            let gravityAssel = anotherEntityBBox.getMass() / Math.pow(gravity.getDis(), 2);
 
             gravityAssel *= 10;
 
