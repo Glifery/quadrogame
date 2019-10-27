@@ -1,6 +1,10 @@
 import {Entity} from "../model/Entity";
 import {Vector} from "../model/Vector";
 import {LineBBox} from "../model/bbox/LineBBox";
+import * as konva from "konva";
+import {Representation} from "../model/Representation";
+
+const Konva: any = konva;
 
 export class Wall extends Entity {
     private vector: Vector;
@@ -15,12 +19,32 @@ export class Wall extends Entity {
         this.getHandlerMetadata('main').set('mass', 0);
 
         this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
-
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new LineBBox(
             this.getHandlerMetadata('main').get('mass'),
             0, 0,
             this.vector.getX(), this.vector.getY()
         ));
+
+        this.getHandlerMetadata('KonvaRendererStrategy').set('init', new Konva.Line({
+            x: 0,
+            y: 0,
+            points: [0, 0, 0, 0],
+            stroke: 'green',
+            strokeWidth: 1
+        }));
+        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation) => {
+            const projection = representation.getProjection();
+            const graphicElement = this.getHandlerMetadata('KonvaRendererStrategy').get('init');
+
+            graphicElement.x(projection.getX());
+            graphicElement.y(projection.getY());
+            graphicElement.points([
+                0,
+                0,
+                Vector.createFromVector(this.getVector()).rotate(projection.getRotation()).getX(),
+                Vector.createFromVector(this.getVector()).rotate(projection.getRotation()).getY()
+            ]);
+        });
     }
 
     getVector(): Vector {

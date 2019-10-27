@@ -27,7 +27,7 @@ export class Space {
         entity.init();
 
         for (let view of this.views) {
-            view.initiateRepresentation(entity);
+            view.initiateRenderer(entity);
         }
 
         this.simulator.registerEntity(entity);
@@ -45,8 +45,9 @@ export class Space {
         if (index > -1) {
             this.entities.splice(index, 1);
             entity.setSpace(null);
-            entity.getRepresentation().getGraphic().remove();
-            entity.setRepresentation(null);
+            for (let view of this.views) {
+                view.deleteRenderer(entity);
+            }
         }
     }
 }

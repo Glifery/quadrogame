@@ -4,34 +4,17 @@ import {Projection} from "./Projection";
 export class Representation {
     private entity: Entity;
     private projection: Projection;
-    private graphic: any;
 
-    constructor(entity: Entity, graphic: any) {
+    constructor(entity: Entity, projection: Projection) {
         this.entity = entity;
-        this.graphic = graphic;
+        this.projection = projection;
     }
 
     getEntity(): Entity {
         return this.entity;
     }
 
-    setProjection(projection: Projection): Representation {
-        this.projection = projection;
-
-        return this;
-    }
-
     getProjection(): Projection {
         return this.projection;
-    }
-
-    setGraphic(graphic: any): Representation {
-        this.graphic = graphic;
-
-        return this;
-    }
-
-    getGraphic(): any {
-        return this.graphic;
     }
 }

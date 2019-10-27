@@ -18,12 +18,16 @@ export class View {
 
         // In case if view is added AFTER entity added
         for (let entity of space.getEntities()) {
-            this.initiateRepresentation(entity);
+            this.initiateRenderer(entity);
         }
     }
 
-    initiateRepresentation(entity: Entity): void {
-        this.rendererStrategy.initiateRepresentation(entity);
+    initiateRenderer(entity: Entity): void {
+        this.rendererStrategy.initiateRenderer(entity);
+    }
+
+    deleteRenderer(entity: Entity): void {
+        this.rendererStrategy.deleteRenderer(entity);
     }
 
     startRendering(fps: number): View {
@@ -36,11 +40,12 @@ export class View {
         this.projectionStrategy.beforeCalculation(this);
 
         for (let entity of this.space.getEntities()) {
-            let representation: Representation = entity.getRepresentation();
+            let representation: Representation = new Representation(
+                entity,
+                this.projectionStrategy.calculateProjection(entity, this)
+            );
 
-            representation.setProjection(this.projectionStrategy.calculateProjection(entity, this));
-
-            this.rendererStrategy.renderEntity(representation);
+            this.rendererStrategy.rerenderEntity(representation);
         }
 
         this.rendererStrategy.finalizeRender();
