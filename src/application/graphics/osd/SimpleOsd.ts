@@ -25,6 +25,10 @@ export class SimpleOsd {
         this.konvaAdapter.getLayer().add(this.text);
     }
 
+    setEntity(entity: Entity) {
+        this.entity = entity;
+    }
+
     startRendering(fps: number): SimpleOsd {
         setInterval(() => this.rerender(), 1000/fps);
 
@@ -32,7 +36,11 @@ export class SimpleOsd {
     }
 
     private rerender(): void {
-        this.text.setAttr('text', this.entity.getAxis().getOrientation());
+        if (this.entity) {
+            this.text.setAttr('text', `${this.entity.getArmor().getHealth()} / ${this.entity.getArmor().getMaxHealth()}`);
+        } else {
+            this.text.setAttr('text', 'No entity');
+        }
 
         this.konvaAdapter.getLayer().draw();
     }

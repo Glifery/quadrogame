@@ -24,14 +24,14 @@ export class Entry {
             new FollowEntity(demoSpace.getControllablePosition(), 950, 500, 90)
         );
 
-        let osd: SimpleOsd = new SimpleOsd(
-            demoSpace.getControllablePosition(),
-            300, 100, 10, 0
-        );
+        // let osd: SimpleOsd = new SimpleOsd(
+        //     demoSpace.getControllablePosition(),
+        //     300, 100, 10, 0
+        // );
 
         simulator.startSimulation(25, 1);
         view.startRendering(25);
-        osd.startRendering(10);
+        // osd.startRendering(10);
     }
 }
 

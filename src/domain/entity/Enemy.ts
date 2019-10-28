@@ -2,11 +2,14 @@ import {Entity} from "../model/Entity";
 import {CircleBBox} from "../model/bbox/CircleBBox";
 import * as konva from "konva";
 import {Representation} from "../model/Representation";
+import {Armor} from "../game/Armor";
 
 const Konva: any = konva;
 
 export class Enemy extends Entity {
     init(): void {
+        this.armor = new Armor(150, Armor.TYPE_LIGHT, 1);
+
         this.getHandlerMetadata('main').set('radius', 30);
         this.getHandlerMetadata('main').set('mass', 10);
 

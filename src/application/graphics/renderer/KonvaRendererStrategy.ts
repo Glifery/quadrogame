@@ -58,7 +58,7 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
             y: 0,
             width: width,
             height: height,
-            fill: 'black',
+            // fill: 'black',
             stroke: 'black',
             strokeWidth: 2
         }));

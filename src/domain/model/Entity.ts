@@ -2,6 +2,7 @@ import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {BehaviorInterface} from "../../application/physics/behavior/BehaviorInterface";
 import {Space} from "./Space";
+import {Armor} from "../game/Armor";
 
 export abstract class Entity {
     private handlerMetadata: Map<string, Map<string, any>>;
@@ -9,6 +10,7 @@ export abstract class Entity {
     protected axis: Axis;
     protected behaviors: BehaviorInterface[];
     protected space: Space;
+    protected armor: Armor;
 
     constructor(x: number, y: number, dir: number = 0) {
         this.handlerMetadata = new Map<string, Map<string, any>>();
@@ -55,5 +57,9 @@ export abstract class Entity {
         }
 
         return this.handlerMetadata.get(handler);
+    }
+
+    getArmor(): Armor {
+        return this.armor;
     }
 }
