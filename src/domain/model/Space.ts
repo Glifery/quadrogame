@@ -1,36 +1,19 @@
 import {Entity} from "./Entity";
-import {View} from "../../application/graphics/View";
-import {Simulator} from "../../application/physics/Simulator";
+import {Dispatcher, subscriptionFn} from "../../application/util/Dispatcher";
 
 export class Space {
-    private simulator: Simulator;
-    private views: View[];
+    public static EVENT_POST_ENTITY_CREATED = 'post_entity_created';
+    public static EVENT_PRE_ENTITY_DELETED = 'pre_entity_deleted';
+
+    private dispatcher: Dispatcher;
     private entities: Entity[] = [];
 
-    constructor(simulator: Simulator) {
-        this.simulator = simulator;
-        this.views = [];
-
-        simulator.registerSpace(this);
+    constructor() {
+        this.dispatcher = new Dispatcher([Space.EVENT_POST_ENTITY_CREATED, Space.EVENT_PRE_ENTITY_DELETED]);
     }
 
-    addView(view: View): Space {
-        this.views.push(view);
-
-        return this;
-    }
-
-    addEntity(entity: Entity): Space {
-        this.entities.push(entity);
-        entity.setSpace(this);
-
-        entity.init();
-
-        for (let view of this.views) {
-            view.initiateRenderer(entity);
-        }
-
-        this.simulator.registerEntity(entity);
+    on(event: string, subscription: subscriptionFn, context?: any): Space {
+        this.dispatcher.subscribe(event, subscription, context);
 
         return this;
     }
@@ -39,15 +22,25 @@ export class Space {
         return this.entities;
     }
 
+    addEntity(entity: Entity): Space {
+        this.entities.push(entity);
+        entity.setSpace(this);
+
+        entity.init();
+
+        this.dispatcher.emit(Space.EVENT_POST_ENTITY_CREATED, entity);
+
+        return this;
+    }
+
     deleteEntity(entity: Entity) {
         const index: number = this.entities.indexOf(entity);
 
         if (index > -1) {
             this.entities.splice(index, 1);
             entity.setSpace(null);
-            for (let view of this.views) {
-                view.deleteRenderer(entity);
-            }
+
+            this.dispatcher.emit(Space.EVENT_PRE_ENTITY_DELETED, entity);
         }
     }
 }

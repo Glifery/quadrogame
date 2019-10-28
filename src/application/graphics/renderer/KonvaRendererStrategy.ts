@@ -28,7 +28,7 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
         this.layer.draw();
     }
 
-    initiateRenderer(entity: Entity): void {
+    initRenderer(entity: Entity): void {
         let renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init');
 
         if (!renderer) {
@@ -39,7 +39,7 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
     }
 
     deleteRenderer(entity: Entity): void {
-        let renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init');
+        const renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init');
 
         if (renderer) {
             renderer.remove();

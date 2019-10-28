@@ -9,6 +9,7 @@ import {Grenade} from "../../../domain/entity/Grenade";
 import {GravityBehavior} from "./GravityBehavior";
 import {ExplodeOnLifetimeBehavior} from "./ExplodeOnLifetimeBehavior";
 import {Bullet} from "../../../domain/entity/Bullet";
+import {LifetimeBehavior} from "./LifetimeBehavior";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
@@ -16,6 +17,7 @@ export class ControllableBehavior implements BehaviorInterface {
     static readonly rotationAccel = 300;
 
     private gravityBehavior: GravityBehavior;
+    private lifetimeBehavior: LifetimeBehavior;
     private explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior;
 
     private controls: ControlInterface[] = [];
@@ -23,9 +25,11 @@ export class ControllableBehavior implements BehaviorInterface {
 
     constructor(
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
+        @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
         @inject(ExplodeOnLifetimeBehavior) explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior
     ) {
         this.gravityBehavior = gravityBehavior;
+        this.lifetimeBehavior = lifetimeBehavior;
         this.explodeOnLifetimeBehavior = explodeOnLifetimeBehavior;
     }
 
@@ -68,8 +72,8 @@ export class ControllableBehavior implements BehaviorInterface {
         let bulletPosition = Vector.createFromDirDis(entity.getAxis().getOrientation(), 22).addVector(entity.getPosition());
         let bullet: Bullet = new Bullet(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
-        bullet.setMaxLifetime(0.6);
-        // bullet.addBehavior(this.explodeOnLifetimeBehavior);
+        bullet.setMaxLifetime(0.3);
+        bullet.addBehavior(this.lifetimeBehavior);
         bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), 600).addVector(entity.getPosition().getSpeed()));
         entity.getSpace().addEntity(bullet);
 

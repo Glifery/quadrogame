@@ -9,7 +9,10 @@ import {CircleBBox} from "../../../../domain/model/bbox/CircleBBox";
 
 @injectable()
 export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
-    initiateEntity(entity: Entity, simulator: Simulator): void {
+    initEntity(entity: Entity, simulator: Simulator): void {
+    }
+
+    deleteEntity(entity: Entity, simulator: Simulator): void {
     }
 
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void {

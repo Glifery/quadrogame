@@ -12,6 +12,12 @@ export class Simulator {
     private counter: number = 0;
 
     registerSpace(space: Space): Simulator {
+        space.getEntities().forEach(entity => this.initEntity(entity));
+
+        space
+            .on(Space.EVENT_POST_ENTITY_CREATED, this.initEntity, this)
+            .on(Space.EVENT_PRE_ENTITY_DELETED, this.deleteEntity, this);
+
         this.spaces.push(space);
 
         return this;
@@ -22,17 +28,11 @@ export class Simulator {
 
         // In case if global behavior is added AFTER entity added
         for (let entities of this.getEntities()) {
-            globalBehavior.initiateEntity(entities, this);
+            globalBehavior.initEntity(entities, this);
 
         }
 
         return this;
-    }
-
-    registerEntity(entity: Entity): void {
-        for (let behavior of this.globalBehaviors) {
-            behavior.initiateEntity(entity, this);
-        }
     }
 
     getEntities(): Entity[] {
@@ -54,6 +54,18 @@ export class Simulator {
         );
 
         return this;
+    }
+
+    private initEntity(entity: Entity): void {
+        for (let globalBehavior of this.globalBehaviors) {
+            globalBehavior.initEntity(entity, this);
+        }
+    }
+
+    private deleteEntity(entity: Entity): void {
+        for (let globalBehavior of this.globalBehaviors) {
+            globalBehavior.deleteEntity(entity, this);
+        }
     }
 
     private prepare(): Simulator {

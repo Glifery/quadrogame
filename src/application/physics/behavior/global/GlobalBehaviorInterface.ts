@@ -2,7 +2,9 @@ import {Simulator} from "../../Simulator";
 import {Entity} from "../../../../domain/model/Entity";
 
 export interface GlobalBehaviorInterface {
-    initiateEntity(entity: Entity, simulator: Simulator): void;
+    initEntity(entity: Entity, simulator: Simulator): void;
+
+    deleteEntity(entity: Entity, simulator: Simulator): void;
 
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void;
 }

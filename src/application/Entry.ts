@@ -12,7 +12,8 @@ export class Entry {
         let demoSpace: DemoSpace = container.get<DemoSpace>(DemoSpace);
         let simulator: Simulator = container.get<Simulator>(Simulator);
 
-        let space: Space = new Space(simulator);
+        let space: Space = new Space();
+        simulator.registerSpace(space);
 
         demoSpace.up(space, simulator);
 

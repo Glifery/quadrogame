@@ -30,8 +30,16 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         return this;
     }
 
-    initiateEntity(entity: Entity, simulator: Simulator): void {
-        this.initiateBBox(entity);
+    initEntity(entity: Entity, simulator: Simulator): void {
+        this.initBBox(entity);
+    }
+
+    deleteEntity(entity: Entity, simulator: Simulator): void {
+        const bbox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
+
+        if (bbox) {
+            this.system.remove(bbox.getCollider());
+        }
     }
 
     handle(entities: Entity[], multiplier: number, simulator: Simulator): void {
@@ -67,19 +75,13 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
             }
         }
 
-        for (let collisionPair of collisionPairs) {
-            this.resolveCollisionForPair(collisionPair, multiplier, simulator);
-        }
+        collisionPairs.forEach(collisionPair => this.resolveCollisionForPair(collisionPair, multiplier, simulator));
     }
 
     resolveCollisionForPair(collisionPair: CollisionPair, multiplier: number, simulator: Simulator): void {
-        for (let collisionHandler of this.collisionHandlers) {
-            if (!collisionHandler.supports(collisionPair)) {
-                continue;
-            }
-
-            collisionHandler.handle(collisionPair, multiplier, simulator);
-        }
+        this.collisionHandlers
+            .filter(collisionHandler => collisionHandler.supports(collisionPair))
+            .forEach(collisionHandler => collisionHandler.handle(collisionPair, multiplier, simulator));
     }
 
     private updateBBox(entity: Entity): void {
@@ -128,7 +130,7 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         }
     }
 
-    private initiateBBox(entity: Entity): void {
+    private initBBox(entity: Entity): void {
         const bbox: BBox = entity.getHandlerMetadata('CollisionBehavior').get('bbox');
 
         if (bbox instanceof CircleBBox) {

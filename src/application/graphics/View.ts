@@ -11,29 +11,31 @@ export class View {
 
     constructor(space: Space, rendererStrategy: RendererStrategyInterface, projectionStrategy: ProjectionStrategyInterface) {
         this.space = space;
-        space.addView(this);
 
         this.rendererStrategy = rendererStrategy;
         this.projectionStrategy = projectionStrategy;
 
         // In case if view is added AFTER entity added
-        for (let entity of space.getEntities()) {
-            this.initiateRenderer(entity);
-        }
-    }
+        space.getEntities().forEach(entity => this.initRenderer(entity));
 
-    initiateRenderer(entity: Entity): void {
-        this.rendererStrategy.initiateRenderer(entity);
-    }
-
-    deleteRenderer(entity: Entity): void {
-        this.rendererStrategy.deleteRenderer(entity);
+        // Subscript to create entity
+        this.space
+            .on(Space.EVENT_POST_ENTITY_CREATED, this.initRenderer, this)
+            .on(Space.EVENT_PRE_ENTITY_DELETED, this.deleteRenderer, this);
     }
 
     startRendering(fps: number): View {
         setInterval(() => this.rerender(), 1000/fps);
 
         return this;
+    }
+
+    private initRenderer(entity: Entity): void {
+        this.rendererStrategy.initRenderer(entity);
+    }
+
+    private deleteRenderer(entity: Entity): void {
+        this.rendererStrategy.deleteRenderer(entity);
     }
 
     private rerender(): View {
