@@ -9,16 +9,24 @@ import {Shape} from "konva/types/Shape";
 const Konva: any = konva;
 
 export class KonvaRendererStrategy implements RendererStrategyInterface {
+    private unique: number;
     private stage: Stage;
     private layer: Layer;
 
     constructor(width: number, height: number, offsetX: number, offsetY: number) {
+        this.unique = Math.round(Math.random() * 1000);
+
+        const element = document.createElement('div');
+
+        element.setAttribute("id", `container_${this.unique}`);
+        element.setAttribute("class", 'canvas_container');
+        element.setAttribute("style", `left: ${offsetX}px; top: ${offsetY}px;`);
+        document.getElementById('canvas_containers').appendChild(element);
+
         this.stage = new Konva.Stage({
-            container: 'container',
+            container: `container_${this.unique}`,
             width: width,
-            height: height,
-            offsetX: offsetX,
-            offsetY: offsetY,
+            height: height
         });
         this.layer = new Konva.Layer();
         this.stage.add(this.layer);
@@ -29,17 +37,20 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
     }
 
     initRenderer(entity: Entity): void {
-        let renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init');
+        const rendererFn: () => Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init_fn');
 
-        if (!renderer) {
+        if (!rendererFn) {
             throw new Error('Entity is not added to KonvaTendererStrategy');
         }
 
-        this.layer.add(renderer);
+        const shape: Shape = rendererFn();
+
+        entity.getHandlerMetadata('KonvaRendererStrategy').set(`${this.unique}_shape`, shape);
+        this.layer.add(shape);
     }
 
     deleteRenderer(entity: Entity): void {
-        const renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init');
+        const renderer: Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get(`${this.unique}_shape`);
 
         if (renderer) {
             renderer.remove();
@@ -47,10 +58,13 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
     }
 
     rerenderEntity(representation: Representation): void {
-        let rerenderFn: (Representation) => void = representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get('rerender_fn');
+        let rerenderFn: (Representation, Shape) => void = representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get('rerender_fn');
 
         if (rerenderFn) {
-            rerenderFn(representation);
+            rerenderFn(
+                representation,
+                representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get(`${this.unique}_shape`)
+            );
         }
     }
 

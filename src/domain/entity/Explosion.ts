@@ -9,16 +9,15 @@ export class Explosion extends TemporaryEntity {
     private maxBlastWave: number;
 
     init(): void {
-        this.getHandlerMetadata('KonvaRendererStrategy').set('init', new Konva.Circle({
+        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Circle({
             x: 0,
             y: 0,
             radius: this.getHandlerMetadata('main').get('radius'),
             stroke: 'red',
             strokeWidth: 2
         }));
-        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation) => {
+        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
             const projection = representation.getProjection();
-            const graphicElement = this.getHandlerMetadata('KonvaRendererStrategy').get('init');
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());

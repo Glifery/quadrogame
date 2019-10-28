@@ -25,16 +25,15 @@ export class Wall extends Entity {
             this.vector.getX(), this.vector.getY()
         ));
 
-        this.getHandlerMetadata('KonvaRendererStrategy').set('init', new Konva.Line({
+        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Line({
             x: 0,
             y: 0,
             points: [0, 0, 0, 0],
             stroke: 'green',
             strokeWidth: 1
         }));
-        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation) => {
+        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
             const projection = representation.getProjection();
-            const graphicElement = this.getHandlerMetadata('KonvaRendererStrategy').get('init');
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
