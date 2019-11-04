@@ -1,15 +1,30 @@
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {Vector} from "../../domain/model/Vector";
 import {Space} from "../../domain/model/Space";
 import {Entity} from "../../domain/model/Entity";
 import {Moment} from "../../domain/model/Moment";
 import {GlobalBehaviorInterface} from "./behavior/global/GlobalBehaviorInterface";
+import {BehaviorInterface} from "./behavior/BehaviorInterface";
+import {LifetimeBehavior} from "./behavior/LifetimeBehavior";
 
 @injectable()
 export class Simulator {
     private spaces: Space[] = [];
     private globalBehaviors: GlobalBehaviorInterface[] = [];
     private counter: number = 0;
+    private behaviorsPool: Map<string, BehaviorInterface>;
+
+    constructor(
+        @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
+    ) {
+        this.behaviorsPool = new Map<string, BehaviorInterface>();
+
+        this.behaviorsPool.set(LifetimeBehavior.getName(), lifetimeBehavior);
+    }
+
+    getBehavior(behaviorName: string) {
+        return this.behaviorsPool.get(behaviorName);
+    }
 
     registerSpace(space: Space): Simulator {
         space.getEntities().forEach(entity => this.initEntity(entity));

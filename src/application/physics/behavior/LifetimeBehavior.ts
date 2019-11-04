@@ -6,6 +6,10 @@ import {TemporaryEntity} from "../../../domain/entity/TemporaryEntity";
 
 @injectable()
 export class LifetimeBehavior implements BehaviorInterface {
+    static getName() {
+        return 'lifetime';
+    }
+
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         if (!(entity instanceof TemporaryEntity)) {
             throw new Error('Unable to append LifetimeBehavior to not TemporaryEntity');

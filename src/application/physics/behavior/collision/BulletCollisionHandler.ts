@@ -5,6 +5,7 @@ import {Simulator} from "../../Simulator";
 import {Entity} from "../../../../domain/model/Entity";
 import {Hero} from "../../../../domain/entity/Hero";
 import {SimpleOsd} from "../../../graphics/osd/SimpleOsd";
+import {Weapon} from "../../../../domain/game/Weapon";
 
 @injectable()
 export class BulletCollisionHandler implements CollisionHandlerInterface {
@@ -41,9 +42,8 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
         this.simpleOcd.setEntity(entity);
 
         bullet.getSpace().deleteEntity(bullet);
-        armor.decreaseHealth(10 - armor.getArmor());
+        armor.decreaseHealth(this.getDamage(bullet) - armor.getArmor());
 
-        console.log(armor.getHealth());
         if (armor.getHealth() <= 0) {
             this.simpleOcd.setEntity(null);
             entity.getSpace().deleteEntity(entity);
@@ -56,5 +56,11 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
 
     private isMortal(entity: Entity): boolean {
         return !(entity.getHandlerMetadata('CollisionBehavior').get('bullet') == true) && !(entity instanceof Hero);
+    }
+
+    private getDamage(bullet: Entity): number {
+        let weapon: Weapon = bullet.getHandlerMetadata('CollisionBehavior').get('weapon');
+
+        return weapon.getDamage();
     }
 }

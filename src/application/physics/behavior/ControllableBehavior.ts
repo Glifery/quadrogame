@@ -10,6 +10,7 @@ import {GravityBehavior} from "./GravityBehavior";
 import {ExplodeOnLifetimeBehavior} from "./ExplodeOnLifetimeBehavior";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {LifetimeBehavior} from "./LifetimeBehavior";
+import {Hero} from "../../../domain/entity/Hero";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
@@ -42,7 +43,9 @@ export class ControllableBehavior implements BehaviorInterface {
             finalMoment.addMoment(control.getRotationMoment());
 
             if (control.checkFireStatus() === true) {
-                this.fire(entity);
+                if (entity instanceof Hero) {
+                    entity.getWeaponSlots().getPrimaryWeapon().fire(entity, multiplier, simulator);
+                }
             }
 
             if (control.checkCtrlStatus() === true) {
@@ -59,29 +62,6 @@ export class ControllableBehavior implements BehaviorInterface {
 
         return this;
     }
-
-    private fire(entity): void {
-        let currentTime: number = new Date().getTime();
-
-        if ((this.lastFireTime != null) && (currentTime - this.lastFireTime) < 400) {
-            return;
-        }
-
-        this.lastFireTime = currentTime;
-
-        let bulletPosition = Vector.createFromDirDis(entity.getAxis().getOrientation(), 22).addVector(entity.getPosition());
-        let bullet: Bullet = new Bullet(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
-
-        bullet.setMaxLifetime(0.3);
-        bullet.addBehavior(this.lifetimeBehavior);
-        bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), 600).addVector(entity.getPosition().getSpeed()));
-        entity.getSpace().addEntity(bullet);
-
-        entity.getPosition().addVector(
-            Vector.createFromVector(bullet.getPosition().getSpeed()).invert().multiply(5)
-        );
-    }
-
 
     private grenade(entity): void {
         let currentTime: number = new Date().getTime();

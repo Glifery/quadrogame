@@ -2,10 +2,14 @@ import {Entity} from "../model/Entity";
 import {CircleBBox} from "../model/bbox/CircleBBox";
 import * as konva from 'konva';
 import {Representation} from "../model/Representation";
+import {WeaponSlots} from "../game/WeaponSlots";
+import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
 
 const Konva: any = konva;
 
 export class Hero extends Entity {
+    private weaponSlots: WeaponSlots;
+
     init(): void {
         this.getHandlerMetadata('main').set('radius', 20);
         this.getHandlerMetadata('main').set('mass', 10);
@@ -31,5 +35,13 @@ export class Hero extends Entity {
             graphicElement.y(projection.getY());
             graphicElement.radius(this.getHandlerMetadata('main').get('radius') * projection.getScale());
         });
+
+        this.weaponSlots = new WeaponSlots([
+            new SimpleWeapon(this)
+        ]);
+    }
+
+    getWeaponSlots(): WeaponSlots {
+        return this.weaponSlots;
     }
 }
