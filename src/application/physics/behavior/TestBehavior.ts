@@ -8,7 +8,7 @@ import {Moment} from "../../../domain/model/Moment";
 @injectable()
 export class TestBehavior implements BehaviorInterface {
     static getName() {
-        return 'text';
+        return 'test';
     }
 
     public supports(entity: Entity): boolean {

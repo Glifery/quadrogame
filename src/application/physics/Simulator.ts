@@ -19,9 +19,8 @@ import {ExplosionBehavior} from "./behavior/ExplosionBehavior";
 export class Simulator {
     private spaces: Space[] = [];
     private entityBehaviors: Map<string, BehaviorInterface>;
-    private globalBehaviors: GlobalBehaviorInterface[] = [];
+    private globalBehaviors: Map<string, GlobalBehaviorInterface>;
     private counter: number = 0;
-    private behaviorsPool: Map<string, BehaviorInterface>;
 
     constructor(
         @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
@@ -32,6 +31,8 @@ export class Simulator {
         @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
         @inject(NullBehavior) nullBehavior: NullBehavior,
         @inject(TestBehavior) testBehavior: TestBehavior,
+
+        @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
     ) {
         this.entityBehaviors = new Map<string, BehaviorInterface>();
 
@@ -44,13 +45,8 @@ export class Simulator {
         this.entityBehaviors.set(NullBehavior.getName(), nullBehavior);
         this.entityBehaviors.set(TestBehavior.getName(), testBehavior);
 
-        this.behaviorsPool = new Map<string, BehaviorInterface>();
-
-        this.behaviorsPool.set(LifetimeBehavior.getName(), lifetimeBehavior);
-    }
-
-    getBehavior(behaviorName: string) {
-        return this.entityBehaviors.get(behaviorName);
+        this.globalBehaviors = new Map<string, GlobalBehaviorInterface>();
+        this.globalBehaviors.set(CollisionBehavior.getName(), collisionBehavior);
     }
 
     registerSpace(space: Space): Simulator {
@@ -61,18 +57,6 @@ export class Simulator {
             .on(Space.EVENT_PRE_ENTITY_DELETED, this.deleteEntity, this);
 
         this.spaces.push(space);
-
-        return this;
-    }
-
-    addGlobalBehaviors(globalBehavior: GlobalBehaviorInterface): Simulator {
-        this.globalBehaviors.push(globalBehavior);
-
-        // In case if global behavior is added AFTER entity added
-        for (let entities of this.getEntities()) {
-            globalBehavior.initEntity(entities, this);
-
-        }
 
         return this;
     }
@@ -99,15 +83,19 @@ export class Simulator {
     }
 
     private initEntity(entity: Entity): void {
-        for (let globalBehavior of this.globalBehaviors) {
-            globalBehavior.initEntity(entity, this);
-        }
+        const simulator: Simulator = this;
+
+        this.globalBehaviors.forEach((behavior: GlobalBehaviorInterface, name: string) => {
+            behavior.initEntity(entity, simulator);
+        });
     }
 
     private deleteEntity(entity: Entity): void {
-        for (let globalBehavior of this.globalBehaviors) {
-            globalBehavior.deleteEntity(entity, this);
-        }
+        const simulator: Simulator = this;
+
+        this.globalBehaviors.forEach((behavior: GlobalBehaviorInterface, name: string) => {
+            behavior.deleteEntity(entity, simulator);
+        });
     }
 
     private prepare(): Simulator {
@@ -130,11 +118,11 @@ export class Simulator {
             });
         }
 
-        for (let behavior of this.globalBehaviors) {
-            behavior.handle(this.getEntities(), multiplier, this);
-        }
+        this.globalBehaviors.forEach((behavior: GlobalBehaviorInterface, name: string) => {
+            behavior.handle(this.getEntities(), multiplier, simulator);
+        });
 
-        return this
+        return this;
     }
 
     private apply(): Simulator {

@@ -1,4 +1,4 @@
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
 import {Simulator} from "../../Simulator";
 import {Vector} from "../../../../domain/model/Vector";
 import {Entity} from "../../../../domain/model/Entity";
@@ -10,24 +10,30 @@ import {Collisions, Result} from "detect-collisions";
 import {LineBBox} from "../../../../domain/model/bbox/LineBBox";
 import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface";
 import {DynamicLineBBox} from "../../../../domain/model/bbox/DynamicLineBBox";
+import {ReactionCollisionHandler} from "../collision/ReactionCollisionHandler";
+import {BulletCollisionHandler} from "../collision/BulletCollisionHandler";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
+    static getName() {
+        return 'collision';
+    }
+
     private collisionHandlers: CollisionHandlerInterface[];
     private system: Collisions;
     private result: Result;
 
-    constructor() {
-        this.collisionHandlers = [];
+    constructor(
+        @inject(ReactionCollisionHandler) reactionCollisionHandler: ReactionCollisionHandler,
+        @inject(BulletCollisionHandler) bulletCollisionHandler: BulletCollisionHandler,
+    ) {
+        this.collisionHandlers = [
+            reactionCollisionHandler,
+            bulletCollisionHandler
+        ];
 
         this.system = new Collisions();
         this.result = this.system.createResult();
-    }
-
-    addCollisionHandler(collisionHandler: CollisionHandlerInterface): CollisionBehavior {
-        this.collisionHandlers.push(collisionHandler);
-
-        return this;
     }
 
     initEntity(entity: Entity, simulator: Simulator): void {

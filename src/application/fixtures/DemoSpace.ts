@@ -6,42 +6,17 @@ import {Entity} from "../../domain/model/Entity";
 import {Hero} from "../../domain/entity/Hero";
 import {Roamer} from "../../domain/entity/Roamer";
 import {Enemy} from "../../domain/entity/Enemy";
-import {CollisionBehavior} from "../physics/behavior/global/CollisionBehavior";
 import {Simulator} from "../physics/Simulator";
-import {LegacyCollisionBehavior} from "../physics/behavior/global/LegacyCollisionBehavior";
 import {Wall} from "../../domain/entity/Wall";
-import {ReactionCollisionHandler} from "../physics/behavior/collision/ReactionCollisionHandler";
-import {BulletCollisionHandler} from "../physics/behavior/collision/BulletCollisionHandler";
 
 @injectable()
 export class DemoSpace implements SpaceFixtureInterface{
-    private collisionBehavior: CollisionBehavior;
-    private reactionCollisionHandler: ReactionCollisionHandler;
-    private bulletCollisionHandler: BulletCollisionHandler;
-    private legacyCollisionBehavior: LegacyCollisionBehavior;
-
     private controllebleEntity: Entity;
-
-    constructor(
-        @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
-        @inject(ReactionCollisionHandler) reactionCollisionHandler: ReactionCollisionHandler,
-        @inject(BulletCollisionHandler) bulletCollisionHandler: BulletCollisionHandler,
-        @inject(LegacyCollisionBehavior) legacyCollisionBehavior: LegacyCollisionBehavior,
-    ) {
-        this.collisionBehavior = collisionBehavior;
-        this.reactionCollisionHandler = reactionCollisionHandler;
-        this.bulletCollisionHandler = bulletCollisionHandler;
-        this.legacyCollisionBehavior = legacyCollisionBehavior;
-    }
 
     up(space: Space, simulator: Simulator): void {
         this.controllebleEntity = new Hero(1000, 1000, 0);
         space.addEntity(this.controllebleEntity);
 
-        simulator.addGlobalBehaviors(this.collisionBehavior);
-
-        this.collisionBehavior.addCollisionHandler(this.reactionCollisionHandler);
-        this.collisionBehavior.addCollisionHandler(this.bulletCollisionHandler);
         this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         // return;
 
