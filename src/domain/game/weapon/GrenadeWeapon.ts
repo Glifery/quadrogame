@@ -14,7 +14,7 @@ export class GrenadeWeapon extends Weapon {
 
         this.lifetime = 0.3;
         this.kickback = 5;
-        this.reloadSpeed = 400;
+        this.reloadSpeed = 800;
         this.damage = 40;
         this.speed = 600;
         this.bonusArmorType = Armor.TYPE_HEAVY;
@@ -33,12 +33,12 @@ export class GrenadeWeapon extends Weapon {
             .addVector(Vector.createFromDirDis(entity.getAxis().getOrientation(), 22));
         let grenade: Grenade = new Grenade(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
-        grenade.setMaxLifetime(0.6);
-        grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), 300).addVector(entity.getPosition().getSpeed()));
+        grenade.setMaxLifetime(this.lifetime);
+        grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), this.speed).addVector(entity.getPosition().getSpeed()));
         entity.getSpace().addEntity(grenade);
 
         entity.getPosition().addVector(
-            Vector.createFromVector(grenade.getPosition().getSpeed()).invert().multiply(5)
+            Vector.createFromVector(grenade.getPosition().getSpeed()).invert().multiply(this.kickback)
         );
     }
 }

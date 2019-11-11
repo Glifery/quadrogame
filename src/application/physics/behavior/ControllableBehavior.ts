@@ -5,9 +5,6 @@ import {ControlInterface} from "../control/ControlInterface";
 import {Vector} from "../../../domain/model/Vector";
 import {Entity} from "../../../domain/model/Entity";
 import {Moment} from "../../../domain/model/Moment";
-import {GravityBehavior} from "./GravityBehavior";
-import {ExplodeOnLifetimeBehavior} from "./ExplodeOnLifetimeBehavior";
-import {LifetimeBehavior} from "./LifetimeBehavior";
 import {Hero} from "../../../domain/entity/Hero";
 import {GamepadControl} from "../control/GamepadControl";
 import {KeyboardControl} from "../control/KeyboardControl";
@@ -21,27 +18,14 @@ export class ControllableBehavior implements BehaviorInterface {
     static readonly movementAccel = 1200;
     static readonly rotationAccel = 300;
 
-    private gravityBehavior: GravityBehavior;
-    private lifetimeBehavior: LifetimeBehavior;
-    private explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior;
-
     private controls: ControlInterface[] = [];
-    private lastFireTime: number = new Date().getTime();
 
     constructor(
         @inject(KeyboardControl) keyboardControl: KeyboardControl,
         @inject(GamepadControl) gamepadControl: GamepadControl,
-
-        @inject(GravityBehavior) gravityBehavior: GravityBehavior,
-        @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
-        @inject(ExplodeOnLifetimeBehavior) explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior
     ) {
         this.controls.push(keyboardControl);
         this.controls.push(gamepadControl);
-
-        this.gravityBehavior = gravityBehavior;
-        this.lifetimeBehavior = lifetimeBehavior;
-        this.explodeOnLifetimeBehavior = explodeOnLifetimeBehavior;
     }
 
     public supports(entity: Entity): boolean {
@@ -55,6 +39,8 @@ export class ControllableBehavior implements BehaviorInterface {
         let finalMoment: Moment = new Moment(0);
 
         for (let control of this.controls) {
+            control.commit();
+
             finalVector.addVector(control.getMovingVector());
             finalMoment.addMoment(control.getRotationMoment());
 
@@ -66,7 +52,7 @@ export class ControllableBehavior implements BehaviorInterface {
 
             if (control.checkCtrlStatus() === true) {
                 if (entity instanceof Hero) {
-                    entity.getWeaponSlots().getSecondaryWeapon().fire(entity, multiplier, simulator);
+                    entity.getWeaponSlots().swapWeapons();
                 }
             }
         }

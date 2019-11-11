@@ -8,7 +8,11 @@ type RotationKeyData = {q:number, e:number};
 
 @injectable()
 export class KeyboardControl implements ControlInterface {
-    private trackedKeyStatuses: any;
+    private keyStatuses: any;
+    private keyPressedStatuses: any;
+    private keyReleasedStatuses: any;
+    private keyPressedImpulseStatuses: any;
+    private keyWaitForReleaseStatuses: any;
 
     private trackedKeys: string[] = ['q', 'w', 'e', 'a', 's', 'd', ' ', 'c'];
     private movingKeyData: MovingKeyData = {
@@ -21,20 +25,35 @@ export class KeyboardControl implements ControlInterface {
         q: 1,
         e: -1
     };
-    private fireKeyData: any = {
-        ' ': true
-    };
 
     constructor() {
         this.configure();
     }
 
+    commit() {
+        for (let key of this.trackedKeys) {
+            this.keyPressedImpulseStatuses[key] = false;
+
+            if ((this.keyPressedStatuses[key] === true) && (this.keyWaitForReleaseStatuses[key] === false)) {
+                this.keyPressedImpulseStatuses[key] = true;
+                this.keyWaitForReleaseStatuses[key] = true;
+            }
+
+            if (this.keyReleasedStatuses[key] === true) {
+                this.keyWaitForReleaseStatuses[key] = false;
+            }
+
+            this.keyPressedStatuses[key] = false;
+            this.keyReleasedStatuses[key] = false;
+        }
+    }
+
     getMovingVector() {
         let vector: Vector = new Vector(0, 0);
-        let keys: string[] = Object.keys(this.trackedKeyStatuses);
+        let keys: string[] = Object.keys(this.keyStatuses);
 
         for (let key of keys) {
-            if (this.trackedKeyStatuses[key] === false) {
+            if (this.keyStatuses[key] === false) {
                 continue;
             }
             if (!this.movingKeyData.hasOwnProperty(key)) {
@@ -49,10 +68,10 @@ export class KeyboardControl implements ControlInterface {
 
     getRotationMoment(): Moment {
         let moment: Moment = new Moment(0);
-        let keys: string[] = Object.keys(this.trackedKeyStatuses);
+        let keys: string[] = Object.keys(this.keyStatuses);
 
         for (let key of keys) {
-            if (this.trackedKeyStatuses[key] === false) {
+            if (this.keyStatuses[key] === false) {
                 continue;
             }
             if (!this.rotationKeyData.hasOwnProperty(key)) {
@@ -66,38 +85,48 @@ export class KeyboardControl implements ControlInterface {
     }
 
     checkFireStatus(): boolean {
-        return this.trackedKeyStatuses[' '];
+        return this.keyStatuses[' '];
     }
 
     checkCtrlStatus(): boolean {
-        return this.trackedKeyStatuses['c'];
+        return this.keyPressedImpulseStatuses['c'];
     }
 
     private configure(): void {
-        this.trackedKeyStatuses = {};
+        this.keyStatuses = {};
+        this.keyPressedStatuses = {};
+        this.keyReleasedStatuses = {};
+        this.keyPressedImpulseStatuses = {};
+        this.keyWaitForReleaseStatuses = {};
 
         for (let key of this.trackedKeys) {
-            this.trackedKeyStatuses[key] = false;
+            this.keyStatuses[key] = false;
+            this.keyPressedStatuses[key] = false;
+            this.keyReleasedStatuses[key] = false;
+            this.keyPressedImpulseStatuses[key] = false;
+            this.keyWaitForReleaseStatuses[key] = false;
         }
 
         document.addEventListener('keydown', (event) => {
             event.preventDefault();
 
-            if ((event.key in this.trackedKeyStatuses) === false) {
+            if ((event.key in this.keyStatuses) === false) {
                 return;
             }
 
-            this.trackedKeyStatuses[event.key] = true;
+            this.keyStatuses[event.key] = true;
+            this.keyPressedStatuses[event.key] = true;
         }, false);
 
         document.addEventListener('keyup', (event) => {
             event.preventDefault();
 
-            if ((event.key in this.trackedKeyStatuses) === false) {
+            if ((event.key in this.keyStatuses) === false) {
                 return;
             }
 
-            this.trackedKeyStatuses[event.key] = false;
+            this.keyStatuses[event.key] = false;
+            this.keyReleasedStatuses[event.key] = true;
         }, false);
     }
 }

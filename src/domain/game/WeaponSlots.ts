@@ -14,4 +14,11 @@ export class WeaponSlots {
     getSecondaryWeapon() {
         return this.weapons[1];
     }
+
+    swapWeapons() {
+        this.weapons = [
+            this.weapons[1],
+            this.weapons[0]
+        ]
+    }
 }

@@ -52,6 +52,8 @@ export class GamepadControl implements  ControlInterface {
         });
     }
 
+    commit() {}
+
     getMovingVector(): Vector {
         let vector = new Vector(0, 0);
 
