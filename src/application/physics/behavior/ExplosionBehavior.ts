@@ -5,9 +5,20 @@ import {Enemy} from "../../../domain/entity/Enemy";
 import {TemporaryEntity} from "../../../domain/entity/TemporaryEntity";
 import {BehaviorInterface} from "./BehaviorInterface";
 import {Explosion} from "../../../domain/entity/Explosion";
+import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class ExplosionBehavior implements BehaviorInterface {
+    static getName() {
+        return 'explosion';
+    }
+
+    public supports(entity: Entity): boolean {
+        let supportedBehaviors: string[] = entity.getHandlerMetadata('simulator').get('entity_behaviors');
+
+        return supportedBehaviors && supportedBehaviors.indexOf(ExplosionBehavior.getName()) > -1;
+    }
+
     handle(entity: TemporaryEntity, multiplier: number, simulator: Simulator): void {
         for (let anotherEntity of simulator.getEntities()) {
             if (entity === anotherEntity) {

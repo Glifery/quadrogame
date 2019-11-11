@@ -7,8 +7,18 @@ import {Moment} from "../../../domain/model/Moment";
 
 @injectable()
 export class DumpBehavior implements BehaviorInterface {
+    static getName() {
+        return 'dump';
+    }
+
     static readonly movementFriction = 450;
     static readonly rotationFriction = 150;
+
+    public supports(entity: Entity): boolean {
+        let supportedBehaviors: string[] = entity.getHandlerMetadata('simulator').get('entity_behaviors');
+
+        return supportedBehaviors && supportedBehaviors.indexOf(DumpBehavior.getName()) > -1;
+    }
 
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         let frictionVector = Vector.createFromVector(entity.getPosition().getSpeed()).invert();

@@ -10,6 +10,8 @@ export class Roamer extends Entity {
         this.getHandlerMetadata('main').set('radius', 3);
         this.getHandlerMetadata('main').set('mass', 0);
 
+        this.getHandlerMetadata('simulator').set('entity_behaviors', ['null']);
+
         this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new CircleBBox(
             this.getHandlerMetadata('main').get('radius'),

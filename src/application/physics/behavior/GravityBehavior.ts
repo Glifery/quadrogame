@@ -7,6 +7,16 @@ import {BBox} from "../../../domain/model/bbox/BBox";
 
 @injectable()
 export class GravityBehavior implements BehaviorInterface {
+    static getName() {
+        return 'gravity';
+    }
+
+    public supports(entity: Entity): boolean {
+        let supportedBehaviors: string[] = entity.getHandlerMetadata('simulator').get('entity_behaviors');
+
+        return supportedBehaviors && supportedBehaviors.indexOf(GravityBehavior.getName()) > -1;
+    }
+
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
         let finalVector: Vector = new Vector(0, 0);
 

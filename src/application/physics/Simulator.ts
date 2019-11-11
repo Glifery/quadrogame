@@ -6,24 +6,51 @@ import {Moment} from "../../domain/model/Moment";
 import {GlobalBehaviorInterface} from "./behavior/global/GlobalBehaviorInterface";
 import {BehaviorInterface} from "./behavior/BehaviorInterface";
 import {LifetimeBehavior} from "./behavior/LifetimeBehavior";
+import {TestBehavior} from "./behavior/TestBehavior";
+import {NullBehavior} from "./behavior/NullBehavior";
+import {DumpBehavior} from "./behavior/DumpBehavior";
+import {CollisionBehavior} from "./behavior/global/CollisionBehavior";
+import {GravityBehavior} from "./behavior/GravityBehavior";
+import {ControllableBehavior} from "./behavior/ControllableBehavior";
+import {ExplodeOnLifetimeBehavior} from "./behavior/ExplodeOnLifetimeBehavior";
+import {ExplosionBehavior} from "./behavior/ExplosionBehavior";
 
 @injectable()
 export class Simulator {
     private spaces: Space[] = [];
+    private entityBehaviors: Map<string, BehaviorInterface>;
     private globalBehaviors: GlobalBehaviorInterface[] = [];
     private counter: number = 0;
     private behaviorsPool: Map<string, BehaviorInterface>;
 
     constructor(
+        @inject(ControllableBehavior) controllableBehavior: ControllableBehavior,
+        @inject(DumpBehavior) dumpBehavior: DumpBehavior,
+        @inject(ExplodeOnLifetimeBehavior) explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior,
+        @inject(ExplosionBehavior) explosionBehavior: ExplosionBehavior,
+        @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
+        @inject(NullBehavior) nullBehavior: NullBehavior,
+        @inject(TestBehavior) testBehavior: TestBehavior,
     ) {
+        this.entityBehaviors = new Map<string, BehaviorInterface>();
+
+        this.entityBehaviors.set(ControllableBehavior.getName(), controllableBehavior);
+        this.entityBehaviors.set(DumpBehavior.getName(), dumpBehavior);
+        this.entityBehaviors.set(ExplodeOnLifetimeBehavior.getName(), explodeOnLifetimeBehavior);
+        this.entityBehaviors.set(ExplosionBehavior.getName(), explosionBehavior);
+        this.entityBehaviors.set(GravityBehavior.getName(), gravityBehavior);
+        this.entityBehaviors.set(LifetimeBehavior.getName(), lifetimeBehavior);
+        this.entityBehaviors.set(NullBehavior.getName(), nullBehavior);
+        this.entityBehaviors.set(TestBehavior.getName(), testBehavior);
+
         this.behaviorsPool = new Map<string, BehaviorInterface>();
 
         this.behaviorsPool.set(LifetimeBehavior.getName(), lifetimeBehavior);
     }
 
     getBehavior(behaviorName: string) {
-        return this.behaviorsPool.get(behaviorName);
+        return this.entityBehaviors.get(behaviorName);
     }
 
     registerSpace(space: Space): Simulator {
@@ -93,10 +120,14 @@ export class Simulator {
     }
 
     private calculate(multiplier: number): Simulator {
+        const simulator: Simulator = this;
+
         for (let entity of this.getEntities()) {
-            for (let behavior of entity.getBehaviors()) {
-                behavior.handle(entity, multiplier, this);
-            }
+            this.entityBehaviors.forEach((behavior: BehaviorInterface, name: string) => {
+                if (behavior.supports(entity)) {
+                    behavior.handle(entity, multiplier, simulator);
+                }
+            });
         }
 
         for (let behavior of this.globalBehaviors) {

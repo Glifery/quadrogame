@@ -13,6 +13,8 @@ export class Enemy extends Entity {
         this.getHandlerMetadata('main').set('radius', 30);
         this.getHandlerMetadata('main').set('mass', 10);
 
+        this.getHandlerMetadata('simulator').set('entity_behaviors', ['null', 'dump', 'gravity']);
+
         this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new CircleBBox(
             this.getHandlerMetadata('main').get('radius'),

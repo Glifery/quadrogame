@@ -11,9 +11,15 @@ import {ExplodeOnLifetimeBehavior} from "./ExplodeOnLifetimeBehavior";
 import {Bullet} from "../../../domain/entity/Bullet";
 import {LifetimeBehavior} from "./LifetimeBehavior";
 import {Hero} from "../../../domain/entity/Hero";
+import {GamepadControl} from "../control/GamepadControl";
+import {KeyboardControl} from "../control/KeyboardControl";
 
 @injectable()
 export class ControllableBehavior implements BehaviorInterface {
+    static getName() {
+        return 'controllable';
+    }
+
     static readonly movementAccel = 1200;
     static readonly rotationAccel = 300;
 
@@ -25,13 +31,25 @@ export class ControllableBehavior implements BehaviorInterface {
     private lastFireTime: number = new Date().getTime();
 
     constructor(
+        @inject(KeyboardControl) keyboardControl: KeyboardControl,
+        @inject(GamepadControl) gamepadControl: GamepadControl,
+
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
         @inject(ExplodeOnLifetimeBehavior) explodeOnLifetimeBehavior: ExplodeOnLifetimeBehavior
     ) {
+        this.controls.push(keyboardControl);
+        this.controls.push(gamepadControl);
+
         this.gravityBehavior = gravityBehavior;
         this.lifetimeBehavior = lifetimeBehavior;
         this.explodeOnLifetimeBehavior = explodeOnLifetimeBehavior;
+    }
+
+    public supports(entity: Entity): boolean {
+        let supportedBehaviors: string[] = entity.getHandlerMetadata('simulator').get('entity_behaviors');
+
+        return supportedBehaviors && supportedBehaviors.indexOf(ControllableBehavior.getName()) > -1;
     }
 
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
@@ -57,12 +75,6 @@ export class ControllableBehavior implements BehaviorInterface {
         entity.getAxis().addMoment(finalMoment.multiply(ControllableBehavior.rotationAccel));
     }
 
-    addControl(control: ControlInterface): BehaviorInterface {
-        this.controls.push(control);
-
-        return this;
-    }
-
     private grenade(entity): void {
         let currentTime: number = new Date().getTime();
 
@@ -76,8 +88,6 @@ export class ControllableBehavior implements BehaviorInterface {
         let grenade: Grenade = new Grenade(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
         grenade.setMaxLifetime(0.6);
-        // grenade.addBehavior(this.gravityBehavior);
-        grenade.addBehavior(this.explodeOnLifetimeBehavior);
         grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), 300).addVector(entity.getPosition().getSpeed()));
         entity.getSpace().addEntity(grenade);
 

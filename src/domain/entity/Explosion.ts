@@ -9,6 +9,8 @@ export class Explosion extends TemporaryEntity {
     private maxBlastWave: number;
 
     init(): void {
+        this.getHandlerMetadata('simulator').set('entity_behaviors', ['lifetime', 'explosion']);
+
         this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Circle({
             x: 0,
             y: 0,

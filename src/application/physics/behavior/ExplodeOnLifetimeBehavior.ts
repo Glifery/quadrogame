@@ -4,20 +4,18 @@ import {TemporaryEntity} from "../../../domain/entity/TemporaryEntity";
 import {Explosion} from "../../../domain/entity/Explosion";
 import {inject, injectable} from "inversify";
 import {ExplosionBehavior} from "./ExplosionBehavior";
+import {Entity} from "../../../domain/model/Entity";
 
 @injectable()
 export class ExplodeOnLifetimeBehavior extends LifetimeBehavior {
-    private lifetimeBehavior: LifetimeBehavior;
-    private explosionBehavior: ExplosionBehavior;
+    static getName() {
+        return 'explode_on_lifetime';
+    }
 
-    constructor(
-        @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
-        @inject(ExplosionBehavior) explosionBehavior: ExplosionBehavior
-    ) {
-        super();
+    public supports(entity: Entity): boolean {
+        let supportedBehaviors: string[] = entity.getHandlerMetadata('simulator').get('entity_behaviors');
 
-        this.lifetimeBehavior = lifetimeBehavior;
-        this.explosionBehavior = explosionBehavior;
+        return supportedBehaviors && supportedBehaviors.indexOf(ExplodeOnLifetimeBehavior.getName()) > -1;
     }
 
     protected deleteEntity(entity: TemporaryEntity, multiplier: number, simulator: Simulator): void {
@@ -26,8 +24,6 @@ export class ExplodeOnLifetimeBehavior extends LifetimeBehavior {
         explosion.setMaxLifetime(0.4);
         explosion.setMaxDistance(200);
         explosion.setMaxBlastWave(1000);
-        explosion.addBehavior(this.lifetimeBehavior);
-        explosion.addBehavior(this.explosionBehavior);
 
         entity.getSpace().addEntity(explosion);
 

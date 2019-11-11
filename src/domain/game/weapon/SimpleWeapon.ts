@@ -35,7 +35,6 @@ export class SimpleWeapon extends Weapon {
         let bullet: Bullet = new Bullet(this, bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
         bullet.setMaxLifetime(this.lifetime);
-        bullet.addBehavior(simulator.getBehavior(LifetimeBehavior.getName()));
         bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), this.speed).addVector(entity.getPosition().getSpeed()));
 
         entity.getSpace().addEntity(bullet);
