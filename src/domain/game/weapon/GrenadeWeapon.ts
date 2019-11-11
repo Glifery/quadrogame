@@ -1,11 +1,11 @@
 import {Weapon} from "../Weapon";
-import {Bullet} from "../../entity/Bullet";
 import {Vector} from "../../model/Vector";
 import {Entity} from "../../model/Entity";
 import {Armor} from "../Armor";
 import {Simulator} from "../../../application/physics/Simulator";
+import {Grenade} from "../../entity/Grenade";
 
-export class SimpleWeapon extends Weapon {
+export class GrenadeWeapon extends Weapon {
     private lifetime: number;
     private kickback: number;
 
@@ -31,15 +31,14 @@ export class SimpleWeapon extends Weapon {
         let bulletPosition = Vector
             .createFromXY(entity.getPosition().getX(), entity.getPosition().getY())
             .addVector(Vector.createFromDirDis(entity.getAxis().getOrientation(), 22));
-        let bullet: Bullet = new Bullet(this, bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
+        let grenade: Grenade = new Grenade(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
 
-        bullet.setMaxLifetime(this.lifetime);
-        bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), this.speed).addVector(entity.getPosition().getSpeed()));
-
-        entity.getSpace().addEntity(bullet);
+        grenade.setMaxLifetime(0.6);
+        grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), 300).addVector(entity.getPosition().getSpeed()));
+        entity.getSpace().addEntity(grenade);
 
         entity.getPosition().addVector(
-            Vector.createFromVector(bullet.getPosition().getSpeed()).invert().multiply(this.kickback)
+            Vector.createFromVector(grenade.getPosition().getSpeed()).invert().multiply(5)
         );
     }
 }

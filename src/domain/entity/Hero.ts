@@ -4,6 +4,7 @@ import * as konva from 'konva';
 import {Representation} from "../model/Representation";
 import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
+import {GrenadeWeapon} from "../game/weapon/GrenadeWeapon";
 
 const Konva: any = konva;
 
@@ -39,7 +40,8 @@ export class Hero extends Entity {
         });
 
         this.weaponSlots = new WeaponSlots([
-            new SimpleWeapon(this)
+            new SimpleWeapon(this),
+            new GrenadeWeapon(this)
         ]);
     }
 
