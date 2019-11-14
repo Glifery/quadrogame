@@ -1,16 +1,15 @@
-import {Entity} from "../model/Entity";
 import {CircleBBox} from "../model/bbox/CircleBBox";
 import * as konva from 'konva';
 import {Representation} from "../model/Representation";
 import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
 import {GrenadeWeapon} from "../game/weapon/GrenadeWeapon";
+import {Unit} from "./Unit";
+import {Armor} from "../game/Armor";
 
 const Konva: any = konva;
 
-export class Hero extends Entity {
-    private weaponSlots: WeaponSlots;
-
+export class Hero extends Unit {
     init(): void {
         this.getHandlerMetadata('main').set('radius', 20);
         this.getHandlerMetadata('main').set('mass', 10);
@@ -22,6 +21,8 @@ export class Hero extends Entity {
             this.getHandlerMetadata('main').get('radius'),
             this.getHandlerMetadata('main').get('mass')
         ));
+
+        this.getHandlerMetadata('TeamBehavior').set('team', 1);
 
         this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Circle({
             x: 0,
@@ -43,9 +44,11 @@ export class Hero extends Entity {
             new SimpleWeapon(this),
             new GrenadeWeapon(this)
         ]);
+
+        this.armor = new Armor(2350, Armor.TYPE_LIGHT, 1);
     }
 
-    getWeaponSlots(): WeaponSlots {
-        return this.weaponSlots;
+    getSafeRadius() {
+        return this.getHandlerMetadata('main').get('radius') + 10;
     }
 }

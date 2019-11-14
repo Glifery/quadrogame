@@ -26,7 +26,7 @@ export class ExplosionBehavior implements BehaviorInterface {
             }
 
             if (!(entity instanceof Explosion)) {
-                throw new Error('Unable to apply ExplosionBehavior on non-Explosion entity')
+                throw new Error('Unable to apply ExplosionBehavior on non-Explosion unit')
             }
 
             if (!(anotherEntity instanceof Enemy)) {

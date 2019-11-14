@@ -1,16 +1,15 @@
 import {Weapon} from "../Weapon";
 import {Vector} from "../../model/Vector";
-import {Entity} from "../../model/Entity";
 import {Armor} from "../Armor";
-import {Simulator} from "../../../application/physics/Simulator";
 import {Grenade} from "../../entity/Grenade";
+import {Unit} from "../../entity/Unit";
 
 export class GrenadeWeapon extends Weapon {
     private lifetime: number;
     private kickback: number;
 
-    constructor(entity: Entity) {
-        super(entity);
+    constructor(unit: Unit) {
+        super(unit);
 
         this.lifetime = 0.3;
         this.kickback = 5;
@@ -21,7 +20,13 @@ export class GrenadeWeapon extends Weapon {
         this.bonusPercent = 0.3;
     }
 
-    fire(entity: Entity, multiplier: number, simulator: Simulator): void {
+    getDistance(): number {
+        return this.getUnit().getSafeRadius() + (this.speed * this.lifetime) + 200;
+    }
+
+    fire(dir: number): void {
+        const unit: Unit = this.getUnit();
+
         if (!this.isWeaponReady()) {
             return;
         }
@@ -29,15 +34,15 @@ export class GrenadeWeapon extends Weapon {
         this.resetReadiness();
 
         let bulletPosition = Vector
-            .createFromXY(entity.getPosition().getX(), entity.getPosition().getY())
-            .addVector(Vector.createFromDirDis(entity.getAxis().getOrientation(), 22));
-        let grenade: Grenade = new Grenade(bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
+            .createFromXY(unit.getPosition().getX(), unit.getPosition().getY())
+            .addVector(Vector.createFromDirDis(dir, unit.getSafeRadius()));
+        let grenade: Grenade = new Grenade(bulletPosition.getX(), bulletPosition.getY(), dir);
 
         grenade.setMaxLifetime(this.lifetime);
-        grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), this.speed).addVector(entity.getPosition().getSpeed()));
-        entity.getSpace().addEntity(grenade);
+        grenade.getPosition().setSpeed(Vector.createFromDirDis(grenade.getAxis().getOrientation(), this.speed).addVector(unit.getPosition().getSpeed()));
+        unit.getSpace().addEntity(grenade);
 
-        entity.getPosition().addVector(
+        unit.getPosition().addVector(
             Vector.createFromVector(grenade.getPosition().getSpeed()).invert().multiply(this.kickback)
         );
     }

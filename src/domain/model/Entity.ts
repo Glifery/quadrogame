@@ -1,14 +1,12 @@
 import {Position} from "./Position";
 import {Axis} from "./Axis";
 import {Space} from "./Space";
-import {Armor} from "../game/Armor";
 
 export abstract class Entity {
     private handlerMetadata: Map<string, Map<string, any>>;
     protected position: Position;
     protected axis: Axis;
     protected space: Space;
-    protected armor: Armor;
 
     constructor(x: number, y: number, dir: number = 0) {
         this.handlerMetadata = new Map<string, Map<string, any>>();
@@ -44,9 +42,5 @@ export abstract class Entity {
         }
 
         return this.handlerMetadata.get(handler);
-    }
-
-    getArmor(): Armor {
-        return this.armor;
     }
 }

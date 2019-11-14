@@ -2,6 +2,7 @@ import {Entity} from "../../../domain/model/Entity";
 import {KonvaAdapter} from "../adapter/KonvaAdapter";
 import * as konva from "konva";
 import {Text} from "konva/types/shapes/Text";
+import {Unit} from "../../../domain/entity/Unit";
 
 const Konva: any = konva;
 
@@ -36,10 +37,10 @@ export class SimpleOsd {
     }
 
     private rerender(): void {
-        if (this.entity) {
+        if (this.entity && (this.entity instanceof Unit)) {
             this.text.setAttr('text', `${this.entity.getArmor().getHealth()} / ${this.entity.getArmor().getMaxHealth()}`);
         } else {
-            this.text.setAttr('text', 'No entity');
+            this.text.setAttr('text', 'No unit');
         }
 
         this.konvaAdapter.getLayer().draw();

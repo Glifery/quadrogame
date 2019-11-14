@@ -133,8 +133,8 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
         // console.log('------------------------');
     }
 
-    // private calculateByImpulseFormula(entity: Entity, anotherEntity: Entity) {
-    //     if (entity === anotherEntity) {
+    // private calculateByImpulseFormula(unit: Entity, anotherEntity: Entity) {
+    //     if (unit === anotherEntity) {
     //         return;
     //     }
     //
@@ -142,11 +142,11 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //         return;
     //     }
     //
-    //     const relativeSpeed: Vector = Vector.createFromVector(entity.getPosition().getSpeed()).subtractVector(anotherEntity.getPosition().getSpeed());
-    //     const initialImpulse: Vector = Vector.createFromVector(relativeSpeed).multiply(entity.getMass());
+    //     const relativeSpeed: Vector = Vector.createFromVector(unit.getPosition().getSpeed()).subtractVector(anotherEntity.getPosition().getSpeed());
+    //     const initialImpulse: Vector = Vector.createFromVector(relativeSpeed).multiply(unit.getMass());
     //     const fromEntityToAnother: Vector = Vector.createFromXY(
-    //         anotherEntity.getPosition().getX() - entity.getPosition().getX(),
-    //         anotherEntity.getPosition().getY() - entity.getPosition().getY(),
+    //         anotherEntity.getPosition().getX() - unit.getPosition().getX(),
+    //         anotherEntity.getPosition().getY() - unit.getPosition().getY(),
     //     );
     //
     //     if (fromEntityToAnother.getDis() > 50) {
@@ -166,7 +166,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     // console.log('anotherEntityImpulse', anotherEntityImpulse.getDir(), anotherEntityImpulse.getDis());
     //     // console.log('---');
     //
-    //     const entityAntiMass: number = (entity.getMass() == 0) ? 0 : 1 / entity.getMass();
+    //     const entityAntiMass: number = (unit.getMass() == 0) ? 0 : 1 / unit.getMass();
     //     const anotherEntityAntiMass: number = (anotherEntity.getMass() == 0) ? 0 : 1 / anotherEntity.getMass();
     //
     //     const anotherEntitySpeed: Vector = anotherEntityImpulse.multiply(anotherEntityAntiMass);
@@ -175,9 +175,9 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     const entitySpeed: Vector = entityImpulse.multiply(entityAntiMass);
     //     const entityAccel: Vector = entitySpeed.subtractVector(relativeSpeed);
     //
-    //     // entity.getPosition().addVector(entityAccel);
+    //     // unit.getPosition().addVector(entityAccel);
     //     // anotherEntity.getPosition().addVector(anotherEntityAccel);
-    //     entity.getPosition().getSpeed().addVector(entitySpeed);
+    //     unit.getPosition().getSpeed().addVector(entitySpeed);
     //     anotherEntity.getPosition().getSpeed().addVector(anotherEntitySpeed);
     //
     //     // console.log('entityAccel', entitySpeed.getDir(), entitySpeed.getDis());
@@ -191,12 +191,12 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     const correction1: Vector = Vector.createFromDirDis(relativeSpeedByNormal.getDir() + 180, entityAntiMass * correctionDis);
     //     const correction2: Vector = Vector.createFromDirDis(relativeSpeedByNormal.getDir(), anotherEntityAntiMass * correctionDis);
     //
-    //     entity.getPosition().setXY(entity.getPosition().getX() + correction1.getX(), entity.getPosition().getY() + correction1.getY());
+    //     unit.getPosition().setXY(unit.getPosition().getX() + correction1.getX(), unit.getPosition().getY() + correction1.getY());
     //     anotherEntity.getPosition().setXY(anotherEntity.getPosition().getX() + correction2.getX(), anotherEntity.getPosition().getY() + correction2.getY());
     // }
     //
-    // private calculateByOldFormula(entity: Entity, anotherEntity: Entity) {
-    //     if (entity === anotherEntity) {
+    // private calculateByOldFormula(unit: Entity, anotherEntity: Entity) {
+    //     if (unit === anotherEntity) {
     //         return;
     //     }
     //
@@ -205,8 +205,8 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     }
     //
     //     const fromEntityToAnother: Vector = Vector.createFromXY(
-    //         anotherEntity.getPosition().getX() - entity.getPosition().getX(),
-    //         anotherEntity.getPosition().getY() - entity.getPosition().getY(),
+    //         anotherEntity.getPosition().getX() - unit.getPosition().getX(),
+    //         anotherEntity.getPosition().getY() - unit.getPosition().getY(),
     //     );
     //     const fromEntityToAnotherDir: number = fromEntityToAnother.getDir();
     //     const fromEntityToAnotherDis: number = fromEntityToAnother.getDis();
@@ -217,7 +217,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //         return;
     //     }
     //
-    //     const relativeSpeed: Vector = Vector.createFromVector(entity.getPosition().getSpeed())
+    //     const relativeSpeed: Vector = Vector.createFromVector(unit.getPosition().getSpeed())
     //         .addVector(
     //             Vector.createFromVector(anotherEntity.getPosition().getSpeed()).invert()
     //         );
@@ -227,7 +227,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //         return;
     //     }
     //
-    //     const entityAntiMass: number = (entity.getMass() == 0) ? 0 :1 / entity.getMass();
+    //     const entityAntiMass: number = (unit.getMass() == 0) ? 0 :1 / unit.getMass();
     //     const anotherEntityAntiMass: number = (anotherEntity.getMass() == 0) ? 0 : 1 / anotherEntity.getMass();
     //
     //     let elasticity = 0.9;
@@ -237,7 +237,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     let impulse1 = Vector.createFromDirDis(fromEntityToAnotherDir, entityAntiMass * j * 1);
     //     let impulse2 = Vector.createFromDirDis(fromEntityToAnotherDir + 180, anotherEntityAntiMass * j * 1);
     //
-    //     entity.getPosition().addVector(impulse1);
+    //     unit.getPosition().addVector(impulse1);
     //     anotherEntity.getPosition().addVector(impulse2);
     //
     //     // console.log('impulse1', impulse1.getDir(), impulse1.getDis());
@@ -251,7 +251,7 @@ export class LegacyCollisionBehavior implements GlobalBehaviorInterface {
     //     const correction1: Vector = Vector.createFromDirDis(speedByNormal.getDir() + 180, entityAntiMass * correctionDis);
     //     const correction2: Vector = Vector.createFromDirDis(speedByNormal.getDir(), anotherEntityAntiMass * correctionDis);
     //
-    //     entity.getPosition().setXY(entity.getPosition().getX() + correction1.getX(), entity.getPosition().getY() + correction1.getY());
+    //     unit.getPosition().setXY(unit.getPosition().getX() + correction1.getX(), unit.getPosition().getY() + correction1.getY());
     //     anotherEntity.getPosition().setXY(anotherEntity.getPosition().getX() + correction2.getX(), anotherEntity.getPosition().getY() + correction2.getY());
     // }
 }

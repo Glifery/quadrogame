@@ -1,8 +1,7 @@
-import {Entity} from "../model/Entity";
-import {Simulator} from "../../application/physics/Simulator";
+import {Unit} from "../entity/Unit";
 
 export abstract class Weapon {
-    protected entity: Entity;
+    protected unit: Unit;
     protected reloadSpeed: number;
     protected damage: number;
     protected speed: number;
@@ -11,14 +10,14 @@ export abstract class Weapon {
 
     private lastFireTime: number;
 
-    constructor(entity: Entity) {
-        this.entity = entity;
+    constructor(unit: Unit) {
+        this.unit = unit;
 
         this.lastFireTime = new Date().getTime();
     }
 
-    getEntity(): Entity {
-        return this.entity;
+    getUnit(): Unit {
+        return this.unit;
     }
 
     getDamage(): number {
@@ -51,5 +50,7 @@ export abstract class Weapon {
         this.lastFireTime = new Date().getTime();
     }
 
-    abstract fire(entity: Entity, multiplier: number, simulator: Simulator): void;
+    abstract getDistance(): number;
+
+    abstract fire(dir: number): void;
 }

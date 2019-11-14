@@ -14,6 +14,7 @@ import {GravityBehavior} from "./behavior/GravityBehavior";
 import {ControllableBehavior} from "./behavior/ControllableBehavior";
 import {ExplodeOnLifetimeBehavior} from "./behavior/ExplodeOnLifetimeBehavior";
 import {ExplosionBehavior} from "./behavior/ExplosionBehavior";
+import {TeamBehavior} from "./behavior/TeamBehavior";
 
 @injectable()
 export class Simulator {
@@ -30,6 +31,7 @@ export class Simulator {
         @inject(GravityBehavior) gravityBehavior: GravityBehavior,
         @inject(LifetimeBehavior) lifetimeBehavior: LifetimeBehavior,
         @inject(NullBehavior) nullBehavior: NullBehavior,
+        @inject(TeamBehavior) teamBehavior: TeamBehavior,
         @inject(TestBehavior) testBehavior: TestBehavior,
 
         @inject(CollisionBehavior) collisionBehavior: CollisionBehavior,
@@ -43,6 +45,7 @@ export class Simulator {
         this.entityBehaviors.set(GravityBehavior.getName(), gravityBehavior);
         this.entityBehaviors.set(LifetimeBehavior.getName(), lifetimeBehavior);
         this.entityBehaviors.set(NullBehavior.getName(), nullBehavior);
+        this.entityBehaviors.set(TeamBehavior.getName(), teamBehavior);
         this.entityBehaviors.set(TestBehavior.getName(), testBehavior);
 
         this.globalBehaviors = new Map<string, GlobalBehaviorInterface>();
@@ -154,7 +157,7 @@ export class Simulator {
             this.savePrevPosition(entity);
 
             this.calculateByEylerFormula(entity, multiplier);
-            // this.calculateByMathFormula(entity, multiplier);
+            // this.calculateByMathFormula(unit, multiplier);
         }
 
         return this;
@@ -190,9 +193,9 @@ export class Simulator {
         entity.getAxis().setOrientation(entity.getAxis().getOrientation() + rotationForPeriod.getDir());
         entity.getAxis().setRotation(entity.getAxis().getRotation().addMoment(accelRotationForPeriod));
 
-        // if (entity instanceof Hero) {
-        //     console.log('speed', entity.getPosition().getSpeed().getDis() / this.counter, entity.getPosition().getX() - 1000, this.counter);
-        //     console.log('rotation', entity.getAxis().getRotation().getDir() / this.counter, entity.getAxis().getOrientation(), this.counter);
+        // if (unit instanceof Hero) {
+        //     console.log('speed', unit.getPosition().getSpeed().getDis() / this.counter, unit.getPosition().getX() - 1000, this.counter);
+        //     console.log('rotation', unit.getAxis().getRotation().getDir() / this.counter, unit.getAxis().getOrientation(), this.counter);
         // }
     }
 
@@ -201,11 +204,11 @@ export class Simulator {
          * period values - real accel and speed within one tick
          * @type {Vector}
          */
-        // let periodSpeedAccel = Vector.createFromVector(entity.getPosition().getAccel()).multiply(multiplier);
-        // let periodSpeed = Vector.createFromVector(entity.getPosition().getSpeed()).addVector(periodSpeedAccel);
+        // let periodSpeedAccel = Vector.createFromVector(unit.getPosition().getAccel()).multiply(multiplier);
+        // let periodSpeed = Vector.createFromVector(unit.getPosition().getSpeed()).addVector(periodSpeedAccel);
 
-        // let periodRotationAccel = Moment.createFromMoment(entity.getAxis().getAccel()).multiply(multiplier);
-        // let periodRotation = Moment.createFromMoment(entity.getAxis().getRotation()).addMoment(periodRotationAccel);
+        // let periodRotationAccel = Moment.createFromMoment(unit.getAxis().getAccel()).multiply(multiplier);
+        // let periodRotation = Moment.createFromMoment(unit.getAxis().getRotation()).addMoment(periodRotationAccel);
 
         /**
          * S = (V0*T) + (a*T*T)/2
@@ -219,16 +222,16 @@ export class Simulator {
         let actualRotation = Moment.createFromMoment(initialRotation).addMoment(accelRotation);
 
         entity.getPosition().setXY(entity.getPosition().getX() + actualMovement.getX(), entity.getPosition().getY() + actualMovement.getY());
-        // entity.getPosition().setSpeed(periodSpeed);
+        // unit.getPosition().setSpeed(periodSpeed);
         entity.getPosition().setSpeed(Vector.createFromVector(actualMovement).multiply(1/multiplier));
 
         entity.getAxis().setOrientation(entity.getAxis().getOrientation() + actualRotation.getDir());
-        // entity.getAxis().setRotation(periodRotation);
+        // unit.getAxis().setRotation(periodRotation);
         entity.getAxis().setRotation(Moment.createFromMoment(actualRotation).multiply(1/multiplier));
 
-        // if (entity instanceof Hero) {
-        //     console.log('speed', entity.getPosition().getSpeed().getDis() / this.counter, entity.getPosition().getX() - 1000, this.counter);
-        //     console.log('rotation', entity.getAxis().getRotation().getDir() / this.counter, entity.getAxis().getOrientation(), this.counter);
+        // if (unit instanceof Hero) {
+        //     console.log('speed', unit.getPosition().getSpeed().getDis() / this.counter, unit.getPosition().getX() - 1000, this.counter);
+        //     console.log('rotation', unit.getAxis().getRotation().getDir() / this.counter, unit.getAxis().getOrientation(), this.counter);
         // }
 
         /**

@@ -16,6 +16,7 @@ import {ExplodeOnLifetimeBehavior} from "../../../application/physics/behavior/E
 import {ExplosionBehavior} from "../../../application/physics/behavior/ExplosionBehavior";
 import {NullBehavior} from "../../../application/physics/behavior/NullBehavior";
 import {TestBehavior} from "../../../application/physics/behavior/TestBehavior";
+import {TeamBehavior} from "../../../application/physics/behavior/TeamBehavior";
 
 const container = new Container();
 
@@ -36,5 +37,6 @@ container.bind<ExplodeOnLifetimeBehavior>(ExplodeOnLifetimeBehavior).toSelf();
 container.bind<ExplosionBehavior>(ExplosionBehavior).toSelf();
 container.bind<NullBehavior>(NullBehavior).toSelf();
 container.bind<TestBehavior>(TestBehavior).toSelf();
+container.bind<TestBehavior>(TeamBehavior).toSelf();
 
 export {container}

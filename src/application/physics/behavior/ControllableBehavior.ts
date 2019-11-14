@@ -46,7 +46,7 @@ export class ControllableBehavior implements BehaviorInterface {
 
             if (control.checkFireStatus() === true) {
                 if (entity instanceof Hero) {
-                    entity.getWeaponSlots().getPrimaryWeapon().fire(entity, multiplier, simulator);
+                    entity.getWeaponSlots().getPrimaryWeapon().fire(entity.getAxis().getOrientation());
                 }
             }
 

@@ -1,19 +1,18 @@
 import {Weapon} from "../Weapon";
 import {Bullet} from "../../entity/Bullet";
 import {Vector} from "../../model/Vector";
-import {Entity} from "../../model/Entity";
 import {Armor} from "../Armor";
-import {Simulator} from "../../../application/physics/Simulator";
+import {Unit} from "../../entity/Unit";
 
 export class SimpleWeapon extends Weapon {
     private lifetime: number;
     private kickback: number;
 
-    constructor(entity: Entity) {
-        super(entity);
+    constructor(unit: Unit) {
+        super(unit);
 
         this.lifetime = 0.3;
-        this.kickback = 5;
+        this.kickback = 1;
         this.reloadSpeed = 400;
         this.damage = 40;
         this.speed = 600;
@@ -21,7 +20,13 @@ export class SimpleWeapon extends Weapon {
         this.bonusPercent = 0.3;
     }
 
-    fire(entity: Entity, multiplier: number, simulator: Simulator): void {
+    getDistance(): number {
+        return this.getUnit().getSafeRadius() +  this.speed * this.lifetime;
+    }
+
+    fire(dir: number): void {
+        const unit: Unit = this.getUnit();
+
         if (!this.isWeaponReady()) {
             return;
         }
@@ -29,16 +34,16 @@ export class SimpleWeapon extends Weapon {
         this.resetReadiness();
 
         let bulletPosition = Vector
-            .createFromXY(entity.getPosition().getX(), entity.getPosition().getY())
-            .addVector(Vector.createFromDirDis(entity.getAxis().getOrientation(), 22));
-        let bullet: Bullet = new Bullet(this, bulletPosition.getX(), bulletPosition.getY(), entity.getAxis().getOrientation());
+            .createFromXY(unit.getPosition().getX(), unit.getPosition().getY())
+            .addVector(Vector.createFromDirDis(dir, unit.getSafeRadius()));
+        let bullet: Bullet = new Bullet(this, bulletPosition.getX(), bulletPosition.getY(), dir);
 
         bullet.setMaxLifetime(this.lifetime);
-        bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), this.speed).addVector(entity.getPosition().getSpeed()));
+        bullet.getPosition().setSpeed(Vector.createFromDirDis(bullet.getAxis().getOrientation(), this.speed).addVector(unit.getPosition().getSpeed()));
 
-        entity.getSpace().addEntity(bullet);
+        unit.getSpace().addEntity(bullet);
 
-        entity.getPosition().addVector(
+        unit.getPosition().addVector(
             Vector.createFromVector(bullet.getPosition().getSpeed()).invert().multiply(this.kickback)
         );
     }

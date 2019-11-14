@@ -15,10 +15,10 @@ export class View {
         this.rendererStrategy = rendererStrategy;
         this.projectionStrategy = projectionStrategy;
 
-        // In case if view is added AFTER entity added
+        // In case if view is added AFTER unit added
         space.getEntities().forEach(entity => this.initRenderer(entity));
 
-        // Subscript to create entity
+        // Subscript to create unit
         this.space
             .on(Space.EVENT_POST_ENTITY_CREATED, this.initRenderer, this)
             .on(Space.EVENT_PRE_ENTITY_DELETED, this.deleteRenderer, this);
