@@ -54,6 +54,6 @@ export class Hero extends Unit {
     }
 
     getSafeRadius() {
-        return this.getHandlerMetadata('main').get('radius') + 10;
+        return this.getHandlerMetadata('main').get('radius') + 5;
     }
 }

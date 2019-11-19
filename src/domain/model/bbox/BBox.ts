@@ -4,6 +4,7 @@ export abstract class BBox {
     static shapeCircle: string = 'circle';
     static shapeRectangle: string = 'rectangle';
     static shapeLine: string = 'line';
+    static shapePoint: string = 'point';
 
     protected shape: string;
     protected mass: number;

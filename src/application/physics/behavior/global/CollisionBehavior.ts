@@ -164,10 +164,9 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
         }
 
         if (bbox instanceof DynamicLineBBox) {
-            bbox.setCollider(this.system.createPolygon(
+            bbox.setCollider(this.system.createPoint(
                 entity.getPosition().getX() + bbox.getX(),
-                entity.getPosition().getY() + bbox.getY(),
-                [[0, 0], [0, 0]]
+                entity.getPosition().getY() + bbox.getY()
             ));
         }
     }
