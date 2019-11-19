@@ -5,6 +5,7 @@ import {Armor} from "../game/Armor";
 import {Unit} from "./Unit";
 import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
+import {Tags} from "../game/Tags";
 
 const Konva: any = konva;
 
@@ -38,6 +39,10 @@ export class Enemy extends Unit {
             graphicElement.y(projection.getY());
             graphicElement.radius(this.getHandlerMetadata('main').get('radius') * projection.getScale());
         });
+
+        this.tags = new Tags([
+            Tags.TAG_LIGHT
+        ]);
 
         this.weaponSlots = new WeaponSlots([
             new SimpleWeapon(this)
