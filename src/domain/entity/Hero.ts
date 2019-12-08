@@ -7,10 +7,13 @@ import {GrenadeWeapon} from "../game/weapon/GrenadeWeapon";
 import {Unit} from "./Unit";
 import {Armor} from "../game/Armor";
 import {Tags} from "../game/Tags";
+import {HeroOsd} from "../../application/graphics/osd/HeroOsd";
 
 const Konva: any = konva;
 
 export class Hero extends Unit {
+    private heroOsd: HeroOsd;
+
     init(): void {
         this.getHandlerMetadata('main').set('radius', 20);
         this.getHandlerMetadata('main').set('mass', 10);
@@ -51,6 +54,11 @@ export class Hero extends Unit {
         ]);
 
         this.armor = new Armor(2350, Armor.TYPE_LIGHT, 1);
+
+        this.heroOsd = new HeroOsd(
+            null,
+            300, 100, 20, 500
+        ).resetEntity(this).startRendering(10);
     }
 
     getSafeRadius() {

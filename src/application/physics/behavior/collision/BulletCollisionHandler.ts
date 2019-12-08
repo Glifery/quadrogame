@@ -4,19 +4,19 @@ import {CollisionPair} from "../../../../domain/model/CollisionPair";
 import {Simulator} from "../../Simulator";
 import {Entity} from "../../../../domain/model/Entity";
 import {Hero} from "../../../../domain/entity/Hero";
-import {SimpleOsd} from "../../../graphics/osd/SimpleOsd";
 import {Weapon} from "../../../../domain/game/Weapon";
 import {Unit} from "../../../../domain/entity/Unit";
+import {EnemyOsd} from "../../../graphics/osd/EnemyOsd";
 
 @injectable()
 export class BulletCollisionHandler implements CollisionHandlerInterface {
-    private simpleOcd: SimpleOsd = new SimpleOsd(
-        null,
-        300, 100, 10, 0
-    );
+    private enemyOsd: EnemyOsd;
 
     constructor() {
-        this.simpleOcd.startRendering(10);
+        this.enemyOsd = new EnemyOsd(
+            null,
+            300, 100, 20, 0
+        ).startRendering(10);
     }
 
     supports(collisionPair: CollisionPair): boolean {
@@ -44,13 +44,15 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
 
         const armor = entity.getArmor();
 
-        this.simpleOcd.setEntity(entity);
+        if (!(entity instanceof Hero)) {
+            this.enemyOsd.resetEntity(entity);
+        }
 
         bullet.getSpace().deleteEntity(bullet);
         armor.decreaseHealth(this.getDamage(bullet) - armor.getArmor());
 
         if (armor.getHealth() <= 0) {
-            this.simpleOcd.setEntity(null);
+            this.enemyOsd.resetEntity();
             entity.getSpace().deleteEntity(entity);
         }
     }

@@ -8,14 +8,14 @@ export class KonvaAdapter {
     private unique: number;
     private layer: Layer;
 
-    constructor(width: number, height: number, offsetX: number, offsetY: number) {
+    constructor(width: number, height: number, offsetX: number, offsetY: number, zIndex: number = 0) {
         this.unique = Math.round(Math.random() * 1000);
 
         const element = document.createElement('div');
 
         element.setAttribute("id", `container_${this.unique}`);
         element.setAttribute("class", 'canvas_container');
-        element.setAttribute("style", `left: ${offsetX}px; top: ${offsetY}px;`);
+        element.setAttribute("style", `left: ${offsetX}px; top: ${offsetY}px; z-index: ${zIndex}`);
         document.getElementById('canvas_containers').appendChild(element);
 
         const stage: Stage = new Konva.Stage({

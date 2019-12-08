@@ -6,7 +6,6 @@ import {View} from "./graphics/View";
 import {DemoSpace} from "./fixtures/DemoSpace";
 import {FollowEntity} from "./graphics/projection/FollowEntity";
 import {KonvaRendererStrategy} from "./graphics/renderer/KonvaRendererStrategy";
-import {SimpleOsd} from "./graphics/osd/SimpleOsd";
 
 export class Entry {
     constructor() {
@@ -24,7 +23,7 @@ export class Entry {
             new FollowEntity(demoSpace.getControllablePosition(), 950, 500, 90)
         );
 
-        // let osd: SimpleOsd = new SimpleOsd(
+        // let osd: EntityRelatedOsd = new EntityRelatedOsd(
         //     demoSpace.getControllablePosition(),
         //     300, 100, 10, 0
         // );
