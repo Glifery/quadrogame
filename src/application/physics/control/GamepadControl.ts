@@ -5,6 +5,21 @@ import {Moment} from "../../../domain/model/Moment";
 
 @injectable()
 export class GamepadControl implements  ControlInterface {
+    static BUTTON_A: number = 0;
+    static BUTTON_B: number = 1;
+    static BUTTON_X: number = 2;
+    static BUTTON_Y: number = 3;
+    static BUTTON_TRIGGER_L1: number = 4;
+    static BUTTON_TRIGGER_R1: number = 5;
+    static BUTTON_TRIGGER_L2: number = 6;
+    static BUTTON_TRIGGER_R2: number = 7;
+    static BUTTON_SELECT: number = 8;
+    static BUTTON_START: number = 9;
+    static BUTTON_CROSS_L: number = 14;
+    static BUTTON_CROSS_R: number = 15;
+    static BUTTON_CROSS_U: number = 12;
+    static BUTTON_CROSS_D: number = 13;
+
     private gamepadIndexes: number[];
 
     constructor() {
@@ -79,10 +94,34 @@ export class GamepadControl implements  ControlInterface {
     }
 
     checkFireStatus(): boolean {
+        for (let index of this.gamepadIndexes) {
+            let gamepad: any = navigator.getGamepads()[index];
+
+            if (gamepad.buttons[GamepadControl.BUTTON_TRIGGER_R1].pressed == true) {
+                return true;
+            }
+
+            // for (let buttonIndex: any = 0; buttonIndex < gamepad.buttons.length; buttonIndex++) {
+            //     let gamepadButton: any = gamepad.buttons[buttonIndex];
+            //
+            //     if (gamepadButton.pressed == true) {
+            //         console.log('dddd', buttonIndex, gamepadButton);
+            //     }
+            // }
+        }
+
         return false;
     }
 
     checkCtrlStatus(): boolean {
+        for (let index of this.gamepadIndexes) {
+            let gamepad: any = navigator.getGamepads()[index];
+
+            if (gamepad.buttons[GamepadControl.BUTTON_TRIGGER_L1].pressed == true) {
+                return true;
+            }
+        }
+
         return false;
     }
 }
