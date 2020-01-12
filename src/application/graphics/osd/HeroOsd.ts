@@ -18,7 +18,7 @@ export class HeroOsd extends EntityRelatedOsd {
             width: 200,
             height: 10,
             fill: false,
-            stroke: 'black',
+            stroke: 'blue',
             strokeWidth: 2
         });
         this.healthStatus = new Konva.Rect({
@@ -26,7 +26,7 @@ export class HeroOsd extends EntityRelatedOsd {
             width: 200,
             height: 10,
             fill: 'red',
-            stroke: 'black',
+            stroke: 'blue',
             strokeWidth: 0
         });
 

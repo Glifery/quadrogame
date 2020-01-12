@@ -21,14 +21,14 @@ export class EnemyOsd extends EntityRelatedOsd {
             text: 'Simple Text',
             fontSize: 30,
             fontFamily: 'Calibri',
-            fill: 'green'
+            fill: 'blue'
         });
         this.healthBar = new Konva.Rect({
             y: 50,
             width: 200,
             height: 10,
             fill: false,
-            stroke: 'black',
+            stroke: 'blue',
             strokeWidth: 2
         });
         this.healthStatus = new Konva.Rect({
@@ -36,7 +36,7 @@ export class EnemyOsd extends EntityRelatedOsd {
             width: 200,
             height: 10,
             fill: 'red',
-            stroke: 'black',
+            stroke: 'blue',
             strokeWidth: 0
         });
 

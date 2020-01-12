@@ -57,7 +57,7 @@ export class Hero extends Unit {
 
         this.heroOsd = new HeroOsd(
             null,
-            300, 100, 20, 500
+            300, 100, 20, 800
         ).resetEntity(this).startRendering(10);
     }
 
