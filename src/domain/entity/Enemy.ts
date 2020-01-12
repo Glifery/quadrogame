@@ -1,13 +1,13 @@
 import {CircleBBox} from "../model/bbox/CircleBBox";
-import * as konva from "konva";
 import {Representation} from "../model/Representation";
 import {Armor} from "../game/Armor";
 import {Unit} from "./Unit";
 import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
 import {Tags} from "../game/Tags";
+import {KonvaImage} from "../../application/graphics/util/KonvaImage";
 
-const Konva: any = konva;
+const image = new KonvaImage('/assets/giga-wing.png');
 
 export class Enemy extends Unit {
     init(): void {
@@ -24,20 +24,23 @@ export class Enemy extends Unit {
 
         this.getHandlerMetadata('TeamBehavior').set('team', 2);
 
-        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Circle({
-            x: 0,
-            y: 0,
-            radius: this.getHandlerMetadata('main').get('radius'),
-            fill: 'yellow',
-            stroke: 'black',
-            strokeWidth: 1
-        }));
+        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => image
+            .createSprite(
+                this.getHandlerMetadata('main').get('radius'),
+                this.getHandlerMetadata('main').get('radius'),
+                0, 0, 93, 93
+            )
+        );
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
             const projection = representation.getProjection();
+            const entity = representation.getEntity();
+            const rotation = entity.getAxis().getOrientation() + projection.getRotation()
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
-            graphicElement.radius(this.getHandlerMetadata('main').get('radius') * projection.getScale());
+            graphicElement.rotation(entity.getAxis().getOrientation() - 90);
+
+            graphicElement.rotation(-(rotation - 90));
         });
 
         this.tags = new Tags([

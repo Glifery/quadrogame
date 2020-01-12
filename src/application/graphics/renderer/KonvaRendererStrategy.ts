@@ -18,15 +18,24 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
 
     initRenderer(entity: Entity): void {
         const rendererFn: () => Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init_fn');
+        const rendererAsyncFn: (Entity, KonvaAdapter) => Shape = entity.getHandlerMetadata('KonvaRendererStrategy').get('init_async_fn');
 
-        if (!rendererFn) {
-            throw new Error('Entity is not added to KonvaTendererStrategy');
+        if (rendererFn) {
+            const shape: Shape = rendererFn();
+
+            entity.getHandlerMetadata('KonvaRendererStrategy').set(`${this.konvaAdapter.getUnique()}_shape`, shape);
+            this.konvaAdapter.getLayer().add(shape);
+
+            return;
         }
 
-        const shape: Shape = rendererFn();
+        if (rendererAsyncFn) {
+            rendererAsyncFn(entity, this.konvaAdapter);
 
-        entity.getHandlerMetadata('KonvaRendererStrategy').set(`${this.konvaAdapter.getUnique()}_shape`, shape);
-        this.konvaAdapter.getLayer().add(shape);
+            return;
+        }
+
+        throw new Error('Entity is not added to KonvaTendererStrategy');
     }
 
     deleteRenderer(entity: Entity): void {
@@ -38,12 +47,13 @@ export class KonvaRendererStrategy implements RendererStrategyInterface {
     }
 
     rerenderEntity(representation: Representation): void {
-        let rerenderFn: (Representation, Shape) => void = representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get('rerender_fn');
+        const rerenderFn: (Representation, Shape) => void = representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get('rerender_fn');
+        const graphicElement: Shape = representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get(`${this.konvaAdapter.getUnique()}_shape`);
 
-        if (rerenderFn) {
+        if (rerenderFn && graphicElement) {
             rerenderFn(
                 representation,
-                representation.getEntity().getHandlerMetadata('KonvaRendererStrategy').get(`${this.konvaAdapter.getUnique()}_shape`)
+                graphicElement
             );
         }
     }

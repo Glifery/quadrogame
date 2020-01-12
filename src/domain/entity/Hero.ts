@@ -1,5 +1,4 @@
 import {CircleBBox} from "../model/bbox/CircleBBox";
-import * as konva from 'konva';
 import {Representation} from "../model/Representation";
 import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
@@ -8,8 +7,11 @@ import {Unit} from "./Unit";
 import {Armor} from "../game/Armor";
 import {Tags} from "../game/Tags";
 import {HeroOsd} from "../../application/graphics/osd/HeroOsd";
+import {Projection} from "../model/Projection";
+import {Shape} from "konva/types/Shape";
+import {KonvaImage} from "../../application/graphics/util/KonvaImage";
 
-const Konva: any = konva;
+const image = new KonvaImage('/assets/air_copter-512.png');
 
 export class Hero extends Unit {
     private heroOsd: HeroOsd;
@@ -28,20 +30,18 @@ export class Hero extends Unit {
 
         this.getHandlerMetadata('TeamBehavior').set('team', 1);
 
-        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => new Konva.Circle({
-            x: 0,
-            y: 0,
-            radius: this.getHandlerMetadata('main').get('radius'),
-            fill: 'blue',
-            stroke: 'black',
-            strokeWidth: 1
-        }));
-        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
-            const projection = representation.getProjection();
+        this.getHandlerMetadata('KonvaRendererStrategy').set('init_fn', () => image
+            .createSprite(
+                this.getHandlerMetadata('main').get('radius'),
+                this.getHandlerMetadata('main').get('radius'),
+                0, 0, 512, 512
+            )
+        );
+        this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: Shape) => {
+            const projection: Projection = representation.getProjection();
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
-            graphicElement.radius(this.getHandlerMetadata('main').get('radius') * projection.getScale());
         });
 
         this.tags = new Tags([

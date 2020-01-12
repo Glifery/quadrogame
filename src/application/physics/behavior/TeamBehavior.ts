@@ -74,6 +74,7 @@ export class TeamBehavior implements BehaviorInterface{
             return;
         }
 
+        unit.getAxis().setOrientation(targetVector.getDir());
         weapon.fire(targetVector.getDir());
     }
 }
