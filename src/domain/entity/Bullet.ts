@@ -29,7 +29,7 @@ export class Bullet extends TemporaryEntity {
             x: 0,
             y: 0,
             radius: this.getHandlerMetadata('main').get('radius'),
-            fill: 'black'
+            fill: 'white'
         }));
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
             const projection = representation.getProjection();

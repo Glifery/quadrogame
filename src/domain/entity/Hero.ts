@@ -11,7 +11,7 @@ import {Projection} from "../model/Projection";
 import {Shape} from "konva/types/Shape";
 import {KonvaImage} from "../../application/graphics/util/KonvaImage";
 
-const image = new KonvaImage('/assets/air_copter-512.png');
+const image = new KonvaImage('/assets/giga-wing.png');
 
 export class Hero extends Unit {
     private heroOsd: HeroOsd;
@@ -34,7 +34,7 @@ export class Hero extends Unit {
             .createSprite(
                 this.getHandlerMetadata('main').get('radius'),
                 this.getHandlerMetadata('main').get('radius'),
-                0, 0, 512, 512
+                175, 110, 67, 73
             )
         );
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: Shape) => {

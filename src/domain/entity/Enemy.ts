@@ -28,7 +28,7 @@ export class Enemy extends Unit {
             .createSprite(
                 this.getHandlerMetadata('main').get('radius'),
                 this.getHandlerMetadata('main').get('radius'),
-                0, 0, 93, 93
+                1, 1, 93, 93
             )
         );
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
