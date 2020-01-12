@@ -113,6 +113,12 @@ export class Simulator {
     private calculate(multiplier: number): Simulator {
         const simulator: Simulator = this;
 
+        //Calculate GLOBAL first
+        this.globalBehaviors.forEach((behavior: GlobalBehaviorInterface, name: string) => {
+            behavior.handle(this.getEntities(), multiplier, simulator);
+        });
+
+        //Then calculate the rest
         for (let entity of this.getEntities()) {
             this.entityBehaviors.forEach((behavior: BehaviorInterface, name: string) => {
                 if (behavior.supports(entity)) {
@@ -120,10 +126,6 @@ export class Simulator {
                 }
             });
         }
-
-        this.globalBehaviors.forEach((behavior: GlobalBehaviorInterface, name: string) => {
-            behavior.handle(this.getEntities(), multiplier, simulator);
-        });
 
         return this;
     }
