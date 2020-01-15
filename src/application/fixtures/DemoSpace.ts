@@ -28,7 +28,7 @@ export class DemoSpace implements SpaceFixtureInterface{
 
         // return;
 
-        let wall1 = new Wall(1200, 900, 1300, 1100);
+        let wall1 = new Wall(1200, 1000, 1400, 1030, 50);
         space.addEntity(wall1);
 
         let roamer: Roamer;

@@ -10,6 +10,7 @@ import {HeroOsd} from "../../application/graphics/osd/HeroOsd";
 import {Projection} from "../model/Projection";
 import {Shape} from "konva/types/Shape";
 import {KonvaImage} from "../../application/graphics/util/KonvaImage";
+import {Entity} from "../model/Entity";
 
 const image = new KonvaImage('/assets/giga-wing.png');
 
@@ -39,9 +40,13 @@ export class Hero extends Unit {
         );
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: Shape) => {
             const projection: Projection = representation.getProjection();
+            const entity: Entity = representation.getEntity();
+            const rotation: number = entity.getAxis().getOrientation() + projection.getRotation();
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
+
+            graphicElement.rotation(-(rotation - 90));
         });
 
         this.tags = new Tags([

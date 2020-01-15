@@ -6,6 +6,8 @@ import {WeaponSlots} from "../game/WeaponSlots";
 import {SimpleWeapon} from "../game/weapon/SimpleWeapon";
 import {Tags} from "../game/Tags";
 import {KonvaImage} from "../../application/graphics/util/KonvaImage";
+import {Entity} from "../model/Entity";
+import {Projection} from "../model/Projection";
 
 const image = new KonvaImage('/assets/giga-wing.png');
 
@@ -32,13 +34,12 @@ export class Enemy extends Unit {
             )
         );
         this.getHandlerMetadata('KonvaRendererStrategy').set('rerender_fn', (representation: Representation, graphicElement: any) => {
-            const projection = representation.getProjection();
-            const entity = representation.getEntity();
-            const rotation = entity.getAxis().getOrientation() + projection.getRotation()
+            const projection: Projection = representation.getProjection();
+            const entity: Entity = representation.getEntity();
+            const rotation: number = entity.getAxis().getOrientation() + projection.getRotation();
 
             graphicElement.x(projection.getX());
             graphicElement.y(projection.getY());
-            graphicElement.rotation(entity.getAxis().getOrientation() - 90);
 
             graphicElement.rotation(-(rotation - 90));
         });

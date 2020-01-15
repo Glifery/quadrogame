@@ -12,6 +12,7 @@ import {CollisionHandlerInterface} from "../collision/CollisionHandlerInterface"
 import {DynamicLineBBox} from "../../../../domain/model/bbox/DynamicLineBBox";
 import {ReactionCollisionHandler} from "../collision/ReactionCollisionHandler";
 import {BulletCollisionHandler} from "../collision/BulletCollisionHandler";
+import {RectangleBBox} from "../../../../domain/model/bbox/RectangleBBox";
 
 @injectable()
 export class CollisionBehavior implements GlobalBehaviorInterface {
@@ -167,6 +168,28 @@ export class CollisionBehavior implements GlobalBehaviorInterface {
             bbox.setCollider(this.system.createPoint(
                 entity.getPosition().getX() + bbox.getX(),
                 entity.getPosition().getY() + bbox.getY()
+            ));
+        }
+
+        if (bbox instanceof RectangleBBox) {
+            bbox.setCollider(this.system.createPolygon(
+                entity.getPosition().getX() + bbox.getX(),
+                entity.getPosition().getY() + bbox.getY(),
+                [
+                    [
+                        0, -(bbox.getDepth() / 2)
+                    ],
+                    [
+                        bbox.getVector().getDis(), -(bbox.getDepth() / 2)
+                    ],
+                    [
+                        bbox.getVector().getDis(), (bbox.getDepth() / 2)
+                    ],
+                    [
+                        0, (bbox.getDepth() / 2)
+                    ]
+                ],
+                -Vector.degToRad(bbox.getVector().getDir())
             ));
         }
     }

@@ -16,6 +16,14 @@ export class Vector {
         return new Vector(vector.getX(), vector.getY());
     }
 
+    static degToRad(deg: number): number {
+        return(deg * Math.PI) / 180;
+    }
+
+    static radToDeg(rad: number): number {
+        return(rad * 180) / Math.PI;
+    }
+
     constructor(x: number, y: number) {
         this.setXY(x, y);
         this.xyToDirdis();
@@ -159,7 +167,7 @@ export class Vector {
             this.dis = 0;
         } else {
             const dis: number = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-            const dir: number = this.radToDeg(Math.atan2(-this.y, this.x));
+            const dir: number = Vector.radToDeg(Math.atan2(-this.y, this.x));
 
             this.dis = this.roundTo(dis, 8);
             this.dir = this.roundTo(dir, 8);
@@ -178,8 +186,8 @@ export class Vector {
             this.x = 0;
             this.y = 0;
         } else {
-            const x: number = Math.cos(this.degToRad(this.dir)) * this.dis;
-            const y: number = -Math.sin(this.degToRad(this.dir)) * this.dis;
+            const x: number = Math.cos(Vector.degToRad(this.dir)) * this.dis;
+            const y: number = -Math.sin(Vector.degToRad(this.dir)) * this.dis;
 
             this.x = this.roundTo(x, 8);
             this.y = this.roundTo(y, 8);
@@ -198,13 +206,5 @@ export class Vector {
         }
 
         return value;
-    }
-
-    private degToRad(deg: number): number {
-        return(deg * Math.PI) / 180;
-    }
-
-    private radToDeg(rad: number): number {
-        return(rad * 180) / Math.PI;
     }
 }
