@@ -23,7 +23,9 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
         const entity1: Entity = collisionPair.getEntity1();
         const entity2: Entity = collisionPair.getEntity2();
 
-        return (((this.isBullet(entity1) && this.isMortal(entity2))) || ((this.isBullet(entity1) && this.isMortal(entity2))));
+        return this.isBullet(entity1) || this.isBullet(entity2);
+
+        // return (((this.isBullet(entity1) && this.isMortal(entity2))) || ((this.isBullet(entity1) && this.isMortal(entity2))));
     }
 
     handle(collisionPair: CollisionPair, multiplier: number, simulator: Simulator): void {
@@ -39,6 +41,8 @@ export class BulletCollisionHandler implements CollisionHandlerInterface {
         }
 
         if (!(entity instanceof Unit)) {
+            bullet.getSpace().deleteEntity(bullet);
+
             return;
         }
 
