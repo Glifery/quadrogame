@@ -11,11 +11,11 @@ export class SimpleWeapon extends Weapon {
     constructor(unit: Unit) {
         super(unit);
 
-        this.lifetime = 0.3;
+        this.lifetime = 0.4;
         this.kickback = 1;
         this.reloadSpeed = 400;
         this.damage = 40;
-        this.speed = 600;
+        this.speed = 1000;
         this.bonusArmorType = Armor.TYPE_HEAVY;
         this.bonusPercent = 0.3;
     }

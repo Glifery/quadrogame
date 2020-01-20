@@ -22,8 +22,8 @@ export class ExplodeOnLifetimeBehavior extends LifetimeBehavior {
         let explosion: Explosion = new Explosion(entity.getPosition().getX(), entity.getPosition().getY());
 
         explosion.setMaxLifetime(0.4);
-        explosion.setMaxDistance(200);
-        explosion.setMaxBlastWave(1000);
+        explosion.setMaxDistance(300);
+        explosion.setMaxBlastWave(1300);
 
         entity.getSpace().addEntity(explosion);
 

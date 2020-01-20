@@ -41,7 +41,9 @@ export class ReactionCollisionHandler implements CollisionHandlerInterface {
         let entityNormalSpeedScalar;
         let anotherEntityNormalSpeedScalar;
 
-        if (anotherEntityBBox.getMass() == 0) {
+        if ((entityBBox.getMass()) == 0 && (anotherEntityBBox.getMass() == 0)) {
+            return;// TODO: check this
+        } else if (anotherEntityBBox.getMass() == 0) {
             entityNormalSpeedScalar = -relativeSpeedByNormal.getDis();
             anotherEntityNormalSpeedScalar = 0;
         } else if (entityBBox.getMass() == 0) {

@@ -11,6 +11,7 @@ import {Projection} from "../model/Projection";
 import {Shape} from "konva/types/Shape";
 import {KonvaImage} from "../../application/graphics/util/KonvaImage";
 import {Entity} from "../model/Entity";
+import {ControllableBehavior} from "../../application/physics/behavior/ControllableBehavior";
 
 const image = new KonvaImage('/assets/giga-wing.png');
 
@@ -22,6 +23,13 @@ export class Hero extends Unit {
         this.getHandlerMetadata('main').set('mass', 10);
 
         this.getHandlerMetadata('simulator').set('entity_behaviors', ['controllable', 'dump', 'gravity']);
+
+        this.getHandlerMetadata('ControllableBehavior').set('movement_aceleration', 1500);
+        this.getHandlerMetadata('ControllableBehavior').set('movement_max_speed', 1100);
+        this.getHandlerMetadata('ControllableBehavior').set('rotation_aceleration', 400);
+        this.getHandlerMetadata('ControllableBehavior').set('rotation_max_speed', 320);
+        this.getHandlerMetadata('DumpBehavior').set('movement_friction', 450);
+        this.getHandlerMetadata('DumpBehavior').set('rotation_friction', 150);
 
         this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new CircleBBox(
