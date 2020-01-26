@@ -39,7 +39,6 @@ export class Simulator {
         this.entityBehaviors = new Map<string, BehaviorInterface>();
 
         this.entityBehaviors.set(ControllableBehavior.getName(), controllableBehavior);
-        this.entityBehaviors.set(DumpBehavior.getName(), dumpBehavior);
         this.entityBehaviors.set(ExplodeOnLifetimeBehavior.getName(), explodeOnLifetimeBehavior);
         this.entityBehaviors.set(ExplosionBehavior.getName(), explosionBehavior);
         this.entityBehaviors.set(GravityBehavior.getName(), gravityBehavior);
@@ -47,6 +46,7 @@ export class Simulator {
         this.entityBehaviors.set(NullBehavior.getName(), nullBehavior);
         this.entityBehaviors.set(TeamBehavior.getName(), teamBehavior);
         this.entityBehaviors.set(TestBehavior.getName(), testBehavior);
+        this.entityBehaviors.set(DumpBehavior.getName(), dumpBehavior);
 
         this.globalBehaviors = new Map<string, GlobalBehaviorInterface>();
         this.globalBehaviors.set(CollisionBehavior.getName(), collisionBehavior);

@@ -24,12 +24,10 @@ export class Hero extends Unit {
 
         this.getHandlerMetadata('simulator').set('entity_behaviors', ['controllable', 'dump', 'gravity']);
 
-        this.getHandlerMetadata('ControllableBehavior').set('movement_aceleration', 1500);
+        this.getHandlerMetadata('ControllableBehavior').set('movement_aceleration', 400);
         this.getHandlerMetadata('ControllableBehavior').set('movement_max_speed', 1100);
-        this.getHandlerMetadata('ControllableBehavior').set('rotation_aceleration', 400);
+        this.getHandlerMetadata('ControllableBehavior').set('rotation_aceleration', 200);
         this.getHandlerMetadata('ControllableBehavior').set('rotation_max_speed', 320);
-        this.getHandlerMetadata('DumpBehavior').set('movement_friction', 450);
-        this.getHandlerMetadata('DumpBehavior').set('rotation_friction', 150);
 
         this.getHandlerMetadata('CollisionBehavior').set('reaction', true);
         this.getHandlerMetadata('CollisionBehavior').set('bbox', new CircleBBox(

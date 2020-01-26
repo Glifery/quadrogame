@@ -17,7 +17,6 @@ export class DemoSpace implements SpaceFixtureInterface{
         this.controllebleEntity = new Hero(1000, 1000, 0);
         space.addEntity(this.controllebleEntity);
 
-        this.controllebleEntity.getPosition().setSpeed(Vector.createFromDirDis(0, 50));
         // return;
 
         let en1 = new Enemy(1100, 1000, 0);

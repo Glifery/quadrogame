@@ -11,7 +11,7 @@ export class DumpBehavior implements BehaviorInterface {
         return 'dump';
     }
 
-    static readonly movementFriction = 450;
+    static readonly movementFriction = 350;
     static readonly rotationFriction = 150;
 
     public supports(entity: Entity): boolean {
@@ -21,7 +21,12 @@ export class DumpBehavior implements BehaviorInterface {
     }
 
     handle(entity: Entity, multiplier: number, simulator: Simulator): void {
-        let frictionVector = Vector.createFromVector(entity.getPosition().getSpeed()).invert();
+        const frictionVector = Vector.createFromVector(entity.getPosition().getSpeed());
+
+        for (let vector of entity.getPosition().getVectors()) {
+            frictionVector.addVector(vector);
+        }
+        frictionVector.invert();
 
         if (entity.getPosition().getSpeed().getDis() > 0) {
             frictionVector.setDis(Math.min(
